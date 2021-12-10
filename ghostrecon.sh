@@ -80,7 +80,7 @@ init() {
 run() {
   local logfile logdir tool
 
-  logdir="$HOME/.local/${BASENAME%%.*}/$domain"
+  logdir=${logdir:-$HOME/.local/${BASENAME%%.*}/$domain}
   mklogdir "$logdir"
 
   backtitle="'Reconnaissence tools [$APP]"
@@ -114,6 +114,16 @@ run() {
     tool=knockpy
     printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Knock${CReset}\n"
     knockpy "$domain" --no-http-code 400 404 500 530 -th 50 -o "$logdir"
+  fi
+
+  # dirb
+  if type -t dirb >/dev/null; then
+    tool=dirb
+    logfile="$logdir/${dtreport}dirb.log"
+    printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Dirb${CReset}\n"
+    dirb https://${domain#http?(s)://} -N 404 -S -R -o "$logfile"
+    # cat "$logfile"
+    printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
   fi
 }
 

@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 NmapProgressBar() {
-  sed -u -n -r '/About/s/([^:]+): About ([0-9]+).[0-9]+%.*/\2 \1/p' - | "$APP_PATH/src/ProgressBar.sh" -z
+  sed -u -n -r '/About/s/([^:]+): About ([0-9]+).[0-9]+%.*/\2 \1/p' - | if type -t ProgressBar.sh >/dev/null; then ProgressBar.sh -z; fi
+}
+
+WpscanProgressBar() {
+  tee "$logfile" | grep '[+]' | if type -t ProgressBar.sh >/dev/null; then ProgressBar.sh -s normal; fi
 }
 
 # ANSI Colors
@@ -21,21 +25,18 @@ function load_ansi_colors() {
     CCrossed='\e[9m' CDoubleUnderline='\e[21m'
 }
 
-dg_menu() {
-  local OPTIND OPTARG menu confirmation_continue
-  #dialog --inputbox 'Informe o domain:' 0 0
-  dg=(dialog --stdout --title "$title" --backtitle "$backtitle" --checklist "$text" 0 "$width" 0)
-  selection=$("${dg[@]}" "${dg_options[@]}")
-  return=$?
-  clear
-  if [[ $return == 0 ]]; then
-    if [[ 'all-tools' == ${selection%% *} ]]; then
-      selection="${tools[*]}"
-    fi
-  fi
+mklogdir() {
+  mkdir -p "$1"
+  dtreport=$(date '+%Y%m%d%H%M')
 }
 
-usage() { printf "${*:+$*\n}  Usar: ${BASH_SOURCE} -d domain.com" 1>&2; exit 1; }
+dg_menu() {
+  dg=(dialog --stdout --title "$title" --backtitle "$backtitle" --checklist "$text" 0 "$width" 0)
+  selection=$("${dg[@]}" "${dg_options[@]}")
+  clear
+}
+
+usage() { printf "${*:+$*\n}  Usar: ${BASH_SOURCE} -d domain.com" 1>&2; return 1; }
 
 init() {
   local OPTIND OPTARG
@@ -50,6 +51,7 @@ init() {
   shift $((OPTIND - 1))
 
   while [ -z "$domain" ]; do
+    echo "$banner"
     read -p 'Enter domain: ' domain
   done
 
@@ -59,32 +61,51 @@ init() {
 }
 
 run() {
-  local log
+  local logfile logdir tool
+
+  logdir="$HOME/.local/${BASENAME%%.*}/$domain"
+  mklogdir "$logdir"
 
   backtitle='Reconnaissence tools [mainrecon]'
   title='Reconhecimento do alvo'
   text='Selecione as ferramentas:'
-  width=40
+  width=0
   dg_menu checklist
 
   # Nmap scan
-  printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Varredura de Portas\n"
-  log=$HOME/nmap.log
-  NMAP_OPT='-sS -sV -Pn -p- -vv'
-  sudo nmap $NMAP_OPT $domain -oN $log --stats-every 1s 2>&- | NmapProgressBar
-  dialog --textbox "$log" 0 0
+  if type -t nmap >/dev/null; then
+    tool=nmap
+    printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Varredura de Portas${CReset}\n"
+    logfile="$logdir/${dtreport}nmap.log"
+    NMAP_OPT='-sS -sV -Pn -p- -vv'
+    sudo nmap $NMAP_OPT $domain -oN $logfile --stats-every 1s 2>&- | NmapProgressBar
+    cat "$logfile"
+    printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
+  fi
 
   # Wpscan
-  wpscan --url "$domain" --ignore-main-redirect --no-banner --api-token WgHJqB4r2114souaMB5aDGG5eulIJSz8RyJQ9FCKqdI --force --enumerate u -o wpscan.txt
+  if type -t wpscan >/dev/null; then
+    tool=wpscan
+    logfile="$logdir/${dtreport}wpscan.log"
+    wpscan --url "$domain" --ignore-main-redirect --no-banner --api-token WgHJqB4r2114souaMB5aDGG5eulIJSz8RyJQ9FCKqdI --force --enumerate u | WpscanProgressBar
+    cat "$logfile"
+    printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
+  fi
 
-  while :; do
-    signal='/ - \ |'
-    for s in $signal; do
-      printf "${CBold}${CFGBlue}[${CFGPurple}%s${CFGBlue}] Iniciando varredura de Sub-diretorios! Este processo pode demorar muito.\r" "$s"
-      sleep .08
-    done
-    ((i++ > 30)) && break
-  done
+  # Knockpy
+  if type -t knockpy >/dev/null; then
+    tool=knockpy
+    printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Knock${CReset}\n"
+    knockpy "$domain" --no-http-code 400 404 500 530 -th 50 -o "$logdir"
+  fi
+  #while :; do
+  #  signal='/ - \ |'
+  #  for s in $signal; do
+  #    printf "${CBold}${CFGBlue}[${CFGPurple}%s${CFGBlue}] Iniciando varredura de Sub-diretorios! Este processo pode demorar muito.\r" "$s"
+  #    sleep .08
+  #  done
+  #  ((i++ > 30)) && break
+  #done
 }
 
 main() {
@@ -92,24 +113,44 @@ main() {
   run
 }
 
+APP_PATH=${BASH_SOURCE[0]%/*}
+BASENAME=${BASH_SOURCE[0]##*/}
+if [[ ${BASH_VERSINFO[0]} -lt 4 ]]; then
+  printf '%s: ERROR: Necessário shell %s %s ou superior.\n' "$BASENAME" 'bash' '4.0' 1>&2
+  exit 1
+fi
+
+banner='██████╗ ██╗  ██╗ ██████╗ ███████╗████████╗
+██╔════╝ ██║  ██║██╔═══██╗██╔════╝╚══██╔══╝
+██║  ███╗███████║██║   ██║███████╗   ██║
+██║   ██║██╔══██║██║   ██║╚════██║   ██║
+╚██████╔╝██║  ██║╚██████╔╝███████║   ██║
+ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚══════╝   ╚═╝
+
+██████╗ ███████╗ ██████╗ ██████╗ ███╗   ██╗
+██╔══██╗██╔════╝██╔════╝██╔═══██╗████╗  ██║
+██████╔╝█████╗  ██║     ██║   ██║██╔██╗ ██║
+██╔══██╗██╔══╝  ██║     ██║   ██║██║╚██╗██║
+██║  ██║███████╗╚██████╗╚██████╔╝██║ ╚████║
+╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝'
+
 #/**
 # * Tools list
 # */
-tools=(
-  nmap
-  httpx
-  dirsearch
-  subfinder
-  sublist3r
-  dirb
-  knockpy
-  paramspider
-  gitdumper
-  wpscan
-  theHarvest
-  karma
+declare -A tools=(
+  [nmap]='Ferramenta de exploração de Rede e Rastreio de Segurança / Portas'
+  [httpx]='Breve descrição'
+  [dirsearch]='Breve descrição'
+  [subfinder]='Breve descrição'
+  [sublist3r]='Breve descrição'
+  [dirb]='Web Content Scanner'
+  [knockpy]='Breve descrição'
+  [paramspider]='Breve descrição'
+  [gitdumper]='Breve descrição'
+  [wpscan]='WordPress Security Scanner'
+  [theHarvest]='Breve descrição'
+  [karma]='Breve descrição'
 )
-mapfile -t dg_options < <(printf '%s\n\noff\n' all-tools "${tools[@]}")
+mapfile -t dg_options < <(for tool in "${!tools[@]}"; do printf '%s\n%s\non\n' "$tool" "${tools[$tool]}"; done)
 
-APP_PATH=${BASH_SOURCE[0]%/*}
 [[ ${BASH_SOURCE[0]} == $0 ]] && main "$@"

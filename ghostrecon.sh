@@ -38,6 +38,7 @@ check_dependencies() {
   fi
   if ! type -t ProgressBar.sh; then
     git clone https://github.com/NRZCode/progressbar.git "$HOME/.local/progressbar"
+    mkdir -p "$HOME/.local/bin"
     ln -sf "$HOME/.local/progressbar/ProgressBar.sh" "$HOME/.local/bin/"
   fi
 }

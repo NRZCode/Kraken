@@ -37,7 +37,9 @@ check_dependencies() {
     exit 1
   fi
   if ! type -t ProgressBar.sh; then
-    git clone https://github.com/NRZCode/progressbar.git "$HOME/.local/progressbar"
+    if [[ ! -d "$HOME/.local/progressbar" ]]; then
+      git clone https://github.com/NRZCode/progressbar.git "$HOME/.local/progressbar"
+    fi
     mkdir -p "$HOME/.local/bin"
     ln -sf "$HOME/.local/progressbar/ProgressBar.sh" "$HOME/.local/bin/"
   fi
@@ -52,6 +54,22 @@ dg_menu() {
   dg=(dialog --stdout --title "$title" --backtitle "$backtitle" --checklist "$text" 0 "$width" 0)
   selection=$("${dg[@]}" "${dg_options[@]}")
   clear
+}
+
+banner() {
+  echo '██████╗ ██╗  ██╗ ██████╗ ███████╗████████╗
+██╔════╝ ██║  ██║██╔═══██╗██╔════╝╚══██╔══╝
+██║  ███╗███████║██║   ██║███████╗   ██║
+██║   ██║██╔══██║██║   ██║╚════██║   ██║
+╚██████╔╝██║  ██║╚██████╔╝███████║   ██║
+ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚══════╝   ╚═╝
+
+██████╗ ███████╗ ██████╗ ██████╗ ███╗   ██╗
+██╔══██╗██╔════╝██╔════╝██╔═══██╗████╗  ██║
+██████╔╝█████╗  ██║     ██║   ██║██╔██╗ ██║
+██╔══██╗██╔══╝  ██║     ██║   ██║██║╚██╗██║
+██║  ██║███████╗╚██████╗╚██████╔╝██║ ╚████║
+╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝'
 }
 
 usage() { printf "${*:+$*\n}  Usar: $BASENAME -d domain.com\n" 1>&2; return 1; }
@@ -69,7 +87,7 @@ init() {
   shift $((OPTIND - 1))
 
   while [ -z "$domain" ]; do
-    echo "$banner"
+    banner
     read -p 'Enter domain: ' domain
   done
 
@@ -85,11 +103,12 @@ run() {
   mklogdir "$logdir"
 
   backtitle="'Reconnaissence tools [$APP]"
-  title='Reconhecimento do alvo'
+  title="Reconhecimento do alvo [$domain]"
   text='Selecione as ferramentas:'
   width=0
   dg_menu checklist
 
+  banner
   # Nmap scan
   if type -t nmap >/dev/null; then
     tool=nmap
@@ -146,19 +165,6 @@ fi
 check_dependencies
 
 
-banner='██████╗ ██╗  ██╗ ██████╗ ███████╗████████╗
-██╔════╝ ██║  ██║██╔═══██╗██╔════╝╚══██╔══╝
-██║  ███╗███████║██║   ██║███████╗   ██║
-██║   ██║██╔══██║██║   ██║╚════██║   ██║
-╚██████╔╝██║  ██║╚██████╔╝███████║   ██║
- ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚══════╝   ╚═╝
-
-██████╗ ███████╗ ██████╗ ██████╗ ███╗   ██╗
-██╔══██╗██╔════╝██╔════╝██╔═══██╗████╗  ██║
-██████╔╝█████╗  ██║     ██║   ██║██╔██╗ ██║
-██╔══██╗██╔══╝  ██║     ██║   ██║██║╚██╗██║
-██║  ██║███████╗╚██████╗╚██████╔╝██║ ╚████║
-╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝'
 
 #/**
 # * Tools list

@@ -29,6 +29,19 @@ function load_ansi_colors() {
     CCrossed='\e[9m' CDoubleUnderline='\e[21m'
 }
 
+check_dependencies() {
+  pkg='git'
+  ver='2.17.1'
+  if ! type -t $pkg >/dev/null; then
+    printf '%s: ERROR: Necessário pacote %s %s ou superior.\n' 'link.sh' "$pkg" "$ver" 1>&2
+    exit 1
+  fi
+  if ! type -t ProgressBar.sh; then
+    git clone https://github.com/NRZCode/progressbar.git "$HOME/.local/progressbar"
+    ln -sf "$HOME/.local/progressbar/ProgressBar.sh" "$HOME/.local/bin/"
+  fi
+}
+
 mklogdir() {
   mkdir -p "$1"
   dtreport=$(date '+%Y%m%d%H%M')
@@ -40,7 +53,7 @@ dg_menu() {
   clear
 }
 
-usage() { printf "${*:+$*\n}  Usar: $BASENAME -d domain.com" 1>&2; return 1; }
+usage() { printf "${*:+$*\n}  Usar: $BASENAME -d domain.com\n" 1>&2; return 1; }
 
 init() {
   local OPTIND OPTARG
@@ -111,11 +124,16 @@ main() {
 
 APP='Ghost Recon'
 APP_PATH=${BASH_SOURCE[0]%/*}
+APP_VERSION=0.0.1
 BASENAME=${BASH_SOURCE[0]##*/}
+[[ $1 == @(-h|--help|help) ]] && { usage; exit 1; }
+[[ $1 == @(-v|--version) ]] && { echo "$APP_VERSION"; exit 0; }
 if [[ ${BASH_VERSINFO[0]} -lt 4 ]]; then
   printf '%s: ERROR: Necessário shell %s %s ou superior.\n' "$BASENAME" 'bash' '4.0' 1>&2
   exit 1
 fi
+check_dependencies
+
 
 banner='██████╗ ██╗  ██╗ ██████╗ ███████╗████████╗
 ██╔════╝ ██║  ██║██╔═══██╗██╔════╝╚══██╔══╝

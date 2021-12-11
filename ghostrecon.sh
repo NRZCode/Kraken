@@ -30,8 +30,9 @@ function load_ansi_colors() {
 }
 
 check_dependencies() {
-  pkg='git'
-  ver='2.17.1'
+  local pkg='git'
+  local ver='2.17.1'
+  local dir=$HOME/.local/bin
   if ! type -t $pkg >/dev/null; then
     printf '%s: ERROR: Necessário pacote %s %s ou superior.\n' 'link.sh' "$pkg" "$ver" 1>&2
     exit 1
@@ -40,8 +41,9 @@ check_dependencies() {
     if [[ ! -d "$HOME/.local/progressbar" ]]; then
       git clone https://github.com/NRZCode/progressbar.git "$HOME/.local/progressbar"
     fi
-    mkdir -p "$HOME/.local/bin"
-    ln -sf "$HOME/.local/progressbar/ProgressBar.sh" "$HOME/.local/bin/"
+    mkdir -p "$dir"
+    [[ "$dir" == @(${PATH//:/|}) ]] || export PATH="$PATH:$dir"
+    ln -sf "$HOME/.local/progressbar/ProgressBar.sh" "$dir"
   fi
 }
 

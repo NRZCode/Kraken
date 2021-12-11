@@ -58,6 +58,22 @@ dg_menu() {
   clear
 }
 
+checkArgType() {
+  # valor de um parâmetro (arg: 3) não pode começar com - 'hifen'
+  if [[ -z $3 || "$3" =~ ^- ]]; then
+    echo "Opção $2 requer parâmetro." >&2
+    return 1
+  fi
+  case $1 in
+    bool) re='^(on|off|true|false|1|0)$';;
+    string) re='^[[:print:]]+$';;
+    int) re='^[-+]?[[:digit:]]+$';;
+    float) re='^[-+]?[0-9]+([.,][0-9]+)?$';;
+    domain) re='^((s?[hf]tt?ps?)://)?([a-zA-Z0-9.-]+)'
+  esac
+  [[ ${3,,} =~ $re ]]
+}
+
 banner() {
   echo '██████╗ ██╗  ██╗ ██████╗ ███████╗████████╗
 ██╔════╝ ██║  ██║██╔═══██╗██╔════╝╚══██╔══╝
@@ -72,6 +88,7 @@ banner() {
 ██╔══██╗██╔══╝  ██║     ██║   ██║██║╚██╗██║
 ██║  ██║███████╗╚██████╗╚██████╔╝██║ ╚████║
 ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝'
+  [[ $domain ]] && echo "Domain: $domain"
 }
 
 usage() { printf "${*:+$*\n}  Usar: $BASENAME -d domain.com\n" 1>&2; return 1; }
@@ -91,8 +108,15 @@ init() {
   while [ -z "$domain" ]; do
     banner
     read -p 'Enter domain: ' domain
+#    if checkArgType domain domain "$domain"; then
+#      domain="${domain#http?(s)://}"
+#echo Definido domain: $domain
+#    else
+#      domain=''
+#    fi
   done
-
+#  echo Definido domain: $domain
+#exit
   if [ -z "$domain" ]; then
     usage; exit 1;
   fi
@@ -104,7 +128,7 @@ run() {
   logdir=${logdir:-$HOME/.local/${BASENAME%%.*}/$domain}
   mklogdir "$logdir"
 
-  backtitle="'Reconnaissence tools [$APP]"
+  backtitle="Reconnaissence tools [$APP]"
   title="Reconhecimento do alvo [$domain]"
   text='Selecione as ferramentas:'
   width=0

@@ -191,7 +191,7 @@ run() {
           ;;
         paramspider)
           #Paramspider
-          if type -t paramspider.py > /dev/null; then
+          if type -t paramspider.py; then
             tool=ParamSpider
             logfile="$logdir/${dtreport}paramspider.log"
             printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando ParamSpider${CReset}\n"
@@ -222,10 +222,8 @@ if [[ ${BASH_VERSINFO[0]} -lt 4 ]]; then
   printf '%s: ERROR: Necessário shell %s %s ou superior.\n' "$BASENAME" 'bash' '4.0' 1>&2
   exit 1
 fi
-[ -f $HOME/.bash_aliases ] && source $HOME/.bash_aliases
 check_dependencies
 
-shopt -s expand_aliases
 
 #/**
 # * Tools list

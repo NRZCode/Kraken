@@ -191,14 +191,11 @@ run() {
           ;;
         paramspider)
           #Paramspider
-          paramspider.py() {
-            python3 $HOME/.local/paramspider/paramspider.py "$@"
-          }
           if type -t paramspider.py > /dev/null; then
             tool=ParamSpider
             logfile="$logdir/${dtreport}paramspider.log"
             printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando ParamSpider${CReset}\n"
-            paramspider.py -d $domain --quiet --subs True --level high -o "$logfile"
+            paramspider.py -d "$domain" --quiet --subs True --level high -o "$logfile"
             printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
           fi
           ;;
@@ -225,6 +222,7 @@ if [[ ${BASH_VERSINFO[0]} -lt 4 ]]; then
   printf '%s: ERROR: Necessário shell %s %s ou superior.\n' "$BASENAME" 'bash' '4.0' 1>&2
   exit 1
 fi
+[ -f $HOME/.bash_aliases ] && source $HOME/.bash_aliases
 check_dependencies
 
 shopt -s expand_aliases

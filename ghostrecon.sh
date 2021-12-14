@@ -141,51 +141,65 @@ run() {
     clear
 
     banner
-    # Nmap scan
-    if type -t nmap >/dev/null; then
-      tool=nmap
-      printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Varredura de Portas${CReset}\n"
-      logfile="$logdir/${dtreport}nmap.log"
-      NMAP_OPT='-sS -sV -Pn -p- -vv'
-      sudo nmap $NMAP_OPT $domain -oN $logfile --stats-every 1s 2>&- | NmapProgressBar
-      [[ 1 == $verbose ]] && cat "$logfile"
-      printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
-    fi
-
-    # Wpscan
-    if type -t wpscan >/dev/null; then
-      tool=wpscan
-      logfile="$logdir/${dtreport}wpscan.log"
-      wpscan --url "$domain" --ignore-main-redirect --no-banner --api-token WgHJqB4r2114souaMB5aDGG5eulIJSz8RyJQ9FCKqdI --force --enumerate u | WpscanProgressBar
-      [[ 1 == $verbose ]] && cat "$logfile"
-      printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
-    fi
-
-    # Knockpy
-    if type -t knockpy >/dev/null; then
-      tool=knockpy
-      printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Knock${CReset}\n"
-      knockpy "$domain" --no-http-code 400 404 500 530 -th 50 -o "$logdir"
-    fi
-
-    # dirb
-    if type -t dirb >/dev/null; then
-      tool=dirb
-      logfile="$logdir/${dtreport}dirb.log"
-      printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Dirb${CReset}\n"
-      dirb "https://$domain" -N 404 -S -R -o "$logfile"
-      printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
-    fi
-
-    #Paramspider
-    alias paramspider.py="python3 $HOME/.local/paramspider/paramspider.py"
-    if type -t paramspider.py >/dev/null; then
-      tool=ParamSpider
-      logfile="$logdir/${dtreport}paramspider.log"
-      printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando ParamSpider${CReset}\n"
-      paramspider.py -d $domain --quiet --subs True --level high -o "$logfile"
-      printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
-    fi
+    for t in $selection; do
+      case $t in
+        nmap)
+          # Nmap scan
+          if type -t nmap >/dev/null; then
+            tool=nmap
+            printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Varredura de Portas NMAP${CReset}\n"
+            logfile="$logdir/${dtreport}nmap.log"
+            NMAP_OPT='-sS -sV -Pn -p- -vv'
+            sudo nmap $NMAP_OPT $domain -oN $logfile --stats-every 1s 2>&- | NmapProgressBar
+            [[ 1 == $verbose ]] && cat "$logfile"
+            printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
+          fi
+          ;;
+        wpscan)
+          # Wpscan
+          if type -t wpscan >/dev/null; then
+            tool=wpscan
+            printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando WpScan${CReset}\n"
+            logfile="$logdir/${dtreport}wpscan.log"
+            wpscan --url "$domain" --random-user-agent --ignore-main-redirect --no-banner --api-token WgHJqB4r2114souaMB5aDGG5eulIJSz8RyJQ9FCKqdI --force --enumerate u | WpscanProgressBar
+            [[ 1 == $verbose ]] && cat "$logfile"
+            printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
+          fi
+          ;;
+        knockpy)
+          # Knockpy
+          if type -t knockpy >/dev/null; then
+            tool=knockpy
+            printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Knock${CReset}\n"
+            knockpy "$domain" --no-http-code 400 404 500 530 -th 50 -o "$logdir"
+          fi
+          ;;
+        dirb)
+          # dirb
+          if type -t dirb >/dev/null; then
+            tool=dirb
+            logfile="$logdir/${dtreport}dirb.log"
+            printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Dirb${CReset}\n"
+            dirb "https://$domain" -N 404 -S -R -o "$logfile"
+            printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
+          fi
+          ;;
+        paramspider)
+          #Paramspider
+          paramspider.py() {
+            python3 $HOME/.local/paramspider/paramspider.py "$@"
+          }
+          if type -t paramspider.py > /dev/null; then
+            tool=ParamSpider
+            logfile="$logdir/${dtreport}paramspider.log"
+            printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando ParamSpider${CReset}\n"
+            paramspider.py -d $domain --quiet --subs True --level high -o "$logfile"
+            printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
+          fi
+          ;;
+      esac
+    done
+    return
   fi
   clear
 }
@@ -207,7 +221,7 @@ if [[ ${BASH_VERSINFO[0]} -lt 4 ]]; then
 fi
 check_dependencies
 
-
+shopt -s expand_aliases
 
 #/**
 # * Tools list

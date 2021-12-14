@@ -58,6 +58,13 @@ dg_menu() {
   clear
 }
 
+#/**
+# * checkArgType
+# * @param $1 tipo para validação
+# * @param $2 parâmetro
+# * @param $3 valor
+# * @return TRUE|FALSE
+# */
 checkArgType() {
   # valor de um parâmetro (arg: 3) não pode começar com - 'hifen'
   if [[ -z $3 || "$3" =~ ^- ]]; then
@@ -69,7 +76,7 @@ checkArgType() {
     string) re='^[[:print:]]+$';;
     int) re='^[-+]?[[:digit:]]+$';;
     float) re='^[-+]?[0-9]+([.,][0-9]+)?$';;
-    domain) re='^((s?[hf]tt?ps?)://)?([a-zA-Z0-9.-]+)'
+    domain) re='^(([^:/?#]+):)?(//((([^:/?#]+)@)?([^:/?#]+)(:([0-9]+))?))?(/([^?#]*))(\?([^#]*))?(#(.*))?';;
   esac
   [[ ${3,,} =~ $re ]]
 }
@@ -99,6 +106,7 @@ init() {
   while getopts ":d:" opt; do
     case $opt in
          d) domain=$OPTARG;;
+         q) verbose=1;;
          :) usage "Opção -$OPTARG requer parâmetro.";;
       \?|*) usage "Opção -$OPTARG desconhecida (?)";;
     esac
@@ -108,15 +116,12 @@ init() {
   while [ -z "$domain" ]; do
     banner
     read -p 'Enter domain: ' domain
-#    if checkArgType domain domain "$domain"; then
-#      domain="${domain#http?(s)://}"
-#echo Definido domain: $domain
-#    else
-#      domain=''
-#    fi
+    if ! checkArgType domain domain "$domain"; then
+      domain=''
+    fi
   done
-#  echo Definido domain: $domain
-#exit
+  domain="$(shopt -s extglob; echo ${domain#http?(s)://})"
+
   if [ -z "$domain" ]; then
     usage; exit 1;
   fi
@@ -142,7 +147,7 @@ run() {
     logfile="$logdir/${dtreport}nmap.log"
     NMAP_OPT='-sS -sV -Pn -p- -vv'
     sudo nmap $NMAP_OPT $domain -oN $logfile --stats-every 1s 2>&- | NmapProgressBar
-    cat "$logfile"
+    [[ 1 == $verbose ]] && cat "$logfile"
     printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
   fi
 
@@ -151,7 +156,7 @@ run() {
     tool=wpscan
     logfile="$logdir/${dtreport}wpscan.log"
     wpscan --url "$domain" --ignore-main-redirect --no-banner --api-token WgHJqB4r2114souaMB5aDGG5eulIJSz8RyJQ9FCKqdI --force --enumerate u | WpscanProgressBar
-    cat "$logfile"
+    [[ 1 == $verbose ]] && cat "$logfile"
     printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
   fi
 
@@ -167,8 +172,7 @@ run() {
     tool=dirb
     logfile="$logdir/${dtreport}dirb.log"
     printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Dirb${CReset}\n"
-    dirb https://${domain#http?(s)://} -N 404 -S -R -o "$logfile"
-    # cat "$logfile"
+    dirb "https://$domain" -N 404 -S -R -o "$logfile"
     printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
   fi
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ProgressBarInterface() {
-  if type -t ProgressBar.sh >/dev/null; then ProgressBar.sh $*; fi
+  if type -t ProgressBar.sh >/dev/null; then ProgressBar.sh $*; else cat; fi
 }
 
 NmapProgressBar() {
@@ -37,7 +37,7 @@ check_dependencies() {
     printf '%s: ERROR: Necessário pacote %s %s ou superior.\n' 'link.sh' "$pkg" "$ver" 1>&2
     exit 1
   fi
-  if ! type -t ProgressBar.sh; then
+  if ! type -t ProgressBar.sh > /dev/null; then
     if [[ ! -d "$HOME/.local/progressbar" ]]; then
       git clone https://github.com/NRZCode/progressbar.git "$HOME/.local/progressbar"
     fi
@@ -55,7 +55,6 @@ mklogdir() {
 dg_menu() {
   dg=(dialog --stdout --title "$title" --backtitle "$backtitle" --checklist "$text" 0 "$width" 0)
   selection=$("${dg[@]}" "${dg_options[@]}")
-  clear
 }
 
 #/**
@@ -116,9 +115,10 @@ init() {
   while [ -z "$domain" ]; do
     banner
     read -p 'Enter domain: ' domain
-    if ! checkArgType domain domain "$domain"; then
-      domain=''
-    fi
+#    if ! checkArgType domain domain "$domain"; then
+#      echo "$domain INVALIDO"
+#      domain=''
+#    fi
   done
   domain="$(shopt -s extglob; echo ${domain#http?(s)://})"
 
@@ -137,44 +137,57 @@ run() {
   title="Reconhecimento do alvo [$domain]"
   text='Selecione as ferramentas:'
   width=0
-  dg_menu checklist
+  if dg_menu checklist; then
+    clear
 
-  banner
-  # Nmap scan
-  if type -t nmap >/dev/null; then
-    tool=nmap
-    printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Varredura de Portas${CReset}\n"
-    logfile="$logdir/${dtreport}nmap.log"
-    NMAP_OPT='-sS -sV -Pn -p- -vv'
-    sudo nmap $NMAP_OPT $domain -oN $logfile --stats-every 1s 2>&- | NmapProgressBar
-    [[ 1 == $verbose ]] && cat "$logfile"
-    printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
-  fi
+    banner
+    # Nmap scan
+    if type -t nmap >/dev/null; then
+      tool=nmap
+      printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Varredura de Portas${CReset}\n"
+      logfile="$logdir/${dtreport}nmap.log"
+      NMAP_OPT='-sS -sV -Pn -p- -vv'
+      sudo nmap $NMAP_OPT $domain -oN $logfile --stats-every 1s 2>&- | NmapProgressBar
+      [[ 1 == $verbose ]] && cat "$logfile"
+      printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
+    fi
 
-  # Wpscan
-  if type -t wpscan >/dev/null; then
-    tool=wpscan
-    logfile="$logdir/${dtreport}wpscan.log"
-    wpscan --url "$domain" --ignore-main-redirect --no-banner --api-token WgHJqB4r2114souaMB5aDGG5eulIJSz8RyJQ9FCKqdI --force --enumerate u | WpscanProgressBar
-    [[ 1 == $verbose ]] && cat "$logfile"
-    printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
-  fi
+    # Wpscan
+    if type -t wpscan >/dev/null; then
+      tool=wpscan
+      logfile="$logdir/${dtreport}wpscan.log"
+      wpscan --url "$domain" --ignore-main-redirect --no-banner --api-token WgHJqB4r2114souaMB5aDGG5eulIJSz8RyJQ9FCKqdI --force --enumerate u | WpscanProgressBar
+      [[ 1 == $verbose ]] && cat "$logfile"
+      printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
+    fi
 
-  # Knockpy
-  if type -t knockpy >/dev/null; then
-    tool=knockpy
-    printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Knock${CReset}\n"
-    knockpy "$domain" --no-http-code 400 404 500 530 -th 50 -o "$logdir"
-  fi
+    # Knockpy
+    if type -t knockpy >/dev/null; then
+      tool=knockpy
+      printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Knock${CReset}\n"
+      knockpy "$domain" --no-http-code 400 404 500 530 -th 50 -o "$logdir"
+    fi
 
-  # dirb
-  if type -t dirb >/dev/null; then
-    tool=dirb
-    logfile="$logdir/${dtreport}dirb.log"
-    printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Dirb${CReset}\n"
-    dirb "https://$domain" -N 404 -S -R -o "$logfile"
-    printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
+    # dirb
+    if type -t dirb >/dev/null; then
+      tool=dirb
+      logfile="$logdir/${dtreport}dirb.log"
+      printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Dirb${CReset}\n"
+      dirb "https://$domain" -N 404 -S -R -o "$logfile"
+      printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
+    fi
+
+    #Paramspider
+    alias paramspider.py="python3 $HOME/.local/paramspider/paramspider.py"
+    if type -t paramspider.py >/dev/null; then
+      tool=ParamSpider
+      logfile="$logdir/${dtreport}paramspider.log"
+      printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando ParamSpider${CReset}\n"
+      paramspider.py -d $domain --quiet --subs True --level high -o "$logfile"
+      printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
+    fi
   fi
+  clear
 }
 
 main() {

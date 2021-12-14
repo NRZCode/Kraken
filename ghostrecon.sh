@@ -138,6 +138,7 @@ run() {
   text='Selecione as ferramentas:'
   width=0
   if dg_menu checklist; then
+    sudo tor start
     sudo anonsurf start > /dev/null
     clear
 

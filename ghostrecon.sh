@@ -138,10 +138,13 @@ run() {
   text='Selecione as ferramentas:'
   width=0
   if dg_menu checklist; then
+    sudo anonsurf start > /dev/null
     clear
 
     banner
     for t in $selection; do
+      sudo anonsurf change
+      sudo anonsurf myip
       case $t in
         nmap)
           # Nmap scan
@@ -152,6 +155,7 @@ run() {
             NMAP_OPT='-sS -sV -Pn -p- -vv'
             sudo nmap $NMAP_OPT $domain -oN $logfile --stats-every 1s 2>&- | NmapProgressBar
             [[ 1 == $verbose ]] && cat "$logfile"
+            sed '/^PORT/,/^Service Info:/!d' "$logfile"
             printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
           fi
           ;;
@@ -199,6 +203,7 @@ run() {
           ;;
       esac
     done
+    sudo anonsurf stop
     return
   fi
   clear
@@ -228,17 +233,17 @@ shopt -s expand_aliases
 # */
 declare -A tools=(
   [nmap]='Ferramenta de exploração de Rede e Rastreio de Segurança / Portas'
-  [httpx]='Breve descrição'
-  [dirsearch]='Breve descrição'
-  [subfinder]='Breve descrição'
-  [sublist3r]='Breve descrição'
+  [httpx]='Retornará URLs com status testado'
+  [dirsearch]='Scanner de diretórios da web'
+  [subfinder]='Ferramenta de descoberta de subdomínio otimizado'
+  [sublist3r]='Ferramenta de descoberta de subdomínio'
   [dirb]='Web Content Scanner'
-  [knockpy]='Breve descrição'
-  [paramspider]='Breve descrição'
-  [gitdumper]='Breve descrição'
+  [knockpy]='Enumerar rapidamente subdomínios'
+  [paramspider]='Encontra parâmetros de subdomínios e arquivos web.'
+  [gitdumper]='Ferramenta para despejar um repositório git de um site'
   [wpscan]='WordPress Security Scanner'
   [theHarvest]='Breve descrição'
-  [karma]='Breve descrição'
+  [karma]='Busca de e-mails e senhas'
 )
 mapfile -t dg_options < <(for tool in "${!tools[@]}"; do printf '%s\n%s\non\n' "$tool" "${tools[$tool]}"; done)
 

@@ -138,14 +138,13 @@ run() {
   text='Selecione as ferramentas:'
   width=0
   if dg_menu checklist; then
-    sudo tor start
+    sudo tor start > /dev/null
     sudo anonsurf start > /dev/null
     clear
 
     banner
     for t in $selection; do
       sudo anonsurf change
-      sudo anonsurf myip
       case $t in
         nmap)
           # Nmap scan
@@ -191,7 +190,7 @@ run() {
           ;;
         paramspider)
           #Paramspider
-          if type -t paramspider.py; then
+          if type -t paramspider.py > /dev/null; then
             tool=ParamSpider
             logfile="$logdir/${dtreport}paramspider.log"
             printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando ParamSpider${CReset}\n"
@@ -199,9 +198,22 @@ run() {
             printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
           fi
           ;;
+        gau)
+          #Gau
+          if type -t subfinder sublist3r httpx gau > /dev/null; then
+            tool=Gau
+            logfile="$logdir/${dtreport}gau.log"
+            printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Subfinder Sublist3r Httpx e Gau${CReset}\n"
+            subfinder -d $domain -all -silent -o /tmp/subfinder.txt &
+            sublist3r -d $domain -t 50 -o /tmp/sublistdir.txt &
+            wait
+            httpx -nf -l <(sort -u /tmp/{subfinder,sublistdir}.txt) -silent | gau -subs >> "$logfile"
+            printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
+          fi
+          ;;
       esac
     done
-    sudo anonsurf stop
+    sudo anonsurf stop > /dev/null
     return
   fi
   clear
@@ -224,7 +236,6 @@ if [[ ${BASH_VERSINFO[0]} -lt 4 ]]; then
 fi
 check_dependencies
 
-
 #/**
 # * Tools list
 # */
@@ -241,6 +252,7 @@ declare -A tools=(
   [wpscan]='WordPress Security Scanner'
   [theHarvest]='Breve descrição'
   [karma]='Busca de e-mails e senhas'
+  [gau]='Ferramenta de descoberta de subdomínios'
 )
 mapfile -t dg_options < <(for tool in "${!tools[@]}"; do printf '%s\n%s\non\n' "$tool" "${tools[$tool]}"; done)
 

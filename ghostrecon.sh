@@ -81,7 +81,7 @@ checkArgType() {
 }
 
 banner() {
-  echo '██████╗ ██╗  ██╗ ██████╗ ███████╗████████╗
+  echo ' ██████╗ ██╗  ██╗ ██████╗ ███████╗████████╗
 ██╔════╝ ██║  ██║██╔═══██╗██╔════╝╚══██╔══╝
 ██║  ███╗███████║██║   ██║███████╗   ██║
 ██║   ██║██╔══██║██║   ██║╚════██║   ██║
@@ -152,7 +152,7 @@ run() {
             tool=nmap
             printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Varredura de Portas NMAP${CReset}\n"
             logfile="$logdir/${dtreport}nmap.log"
-            NMAP_OPT='-sS -sV -Pn -p- -vv'
+            NMAP_OPT='-sS -sV -Pn -vv'
             sudo nmap $NMAP_OPT $domain -oN $logfile --stats-every 1s 2>&- | NmapProgressBar
             [[ 1 == $verbose ]] && cat "$logfile"
             sed '/^PORT/,/^Service Info:/!d' "$logfile"
@@ -204,8 +204,8 @@ run() {
             tool=Gau
             logfile="$logdir/${dtreport}gau.log";
             printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Subfinder Sublist3r Httpx e Gau${CReset}\n"
-            printf "${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Subfinder${CReset}\n"
-            subfinder -d "$domain" -all -silent -o /tmp/subfinder.txt | ProgressBar.sh
+            printf "\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Subfinder${CReset}\n"
+            subfinder -d "$domain" -all -silent -o /tmp/subfinder.txt
             printf "${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Sublist3r${CReset}\n"
             sublist3r -d "$domain" -t 50 -o /tmp/sublistdir.txt | ProgressBar.sh -s normal
             printf "${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Httpx e Gau${CReset}\n"
@@ -252,7 +252,7 @@ declare -A tools=(
   [paramspider]='Encontra parâmetros de subdomínios e arquivos web.'
   [gitdumper]='Ferramenta para despejar um repositório git de um site'
   [wpscan]='WordPress Security Scanner'
-  [theHarvest]='Breve descrição'
+  [theHarvest]='Ferramenta reúne e-mails, nomes, subdomínios, IPs e URLs'
   [karma]='Busca de e-mails e senhas'
   [gau]='Ferramenta de descoberta de subdomínios'
 )

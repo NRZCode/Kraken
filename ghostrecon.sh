@@ -202,12 +202,14 @@ run() {
           #Gau
           if type -t subfinder sublist3r httpx gau > /dev/null; then
             tool=Gau
-            logfile="$logdir/${dtreport}gau.log"
+            logfile="$logdir/${dtreport}gau.log";
             printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Subfinder Sublist3r Httpx e Gau${CReset}\n"
-            subfinder -d $domain -all -silent -o /tmp/subfinder.txt &
-            sublist3r -d $domain -t 50 -o /tmp/sublistdir.txt &
-            wait
-            httpx -nf -l <(sort -u /tmp/{subfinder,sublistdir}.txt) -silent | gau -subs >> "$logfile"
+            printf "${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Subfinder${CReset}\n"
+            subfinder -d "$domain" -all -silent -o /tmp/subfinder.txt | ProgressBar.sh
+            printf "${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Sublist3r${CReset}\n"
+            sublist3r -d "$domain" -t 50 -o /tmp/sublistdir.txt | ProgressBar.sh -s normal
+            printf "${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Httpx e Gau${CReset}\n"
+            httpx -nf -l <(sort -u /tmp/{subfinder,sublistdir}.txt) -silent | gau -v -subs -o "$logfile" | ProgressBar.sh
             printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
           fi
           ;;

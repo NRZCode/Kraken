@@ -138,7 +138,7 @@ run() {
   text='Selecione as ferramentas:'
   width=0
   if dg_menu checklist; then
-    sudo tor start > /dev/null
+    sudo service tor start > /dev/null
     sudo anonsurf start > /dev/null
     clear
 
@@ -203,7 +203,7 @@ run() {
           if type -t subfinder sublist3r httpx gau > /dev/null; then
             tool=Gau
             logfile="$logdir/${dtreport}gau.log";
-            printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Subfinder Sublist3r Httpx e Gau${CReset}\n"
+            printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Conjunto Otimizado de Ferramentas.${CReset}\n"
             printf "\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Subfinder${CReset}\n"
             subfinder -d "$domain" -all -silent -o /tmp/subfinder.txt
             printf "${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Sublist3r${CReset}\n"

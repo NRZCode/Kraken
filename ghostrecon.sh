@@ -207,7 +207,7 @@ run() {
             printf "\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Subfinder${CReset}\n"
             subfinder -d "$domain" -all -silent -o /tmp/subfinder.txt
             printf "${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Sublist3r${CReset}\n"
-            sublist3r -d "$domain" -t 50 -o /tmp/sublistdir.txt | ProgressBar.sh -s normal
+            sublist3r -d "$domain" -t 20 -o /tmp/sublistdir.txt | ProgressBar.sh -s normal
             printf "${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Httpx e Gau${CReset}\n"
             httpx -nf -l <(sort -u /tmp/{subfinder,sublistdir}.txt) -silent | gau -v -subs -o "$logfile" | ProgressBar.sh
             printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"

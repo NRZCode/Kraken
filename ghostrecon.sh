@@ -243,6 +243,24 @@ run() {
             printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
           fi
           ;;
+        gitdumper)
+          if type -t gitdumper.sh > /dev/null; then
+            tool=GitDumper
+            logfile="$logdir/${dtreport}gitdumper.log";
+            printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] GitDumper${CReset}\n"
+            gitdumper.sh https://$domain/.git/
+            printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
+          fi
+          ;;
+        karma)
+          if type -t karma > /dev/null; then
+            tool=Karma
+            logfile="$logdir/${dtreport}karma.log";
+            printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Karma${CReset}\n"
+            echo 'Repositório inválido'
+            printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
+          fi
+          ;;
       esac
     done
     sudo anonsurf stop > /dev/null

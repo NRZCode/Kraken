@@ -252,6 +252,27 @@ run() {
             printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
           fi
           ;;
+        theHarvest)
+          if type -t theHarvester > /dev/null; then
+            tool=theHarvester
+            logfile="$logdir/${dtreport}theHarvester.log";
+            printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] theHarvester${CReset}\n"
+            sudo anonsurf stop > /dev/null
+            theHarvester -d $domain -l 500 -b all -g -s
+            printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
+          fi
+          ;;
+        dirsearch)
+          if type -t dirsearch > /dev/null; then
+            tool=Dirsearch
+            logfile="$logdir/${dtreport}dirsearch.log";
+            printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Dirsearch${CReset}\n"
+            dicc=$(realpath $(command -v dirsearch))
+            echo "dicc: ${dicc%/*}/db/dicc.txt"
+            dirsearch -u "https://$domain" -w "${dicc%/*}/db/dicc.txt" -i 200,300-399 -x 400-499,500-599 -t 50 -q -o "$logfile"
+            printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
+          fi
+          ;;
         karma)
           if type -t karma > /dev/null; then
             tool=Karma

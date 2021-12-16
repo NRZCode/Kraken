@@ -43,7 +43,7 @@ check_dependencies() {
     fi
     mkdir -p "$dir"
     [[ "$dir" == @(${PATH//:/|}) ]] || export PATH="$PATH:$dir"
-    ln -sf "$HOME/.local/progressbar/ProgressBar.sh" "$dir"
+    ln -sf "$HOME/.local/progressbar/ProgressBar.sh" "$dir/ProgressBar.sh"
   fi
 }
 
@@ -144,7 +144,7 @@ run() {
 
     banner
     for t in $selection; do
-      sudo anonsurf change
+      sudo anonsurf change > /dev/null
       case $t in
         nmap)
           # Nmap scan
@@ -198,6 +198,36 @@ run() {
             printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
           fi
           ;;
+        subfinder)
+          #Subfinder
+          if type -t subfinder > /dev/null; then
+            tool=Subfinder
+            logfile="$logdir/${dtreport}subfinder.log";
+            printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Subfinder${CReset}\n"
+            subfinder -d "$domain" -all -silent -o "$logfile"
+            printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
+          fi
+          ;;
+        sublist3r)
+          #Subfinder
+          if type -t subfinder > /dev/null; then
+            tool=Sublist3r
+            logfile="$logdir/${dtreport}sublist3r.log";
+            printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Sublist3r${CReset}\n"
+            sublist3r -d "$domain" -t 20 -o "$logfile" | ProgressBarInterface -s normal
+            printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
+          fi
+          ;;
+        httpx)
+          #Httpx
+          if type -t httpx > /dev/null; then
+            tool=Httpx
+            logfile="$logdir/${dtreport}httpx.log";
+            printf "${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Httpx${CReset}\n"
+            httpx -nf -silent | ProgressBarInterface
+            printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
+          fi
+          ;;
         gau)
           #Gau
           if type -t subfinder sublist3r httpx gau > /dev/null; then
@@ -205,11 +235,11 @@ run() {
             logfile="$logdir/${dtreport}gau.log";
             printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando Conjunto Otimizado de Ferramentas.${CReset}\n"
             printf "\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Subfinder${CReset}\n"
-            subfinder -d "$domain" -all -silent -o /tmp/subfinder.txt
+            subfinder -d "$domain" -all -silent -o "$logdir/${dtreport}subfinder.log"
             printf "${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Sublist3r${CReset}\n"
-            sublist3r -d "$domain" -t 20 -o /tmp/sublistdir.txt | ProgressBar.sh -s normal
+            sublist3r -d "$domain" -t 20 -o "$logdir/${dtreport}sublist3r.log" | ProgressBarInterface -s normal
             printf "${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Httpx e Gau${CReset}\n"
-            httpx -nf -l <(sort -u /tmp/{subfinder,sublistdir}.txt) -silent | gau -v -subs -o "$logfile" | ProgressBar.sh
+            httpx -nf -l <(sort -u "$logdir/${dtreport}"{subfinder,sublist3r}.log) -silent | gau -v -subs -o "$logfile" | ProgressBarInterface
             printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
           fi
           ;;

@@ -268,7 +268,6 @@ run() {
             logfile="$logdir/${dtreport}dirsearch.log";
             printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Dirsearch${CReset}\n"
             dicc=$(realpath $(command -v dirsearch))
-            echo "dicc: ${dicc%/*}/db/dicc.txt"
             dirsearch -u "https://$domain" -w "${dicc%/*}/db/dicc.txt" -i 200,300-399 -x 400-499,500-599 -t 50 -q -o "$logfile"
             printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
           fi

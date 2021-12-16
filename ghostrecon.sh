@@ -8,9 +8,8 @@ NmapProgressBar() {
 }
 
 WpscanProgressBar() {
-  tee "$logfile" | grep '[+]' | ProgressBarInterface -s normal
+  grep '[+]' | ProgressBarInterface -s normal
 }
-
 # ANSI Colors
 function load_ansi_colors() {
   # @C FG Color
@@ -165,7 +164,7 @@ run() {
             tool=wpscan
             printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando WpScan${CReset}\n"
             logfile="$logdir/${dtreport}wpscan.log"
-            wpscan --url "$domain" --random-user-agent --ignore-main-redirect --no-banner --api-token WgHJqB4r2114souaMB5aDGG5eulIJSz8RyJQ9FCKqdI --force --enumerate u | WpscanProgressBar
+            wpscan --url "$domain" --random-user-agent --ignore-main-redirect --no-banner --api-token WgHJqB4r2114souaMB5aDGG5eulIJSz8RyJQ9FCKqdI --force --enumerate u | tee "$logfile" | WpscanProgressBar -s normal
             [[ 1 == $verbose ]] && cat "$logfile"
             printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
           fi
@@ -268,7 +267,7 @@ run() {
             logfile="$logdir/${dtreport}dirsearch.log";
             printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Dirsearch${CReset}\n"
             dicc=$(realpath $(command -v dirsearch))
-            dirsearch -u "https://$domain" -w "${dicc%/*}/db/dicc.txt" -i 200,300-399 -x 400-499,500-599 -t 50 -q -o "$logfile"
+            dirsearch -u "https://$domain" -w /usr/share/dirsearch/db/dicc.txt -i 200,300-399 -x 400-499,500-599 -t 50 -q -o "$logfile"
             printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
           fi
           ;;

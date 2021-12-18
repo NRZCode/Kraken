@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+
+APP='Ghost Recon'
+APP_VERSION=0.0.2
+
 ProgressBarInterface() {
   if type -t ProgressBar.sh >/dev/null; then ProgressBar.sh $*; else cat; fi
 }
@@ -10,6 +14,7 @@ NmapProgressBar() {
 WpscanProgressBar() {
   grep '[+]' | ProgressBarInterface -s normal
 }
+
 # ANSI Colors
 function load_ansi_colors() {
   # @C FG Color
@@ -101,10 +106,10 @@ usage() { printf "${*:+$*\n}  Usar: $BASENAME -d domain.com\n" 1>&2; return 1; }
 init() {
   local OPTIND OPTARG
   load_ansi_colors
-  while getopts ":d:" opt; do
+  while getopts ":d:v:" opt; do
     case $opt in
          d) domain=$OPTARG;;
-         q) verbose=1;;
+         v) [[ $OPTARG == 'v' ]] && verbose=1;;
          :) usage "Opção -$OPTARG requer parâmetro.";;
       \?|*) usage "Opção -$OPTARG desconhecida (?)";;
     esac
@@ -164,7 +169,7 @@ run() {
             tool=wpscan
             printf "\n\n${CBold}${CFGYellow}[${CFGRed}+${CFGYellow}] Iniciando WpScan${CReset}\n"
             logfile="$logdir/${dtreport}wpscan.log"
-            wpscan --url "$domain" --random-user-agent --ignore-main-redirect --no-banner --api-token WgHJqB4r2114souaMB5aDGG5eulIJSz8RyJQ9FCKqdI --force --enumerate u | tee "$logfile" | WpscanProgressBar -s normal
+            wpscan --url "$domain" --random-user-agent --ignore-main-redirect --no-banner --api-token WgHJqB4r2114souaMB5aDGG5eulIJSz8RyJQ9FCKqdI --force --enumerate u | tee "$logfile" | WpscanProgressBar
             [[ 1 == $verbose ]] && cat "$logfile"
             printf 'Relatório de %s salvo em %s\n=====\n\n' "$tool" "$logfile"
           fi
@@ -293,12 +298,10 @@ main() {
   run
 }
 
-APP='Ghost Recon'
 APP_PATH=${BASH_SOURCE[0]%/*}
-APP_VERSION=0.0.1
 BASENAME=${BASH_SOURCE[0]##*/}
 [[ $1 == @(-h|--help|help) ]] && { usage; exit 1; }
-[[ $1 == @(-v|--version) ]] && { echo "$APP_VERSION"; exit 0; }
+[[ $1 == @(-V|--version) ]] && { echo "$APP_VERSION"; exit 0; }
 if [[ ${BASH_VERSINFO[0]} -lt 4 ]]; then
   printf '%s: ERROR: Necessário shell %s %s ou superior.\n' "$BASENAME" 'bash' '4.0' 1>&2
   exit 1

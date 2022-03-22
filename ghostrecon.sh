@@ -49,10 +49,8 @@ elapsedtime() {
   [[ $printtime -ge 3600 ]] && fmt='+%_Hh %_Mmin %_Ss'
   elapsed_time=$(date -u -d "@$printtime" "$fmt")
 
-  ((pad=COLUMNS - 19 - ${#elapsed_time} - ${#status} - ${#1}))
-  printf "${CBold}%b%*s complete with %b%s%b in %s${CReset}\n" \
+  printf "${CBold}%b%s complete with %b%s%b in %s${CReset}\n" \
     "$color" \
-    "$pad" \
     "$1" \
     "$color_status" \
     "$status" \
@@ -128,7 +126,7 @@ dg_menu() {
 }
 
 report_tools() {
-  tools[mrx]='MRX|sublist3r subfinder amass assetfinder|for log in "$logdir/"{assetfinder,amass,sub{list3r,finder}}.log; do > "$log"; done; sublist3r -d "$domain" -t 50 -o "$logdir/sublist3r.log"; subfinder -d "$domain" -all -silent -o "$logdir/subfinder.log"; amass enum -d "$domain" -active -brute -min-for-recursive 3 -silent -o "$logdir/amass.log"; assetfinder -subs-only "$domain" > "$logdir/assetfinder.log"; sort -u "$logdir/"{assetfinder,amass,sub{finder,list3r}}.log -o "$logfile"; httpx -nf -silent < "$logfile" > "$logdir/${dtreport}httpx.log"'
+  tools[mrx]='MRX|sublist3r subfinder amass assetfinder|for log in "$logdir/"{assetfinder,amass,sub{list3r,finder}}.log; do > "$log"; done; sublist3r -d "$domain" -t 50 -o "$logdir/sublist3r.log"; sleep 10; subfinder -d "$domain" -all -silent -o "$logdir/subfinder.log"; sleep 10; amass enum -d "$domain" -active -brute -min-for-recursive 3 -silent -o "$logdir/amass.log"; sleep 10; assetfinder -subs-only "$domain" > "$logdir/assetfinder.log"; sort -u "$logdir/"{assetfinder,amass,sub{finder,list3r}}.log -o "$logfile"; httpx -nf -silent < "$logfile" > "$logdir/${dtreport}httpx.log"'
   tools[dirsearch]='Dirsearch|dirsearch|xargs -L1 dirsearch -q -e php,asp,aspx,jsp,html,zip,jar -x 404-499,500-599 -w "${dicc:-db/dicc.txt}" --timeout 3 --random-agent -t 50 -o "$logfile" -u < <(httpx -nf -silent <<< "$domain")'
   tools[feroxbuster]='Feroxbuster|feroxbuster|xargs -L1 feroxbuster -q -x php,asp,aspx,jsp,html,zip,jar -t 200 -A -w "$dicc" -o "$logfile" -u < <(httpx -nf -silent <<< "$domain")'
 }
@@ -303,6 +301,10 @@ init() {
   if [ -z "$domain" ]; then
     usage; exit 1;
   fi
+}
+
+send_notification() {
+  notify-send -u critical -i bash 'GhostRecon Reconnaissance' 'Recon de tetraquimicametal.com.br concluído'
 }
 
 run_tools() {

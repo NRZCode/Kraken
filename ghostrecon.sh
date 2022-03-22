@@ -49,8 +49,10 @@ elapsedtime() {
   [[ $printtime -ge 3600 ]] && fmt='+%_Hh %_Mmin %_Ss'
   elapsed_time=$(date -u -d "@$printtime" "$fmt")
 
-  printf "${CBold}%b%s complete with %b%s%b in %s${CReset}\n" \
+  ((pad=COLUMNS - 19 - ${#elapsed_time} - ${#status} - ${#1}))
+  printf "${CBold}%b%*s complete with %b%s%b in %s${CReset}\n" \
     "$color" \
+    "$pad" \
     "$1" \
     "$color_status" \
     "$status" \

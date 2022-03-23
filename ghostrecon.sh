@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 APP='Ghost Recon'
-version=0.0.12
+version=0.0.13
 
 # ANSI Colors
 function load_ansi_colors() {
@@ -307,8 +307,8 @@ init() {
   fi
 }
 
-send_notification() {
-  notify-send -u critical -i bash 'GhostRecon Reconnaissance' 'Recon de tetraquimicametal.com.br concluído'
+user_notification() {
+  notify-send -u critical -i bash 'GhostRecon Reconnaissance' "Recon de $domain concluído"
 }
 
 run_tools() {
@@ -366,6 +366,8 @@ run() {
     report
 
     [[ $anon_mode == 1 ]] && anonsurf stop &> /dev/null
+    user_notification
+    elapsedtime 'TOTAL Reconaissance'
     return 0
   fi
 
@@ -417,7 +419,6 @@ main() {
   shopt -s extglob
   init
   run
-  elapsedtime 'TOTAL Reconaissance'
 }
 
 declare -A tools

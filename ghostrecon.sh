@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 APP='Ghost Recon'
-version=0.0.13
+version=0.0.14
 
 # ANSI Colors
 function load_ansi_colors() {
@@ -229,7 +229,7 @@ report() {
   # Compact reports
   cp $logdir/${dtreport}report-01.html $logdir/report.html
   cd "$logdir"
-  zip -r ${dtreport}${domain}.zip ${dtreport}*html report.html screenshots/ headers/
+  zip -q -r ${dtreport}${domain}.zip ${dtreport}*html report.html screenshots/ headers/
   xdg-open "$logdir/${dtreport}report-01.html" &
   ##
   # Menu reports
@@ -289,7 +289,22 @@ Recode The Copyright Is Not Make You A Coder Dude
   [[ $domain ]] && echo "Domain: $domain"
 }
 
-usage() { printf "${*:+$*\n}  Usar: $basename -d domain.com\n" 1>&2; return 1; }
+usage() {
+  usage="  Usage: $basename [OPTIONS]
+
+DESCRIPTION
+  GhostRecon is a based script for reconaissance domains
+
+OPTIONS
+  General options:
+    -d,--domain        Domain to find subdomains for
+    -a,--anon          Setup usage of anonsurf change IP (Default: On)
+    -V,--version       Print current version GhostRecon
+    -u,--update        Update ghostrecon for better performance
+    -h,--help          Show this help message and exit"
+  printf "${*:+$*\n}$usage\n"
+  return 1
+}
 
 init() {
   local OPTIND OPTARG

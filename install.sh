@@ -274,11 +274,13 @@ for tool in ${selection,,}; do
   if in_array "$tool" ${tool_list,,}; then
     export url script
     IFS='|' read url script depends post_install <<< "${tools[$tool]}"
-    print_message "Installing ${tool^}"
-    [[ $url ]] && git_install "$url" "$script"
-    [[ $post_install ]] && {
-      result=$(bash -c "$post_install" 2>>$logerr >>$logfile) | progressbar -s normal -m "${tool^}: Installation"
-    }
+    if [[ $url || $post_install ]]; then
+      print_message "Installing ${tool^}"
+      [[ $url ]] && git_install "$url" "$script"
+      [[ $post_install ]] && {
+        result=$(bash -c "$post_install" 2>>$logerr >>$logfile) | progressbar -s normal -m "${tool^}: Installation"
+      }
+    fi
   fi
 done
 system_upgrade

@@ -191,6 +191,7 @@ git_install() {
 }
 
 checklist_report() {
+  print_message 'Checklist report from tools install'
   for tool in ${selection,,}; do
     tool_list=${!tools[*]}
     if in_array "$tool" ${tool_list,,}; then

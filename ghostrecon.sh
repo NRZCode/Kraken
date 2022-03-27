@@ -163,7 +163,6 @@ report() {
   [[ $pagination ]] && pagination="<a style='margin-left: 1em' href='report.html'>Página 1</a>$pagination"
   ##
   # Subdomains reports
-  subdomains=$(<"$logdir/${dtreport}mrx.log")
   while read subdomain && [[ $subdomain ]]; do
     n=$(($([[ -f "$logdir/${dtreport}${subdomain}.log" ]] && wc -l < "$logdir/${dtreport}${subdomain}.log" 2>&-)))
     href='#'
@@ -209,7 +208,7 @@ report() {
         s|{{host}}|$host|;" "$workdir/resources/subreport.tpl" > "$logdir/${dtreport}${subdomain}.html"
     fi
     tbody+=$(printf "<tr><td><a href='%s'>%s</a></td><td>%s</td></tr>" "$href" "$subdomain" "$n")
-  done <<< "$subdomains"
+  done < "$logdir/${dtreport}mrx.log"
   ##
   # Domain report
   dig=$(dig "$domain"|sed -z 's/\n/\\n/g')
@@ -361,14 +360,13 @@ run() {
     ##
     # Search and report subdomains
     printf "\n\n${CBold}${CFGCyan}[${CFGWhite}+${CFGCyan}] Starting Scan on Subdomains${CReset}\n"
-    subdomains=$(<"$logdir/${dtreport}mrx.log")
-    echo "$subdomains" | aquatone -chrome-path /usr/bin/chromium -scan-timeout 500 -screenshot-timeout 300000 -http-timeout 30000 -out "$logdir" -threads 5 -silent 2>>$logerr >/dev/null
+    aquatone -chrome-path /usr/bin/chromium -scan-timeout 500 -screenshot-timeout 300000 -http-timeout 30000 -out "$logdir" -threads 5 -silent 2>>$logerr >/dev/null < "$logdir/${dtreport}mrx.log"
     IFS='|' read app depends cmd <<< ${tools[feroxbuster]}
     (
       while read domain; do
         logfile="$logdir/${dtreport}${domain}.log"
         result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s slow -m "Feroxbuster $domain"
-      done <<< "$subdomains"
+      done < "$logdir/${dtreport}mrx.log"
     )
 
     IFS='|' read app depends cmd <<< ${tools[nmap]}
@@ -376,7 +374,7 @@ run() {
       while read domain; do
         logfile="$logdir/${dtreport}${domain}nmap.log"
         result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s normal -m "NMAP $domain"
-      done <<< "$subdomains"
+      done < "$logdir/${dtreport}mrx.log"
     )
     report
 

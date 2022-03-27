@@ -1,7 +1,17 @@
 #!/usr/bin/env bash
-version=1.0.6
+version=1.0.8
 usage() {
-  printf 'MSG\n'
+  usage=' Usage: $basename [OPTIONS]
+
+DESCRIPTION
+  Arno is a based script for automatize installation
+
+OPTIONS
+  General options
+    -h,--help,help
+    -v,--version
+    -f,--force-update'
+  printf "$usage\n"
 }
 
 # ANSI Colors
@@ -146,7 +156,7 @@ read_package_ini() {
   while read sec; do
     unset url script post_install
     cfg_section_$sec 2>&-
-    tools[${sec,,}]="$url|$script|$post_install"
+    tools[${sec,,}]="$url|$script|$depends|$post_install"
   done < <(cfg_listsections "$inifile")
 }
 
@@ -178,6 +188,22 @@ git_install() {
   fi
 }
 
+checklist_report() {
+  for tool in ${selection,,}; do
+    tool_list=${!tools[*]}
+    if in_array "$tool" ${tool_list,,}; then
+      IFS='|' read url script depends post_install <<< "${tools[$tool]}"
+      if [[ $depends ]]; then
+        status=$'\e[31mfail\e[m'
+        if type -t $depends >/dev/null; then
+          status=$'\e[33m  OK\e[m'
+        fi
+        echo "${tool^} [$status]"
+      fi
+    fi
+  done | column
+}
+
 shopt -s extglob
 dirname=${BASH_SOURCE%/*}
 basename=${0##*/}
@@ -206,6 +232,7 @@ while [[ $1 ]]; do
       ;;
     -f|--force-update)
       force_update=1
+      rm -f $HOME/.local/.arno_init_install_successful
       shift
       ;;
     -l|--list)
@@ -245,7 +272,7 @@ for tool in ${selection,,}; do
   tool_list=${!tools[*]}
   if in_array "$tool" ${tool_list,,}; then
     export url script
-    IFS='|' read url script post_install <<< "${tools[$tool]}"
+    IFS='|' read url script depends post_install <<< "${tools[$tool]}"
     print_message "Installing ${tool^}"
     [[ $url ]] && git_install "$url" "$script"
     [[ $post_install ]] && {
@@ -254,3 +281,4 @@ for tool in ${selection,,}; do
   fi
 done
 system_upgrade
+checklist_report

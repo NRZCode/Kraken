@@ -9,6 +9,7 @@ DESCRIPTION
 OPTIONS
   General options
     -h,--help,help
+    -l,--list
     -v,--version
     -f,--force-update'
   printf "$usage\n"
@@ -236,7 +237,7 @@ while [[ $1 ]]; do
       shift
       ;;
     -l|--list)
-      [[ -f "$inifile" ]] && pkgs=$(grep -oP '^\[)[^]]+' $inifile)
+      [[ -f "$inifile" ]] && pkgs=$(grep -oP '(?<=^\[)[^]]+' $inifile)
       echo "  Uso: ./$basename" $pkgs
       exit 0
       ;;

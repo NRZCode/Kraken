@@ -131,7 +131,8 @@ init_install() {
   print_message 'Ferramenta em script Bash Completa para Bug bounty ou Pentest ! Vai poupar seu Tempo na hora de configurar sua máquina para trabalhar.'
   printf "\n${CBold}${CFGWhite}=====================================================>${CReset}\n\n"
   if [[ ! -f $HOME/.local/.arno_init_install_successful ]]; then
-    apt -y install python3-pip apt-transport-https curl libcurl4-openssl-dev libssl-dev virtualbox-guest-x11 jq ruby-full libcurl4-openssl-dev ruby virtualbox-guest-utils libxml2 libxml2-dev libxslt1-dev ruby-dev build-essential libgmp-dev hcxtools hcxdumptool zlib1g-dev perl chromium zsh fonts-powerline libio-socket-ssl-perl libdbd-sqlite3-perl libclass-dbi-perl libio-all-lwp-perl libparallel-forkmanager-perl libredis-perl libalgorithm-combinatorics-perl gem git cvs subversion git bzr mercurial build-essential libssl-dev libffi-dev python2-dev python2 python-dev-is-python3 ruby-ffi-yajl python-setuptools libldns-dev nmap rename docker.io parsero apache2 amass joomscan uniscan ssh tor privoxy wifite proxychains4 hashcat aptitude synaptic lolcat python3.9-venv dialog golang-go exploitdb exploitdb-papers exploitdb-bin-sploits graphviz kali-desktop-gnome virtualenv reaver bats metagoofil openssl feroxbuster
+    apt -y install python3-pip apt-transport-https curl libcurl4-openssl-dev libssl-dev virtualbox-guest-x11 jq ruby-full libcurl4-openssl-dev ruby virtualbox-guest-utils libxml2 libxml2-dev libxslt1-dev ruby-dev build-essential libgmp-dev hcxtools hcxdumptool zlib1g-dev perl chromium zsh fonts-powerline libio-socket-ssl-perl libdbd-sqlite3-perl libclass-dbi-perl libio-all-lwp-perl libparallel-forkmanager-perl libredis-perl libalgorithm-combinatorics-perl gem git cvs subversion git bzr mercurial build-essential libssl-dev libffi-dev python2-dev python2 python-dev-is-python3 ruby-ffi-yajl python-setuptools libldns-dev nmap rename docker.io parsero apache2 amass joomscan uniscan ssh tor privoxy wifite proxychains4 hashcat aptitude synaptic lolcat python3.9-venv dialog golang-go exploitdb exploitdb-papers exploitdb-bin-sploits graphviz virtualenv reaver bats metagoofil openssl feroxbuster
+    apt -y install kali-desktop-gnome
     sudo $SUDO_OPT pip3 install --upgrade pip
     sudo $SUDO_OPT pip3 install argparse osrframework py-altdns==1.0.2 requests wfuzz holehe twint bluto droopescan uro
     sudo $SUDO_OPT pip install one-lin3r bluto dnspython requests win_unicode_console colorama netaddr
@@ -195,9 +196,9 @@ checklist_report() {
     if in_array "$tool" ${tool_list,,}; then
       IFS='|' read url script depends post_install <<< "${tools[$tool]}"
       if [[ $depends ]]; then
-        status=$'\e[31mfail\e[m'
+        status=$'\e[91mFail\e[m'
         if type -t $depends >/dev/null; then
-          status=$'\e[33m  OK\e[m'
+          status=$'\e[92mOk\e[m'
         fi
         echo "${tool^} [$status]"
       fi
@@ -233,6 +234,7 @@ while [[ $1 ]]; do
       ;;
     -f|--force-update)
       force_update=1
+      apt -f install
       rm -f $HOME/.local/.arno_init_install_successful
       shift
       ;;

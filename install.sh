@@ -191,21 +191,22 @@ git_install() {
 }
 
 checklist_report() {
+  CFGBRed=$'\e[91m'
+  CFGBGreen=$'\e[92m'
   print_message 'Checklist report from tools install'
-  checklist=$(for tool in ${selection,,}; do
+  for tool in ${selection,,}; do
     tool_list=${!tools[*]}
     if in_array "$tool" ${tool_list,,}; then
       IFS='|' read url script depends post_install <<< "${tools[$tool]}"
       if [[ $depends ]]; then
-        status=$'\e[91mFail\e[m'
+        status=$'Fail'
         if type -t $depends >/dev/null; then
-          status=$'\e[92mOk\e[m'
+          status='Ok'
         fi
         echo "${tool^} [$status]"
       fi
     fi
-  done)
-  column <<< "$checklist"
+  done | column | sed "s/\[Ok\]/[${CFGBGreen}Ok${CReset}]/g;s/\[Fail\]/[${CFGBRed}Fail${CReset}]/g"
 }
 
 shopt -s extglob

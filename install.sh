@@ -135,7 +135,7 @@ init_install() {
     apt -y install kali-desktop-gnome
     sudo $SUDO_OPT pip3 install --upgrade pip
     sudo $SUDO_OPT pip3 install argparse osrframework py-altdns==1.0.2 requests wfuzz holehe twint bluto droopescan uro arjun dnsgen s3scanner
-    sudo $SUDO_OPT pip install one-lin3r bluto dnspython requests win_unicode_console colorama netaddr netaddr aiodnsbrute webscreenshot
+    sudo $SUDO_OPT pip install one-lin3r bluto dnspython requests win_unicode_console colorama netaddr aiodnsbrute webscreenshot
     gem install typhoeus opt_parse_validator blunder wpscan
     mkdir -p "$HOME/.local"
     > $HOME/.local/.arno_init_install_successful

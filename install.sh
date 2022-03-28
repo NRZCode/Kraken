@@ -19,7 +19,7 @@ OPTIONS
 load_ansi_colors() {
   # @C FG Color
   #    |-- foreground color
-  export CReset='\e[m' CFGBlack='\e[30m' CFGRed='\e[31m' CFGGreen='\e[32m' \
+  export CReset=$'\e[m' CFGBlack='\e[30m' CFGRed='\e[31m' CFGGreen='\e[32m' \
     CFGYellow='\e[33m' CFGBlue='\e[34m' CFGPurple='\e[35m' CFGCyan='\e[36m' \
     CFGWhite='\e[37m'
   # @C BG Color

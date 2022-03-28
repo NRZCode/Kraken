@@ -156,7 +156,7 @@ read_package_ini() {
   local sec url script post_install
   cfg_parser "$inifile"
   while read sec; do
-    unset url script post_install
+    unset url script depends post_install
     cfg_section_$sec 2>&-
     tools[${sec,,}]="$url|$script|$depends|$post_install"
   done < <(cfg_listsections "$inifile")
@@ -192,7 +192,7 @@ git_install() {
 
 checklist_report() {
   print_message 'Checklist report from tools install'
-  for tool in ${selection,,}; do
+  checklist=$(for tool in ${selection,,}; do
     tool_list=${!tools[*]}
     if in_array "$tool" ${tool_list,,}; then
       IFS='|' read url script depends post_install <<< "${tools[$tool]}"
@@ -204,7 +204,8 @@ checklist_report() {
         echo "${tool^} [$status]"
       fi
     fi
-  done | column
+  done)
+  column <<< "$checklist"
 }
 
 shopt -s extglob

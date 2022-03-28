@@ -196,7 +196,7 @@ report() {
       )
       tbodydiscovery=$(
       while read code length url; do
-        printf "<tr><td>%s</td><td>%s</td><td>%s</td></tr>" "$code" "$length" "$url"
+        printf '<tr><td>%s</td><td>%s</td><td><a href="%s">%s</a></td></tr>' "$code" "$length" "$url" "$url"
       done < <(grep -Ev '^(#|$)' "$logdir/${dtreport}${subdomain}.log")
       )
       sed "s|{{domain}}|$subdomain|g;

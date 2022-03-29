@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 APP='Ghost Recon'
-version=0.0.14
+version=0.0.15
 
 # ANSI Colors
 function load_ansi_colors() {
@@ -127,8 +127,8 @@ dg_menu() {
 
 report_tools() {
   tools[mrx]='MRX|sublist3r subfinder amass assetfinder|for log in "$logdir/"{assetfinder,amass,sub{list3r,finder}}.log; do > "$log"; done; sublist3r -d "$domain" -t 50 -o "$logdir/sublist3r.log"; sleep 10; subfinder -d "$domain" -all -silent -o "$logdir/subfinder.log"; sleep 10; amass enum -d "$domain" -silent -o "$logdir/amass.log"; sleep 10; assetfinder -subs-only "$domain" > "$logdir/assetfinder.log"; sort -u "$logdir/"{assetfinder,amass,sub{finder,list3r}}.log -o "$logfile"; httpx -silent < "$logfile" > "$logdir/${dtreport}httpx.log"'
-  tools[dirsearch]='Dirsearch|dirsearch|xargs -L1 dirsearch -q -e php,asp,aspx,jsp,html,zip,jar -x 404-499,500-599 -w "${dicc:-db/dicc.txt}" --timeout 3 --random-agent -t 50 -o "$logfile" -u < <(httpx -silent <<< "$domain")'
-  tools[feroxbuster]='Feroxbuster|feroxbuster|feroxbuster -q -x php,asp,aspx,jsp,html,zip,jar -t 200 -A -w "$dicc" -o "$logfile" -u "$domain"'
+  tools[dirsearch]='Dirsearch|dirsearch|xargs -L1 dirsearch -q -e php,asp,aspx,jsp,html,zip,jar -x 404-499,500-599 -w dicc.txt --timeout 3 --random-agent -t 50 -o "$logfile" -u < <(httpx -silent <<< "$domain")'
+  tools[feroxbuster]='Feroxbuster|feroxbuster|feroxbuster -q -x php,asp,aspx,jsp,html,zip,jar -t 200 -A -w dicc.txt -o "$logfile" -u "$domain"'
   tools[whatweb]='Whatweb|whatweb|whatweb -a 3 -q --no-errors "$domain" --log-brief="$logfile"'
   tools[theHarvester]='TheHarvester|theHarvester|theHarvester -d "$domain" -l 500 -b all > "$logfile"'
   tools[owasp]='OWASP|httpx gau|httpx -l "$logdir/${dtreport}mrx.log" -silent | gau -subs -o "$logfile"'
@@ -195,19 +195,21 @@ report() {
         fi
       done
       )
-      tbodydiscovery=$(
-      while read code method lines words chars url; do
-        url=$(sed -E 's_((ht|f)tps?[^[:space:]]+)_<a href="\1">\1</a>_g' <<< "$url")
-        printf '<tr><td>%s</td><td>%s</td><td>%s</td></tr>' "$code" "$lines $words $chars" "$url"
-      done < <(grep -Ev '^(#|$)' "$logfile")
-      )
-      sed "s|{{domain}}|$subdomain|g;
+      (
+        sed '1,/{{subdomains}}/!d' "$workdir/resources/subreport.tpl"
+        while read code method lines words chars url; do
+          url=$(sed -E 's_((ht|f)tps?[^[:space:]]+)_<a href="\1">\1</a>_g' <<< "$url")
+          printf '<tr><td>%s</td><td>%s</td><td>%s</td></tr>' "$code" "$lines $words $chars" "$url"
+        done < <(grep -Ev '^(#|$)' "$logfile")
+        sed '/{{subdomains}}/,$!d' "$workdir/resources/subreport.tpl"
+      ) > "$logdir/$href"
+      sed -i "s|{{domain}}|$subdomain|g;
         s|{{datetime}}|$datetime|;
         s|{{screenshots}}|$screenshots|;
         s|{{response-headers}}|$response_headers|;
         s|{{nmap}}|$nmap|;
-        s|{{subdomains}}|$tbodydiscovery|;
-        s|{{host}}|$host|;" "$workdir/resources/subreport.tpl" > "$logdir/$href"
+        /{{subdomains}}/d;
+        s|{{host}}|$host|;" "$logdir/$href"
     fi
     tbody+=$(printf "<tr><td><a href='%s'>%s</a></td><td>%s</td></tr>" "$href" "$subdomain" "$n")
   done < "$logdir/${dtreport}httpx.log"
@@ -418,7 +420,7 @@ main() {
   fi
   workdir=$dirname
   inifile="$workdir/package.ini"
-  dicc=/usr/local/maurosoria/dirsearch/db/dicc.txt
+
   check_dependencies
   check_inifile
   check_environments

@@ -127,8 +127,8 @@ dg_menu() {
 
 report_tools() {
   tools[mrx]='MRX|sublist3r subfinder amass assetfinder|for log in "$logdir/"{assetfinder,amass,sub{list3r,finder}}.log; do > "$log"; done; sublist3r -d "$domain" -t 50 -o "$logdir/sublist3r.log"; sleep 10; subfinder -d "$domain" -all -silent -o "$logdir/subfinder.log"; sleep 10; amass enum -d "$domain" -silent -o "$logdir/amass.log"; sleep 10; assetfinder -subs-only "$domain" > "$logdir/assetfinder.log"; sort -u "$logdir/"{assetfinder,amass,sub{finder,list3r}}.log -o "$logfile"; httpx -silent < "$logfile" > "$logdir/${dtreport}httpx.log"'
-  tools[dirsearch]='Dirsearch|dirsearch|xargs -L1 dirsearch -q -e php,asp,aspx,jsp,html,zip,jar -x 404-499,500-599 -w dicc.txt --timeout 3 --random-agent -t 50 -o "$logfile" -u < <(httpx -silent <<< "$domain")'
-  tools[feroxbuster]='Feroxbuster|feroxbuster|feroxbuster -q -x php,asp,aspx,jsp,html,zip,jar -t 200 -A -w dicc.txt -o "$logfile" -u "$domain"'
+  tools[dirsearch]='Dirsearch|dirsearch|xargs -L1 dirsearch -q -e php,asp,aspx,jsp,html,zip,jar -x 404-499,500-599 -w "$dicc" --timeout 3 --random-agent -t 50 -o "$logfile" -u < <(httpx -silent <<< "$domain")'
+  tools[feroxbuster]='Feroxbuster|feroxbuster|feroxbuster -q -x php,asp,aspx,jsp,html,zip,jar -t 200 -A -w "$dicc" -o "$logfile" -u "$domain"'
   tools[whatweb]='Whatweb|whatweb|whatweb -a 3 -q --no-errors "$domain" --log-brief="$logfile"'
   tools[theHarvester]='TheHarvester|theHarvester|theHarvester -d "$domain" -l 500 -b all > "$logfile"'
   tools[owasp]='OWASP|httpx gau|httpx -l "$logdir/${dtreport}mrx.log" -silent | gau -subs -o "$logfile"'

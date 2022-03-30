@@ -196,19 +196,18 @@ report() {
       done
       )
       (
-        sed '1,/{{subdomains}}/!d' "$workdir/resources/subreport.tpl"
+        sed '1,/{{subdomains}}/!d; s/{{subdomains}}.*/\n/' "$workdir/resources/subreport.tpl"
         while read code method lines words chars url; do
           url=$(sed -E 's_((ht|f)tps?[^[:space:]]+)_<a href="\1">\1</a>_g' <<< "$url")
           printf '<tr><td>%s</td><td>%s</td><td>%s</td></tr>' "$code" "$lines $words $chars" "$url"
         done < <(grep -Ev '^(#|$)' "$logfile")
-        sed '/{{subdomains}}/,$!d' "$workdir/resources/subreport.tpl"
+        sed '/{{subdomains}}/,$!d; s/.*{{subdomains}}/\n/' "$workdir/resources/subreport.tpl"
       ) > "$logdir/$href"
       sed -i "s|{{domain}}|$subdomain|g;
         s|{{datetime}}|$datetime|;
         s|{{screenshots}}|$screenshots|;
         s|{{response-headers}}|$response_headers|;
         s|{{nmap}}|$nmap|;
-        /{{subdomains}}/d;
         s|{{host}}|$host|;" "$logdir/$href"
     fi
     tbody+=$(printf "<tr><td><a href='%s'>%s</a></td><td>%s</td></tr>" "$href" "$subdomain" "$n")

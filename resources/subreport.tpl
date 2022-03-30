@@ -46,9 +46,7 @@
                                         <th>Url</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                {{subdomains}}
-                                </tbody>
+                                <tbody>{{subdomains}}</tbody>
                             </table>
                         </div>
                     </article>

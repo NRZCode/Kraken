@@ -126,13 +126,13 @@ dg_menu() {
 }
 
 report_tools() {
-  tools[mrx]='MRX|subfinder findomain-linux assetfinder|for log in "$logdir/"{assetfinder,findomain,sub{finder}}.log; do > "$log"; done; sleep 10;findomain-linux -d "$domain" -q -o "$logdir/findomain.log"; sleep 10; subfinder -d "$domain" -silent -o "$logdir/subfinder.log"; sleep 10; assetfinder -subs-only "$domain" > "$logdir/assetfinder.log"; sort -u "$logdir/"{assetfinder,findomain,sub{finder}}.log -o "$logfile"; httpx -silent < "$logfile" > "$logdir/${dtreport}httpx.log"'
+  tools[mrx]='MRX|subfinder findomain-linux assetfinder|for log in "$logdir/"{assetfinder,findomain,sub{finder}}.log; do > "$log"; done; sleep 10;findomain-linux -t "$domain" -q -o "$logdir/findomain.log"; sleep 10; subfinder -d "$domain" -silent -o "$logdir/subfinder.log"; sleep 10; assetfinder -subs-only "$domain" > "$logdir/assetfinder.log"; sort -u "$logdir/"{assetfinder,findomain,sub{finder}}.log -o "$logfile"; httpx -silent < "$logfile" > "$logdir/${dtreport}httpx.log"'
   tools[dirsearch]='Dirsearch|dirsearch|xargs -L1 dirsearch -q -e php,asp,aspx,jsp,html,zip,jar -x 404-499,500-599 -w "$dicc" --timeout 3 --random-agent -t 50 -o "$logfile" -u < <(httpx -silent <<< "$domain")'
   tools[feroxbuster]='Feroxbuster|feroxbuster|feroxbuster -q -x php,asp,aspx,jsp,html,zip,jar -t 80 -r -k -w "$dicc" -o "$logfile" -u "$domain"'
   tools[whatweb]='Whatweb|whatweb|whatweb -a 3 -q --no-errors "$domain" --log-brief="$logfile"'
   tools[theHarvester]='TheHarvester|theHarvester|theHarvester -d "$domain" > "$logfile"'
   tools[owasp]='OWASP|httpx gau|httpx -l "$logdir/${dtreport}mrx.log" -silent | gau --subs -o "$logfile"'
-  tools[curl]='cURL|curl|curl -s https://crt.sh/?q=%25.$domain&output=json | anew -q > "$logfile"'
+  tools[curl]='cURL|curl|curl -s https://crt.sh/?q=%25.$domain&output=json | anew -q "$logfile"'
 }
 
 report() {

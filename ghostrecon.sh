@@ -131,7 +131,7 @@ report_tools() {
   tools[feroxbuster]='Feroxbuster|feroxbuster|feroxbuster -q -x php,asp,aspx,jsp,html,zip,jar -t 200 -A -w "$dicc" -o "$logfile" -u "$domain"'
   tools[whatweb]='Whatweb|whatweb|whatweb -a 3 -q --no-errors "$domain" --log-brief="$logfile"'
   tools[theHarvester]='TheHarvester|theHarvester|theHarvester -d "$domain" -l 500 -b all > "$logfile"'
-  tools[owasp]='OWASP|httpx gau|httpx -l "$logdir/${dtreport}mrx.log" -silent | gau -subs -o "$logfile"'
+  tools[owasp]='OWASP|httpx gau|httpx -l "$logdir/${dtreport}mrx.log" -silent | gau --subs -o "$logfile"'
   tools[curl]='cURL|curl|curl -s https://crt.sh/?q=%25.$domain&output=json | anew -q > "$logfile"'
 }
 
@@ -336,7 +336,7 @@ run_tools() {
       printf "\n\n${CBold}${CFGCyan}[${CFGWhite}+${CFGCyan}] Starting ${app}${CReset}\n"
       export logfile="$logdir/${dtreport}${tool}.log"; > $logfile
       pagereports[$tool]="$logfile"
-      result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s normal -m "${tool^} $domain"
+      result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s slow -m "${tool^} $domain"
       elapsedtime -p "${tool^}"
     fi
   done

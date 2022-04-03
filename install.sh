@@ -101,7 +101,8 @@ system_upgrade() {
   apt -y dist-upgrade
   sudo $SUDO_OPT pip3 install --upgrade pip
   sudo $SUDO_OPT pip3 install --upgrade osrframework
-  apt -y autoremove && apt -y autoclean
+  apt -y autoremove
+  apt -y autoclean
 }
 
 check_dependencies() {
@@ -238,7 +239,8 @@ while [[ $1 ]]; do
     -f|--force-update)
       force_update=1
       apt -f install
-      dpkg --configure -a      
+      apt --fix-broken install -y
+      dpkg --configure -a 
       rm -f $HOME/.local/.arno_init_install_successful
       shift
       ;;

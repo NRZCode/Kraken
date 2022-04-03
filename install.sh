@@ -237,7 +237,7 @@ while [[ $1 ]]; do
       ;;
     -f|--force-update)
       force_update=1
-      apt -f installsudo 
+      apt -f install
       dpkg --configure -a      
       rm -f $HOME/.local/.arno_init_install_successful
       shift

@@ -126,7 +126,7 @@ dg_menu() {
 }
 
 report_tools() {
-  tools[mrx]='Mrx Scan Subdomains|subfinder findomain-linux assetfinder|for log in "$logdir/"{assetfinder,findomain,subfinder}.log; do > "$log"; done; sleep 5;findomain-linux -q -t "$domain" > "$logdir/findomain.log"; sleep 5; subfinder -d "$domain" -silent -t 60 -o "$logdir/subfinder.log"; sleep 5; assetfinder -subs-only "$domain" > "$logdir/assetfinder.log"; sort -u "$logdir/"{assetfinder,findomain,subfinder}.log -o "$logfile"; httpx -silent -t 120 < "$logfile" > "$logdir/${dtreport}httpx.log"'
+  tools[mrx]='Mrx Scan Subdomains|subfinder findomain-linux assetfinder|for log in "$logdir/"{assetfinder,findomain,subfinder}.log; do > "$log"; done; sleep 5;findomain-linux -q -t "$domain" > "$logdir/findomain.log"; sleep 5; subfinder -d "$domain" -silent -t 60 -o "$logdir/subfinder.log"; sleep 5; assetfinder -subs-only "$domain" > "$logdir/assetfinder.log"; sort -u "$logdir/"{assetfinder,findomain,subfinder}.log -o "$logfile"; httpx -t 120 -silent < "$logfile" > "$logdir/${dtreport}httpx.log"'
   tools[dirsearch]='Dirsearch|dirsearch|xargs -L1 dirsearch -q -e php,asp,aspx,jsp,html,zip,jar -x 404-499,500-599 -w "$dicc" --timeout 3 --random-agent -t 50 -o "$logfile" -u < <(httpx -silent <<< "$domain")'
   tools[feroxbuster]='Feroxbuster Scan sub-directories|feroxbuster|feroxbuster -q -x php,asp,aspx,jsp,html,zip,jar -t 60 --proxy socks5h://127.0.0.1:9050 -n -w "$dicc" -o "$logfile" -u "$domain"'
   tools[whatweb]='Whatweb|whatweb|whatweb -a 3 -q -t 60 --no-errors "$domain" --log-brief="$logfile"'

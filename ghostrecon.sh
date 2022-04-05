@@ -352,12 +352,13 @@ run() {
   width=0
   if dg_menu checklist; then
     clear
-    [[ $anon_mode == 1 ]] && anonsurf start &> /dev/null
 
     banner
 
     # Tools for report
-    run_tools mrx nmap whatweb theHarvester curl owasp ${selection,,}
+    run_tools nmap
+    [[ $anon_mode == 1 ]] && anonsurf start &> /dev/null
+    run_tools mrx whatweb theHarvester curl owasp ${selection,,}
 
     ##
     # Search and report subdomains
@@ -368,9 +369,12 @@ run() {
       while read domain; do
         logfile="$logdir/${dtreport}${domain/:\/\//.}.log"
         result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s slow -m "Feroxbuster $domain"
+        [[ $anon_mode == 1 ]] && anonsurf change &> /dev/null
       done < "$logdir/${dtreport}httpx.log"
     )
 
+    [[ $anon_mode == 1 ]] && anonsurf stop &> /dev/null
+    sleep 10
     IFS='|' read app depends cmd <<< ${tools[nmap]}
     (
       while read domain; do
@@ -380,7 +384,6 @@ run() {
     )
     report
 
-    [[ $anon_mode == 1 ]] && anonsurf stop &> /dev/null
     user_notification
     elapsedtime 'TOTAL Reconaissance'
     return 0

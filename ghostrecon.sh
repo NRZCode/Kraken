@@ -366,7 +366,7 @@ run() {
     aquatone -chrome-path /usr/bin/chromium -scan-timeout 500 -screenshot-timeout 300000 -http-timeout 30000 -out "$logdir" -threads 5 -silent 2>>$logerr >/dev/null < "$logdir/${dtreport}mrx.log"
     IFS='|' read app depends cmd <<< ${tools[feroxbuster]}
     (
-      while read domain; do
+      while read domain && [[ $domain ]]; do
         logfile="$logdir/${dtreport}${domain/:\/\//.}.log"
         result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s slow -m "Feroxbuster $domain"
         [[ $anon_mode == 1 ]] && anonsurf change &> /dev/null
@@ -377,7 +377,7 @@ run() {
     sleep 10
     IFS='|' read app depends cmd <<< ${tools[nmap]}
     (
-      while read domain; do
+      while read domain && [[ $domain ]]; do
         logfile="$logdir/${dtreport}${domain}nmap.log"
         result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s normal -m "NMAP $domain"
       done < "$logdir/${dtreport}mrx.log"

@@ -131,7 +131,7 @@ report_tools() {
   tools[feroxbuster]='Feroxbuster Scan sub-directories|feroxbuster|feroxbuster -q -x php,asp,aspx,jsp,html,zip,jar -t 60 --proxy socks5h://127.0.0.1:9050 -n -w "$dicc" -o "$logfile" -u "$domain"'
   tools[whatweb]='Whatweb|whatweb|whatweb -a 3 -q -t 60 --no-errors "$domain" --log-brief="$logfile"'
   tools[owasp]='Owasp Getallurls|httpx waybackurls|httpx -l "$logdir/${dtreport}mrx.log" -silent -t 120 | waybackurls | sort -u > "$logfile"'
-  tools[curl]='cURL|curl|curl -s https://crt.sh/?q=%25.$domain&output=json | anew -q "$logfile"'
+  tools[crt]='Certificate Search|curl|curl -s "https://crt.sh/?q=%25.${domain}&output=json" | anew > "$logfile"'
 }
 
 report() {
@@ -358,7 +358,7 @@ run() {
     # Tools for report
     run_tools nmap
     [[ $anon_mode == 1 ]] && anonsurf start &> /dev/null
-    run_tools mrx whatweb theHarvester curl owasp ${selection,,}
+    run_tools mrx whatweb crt owasp ${selection,,}
 
     ##
     # Search and report subdomains

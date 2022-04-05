@@ -98,9 +98,7 @@ export -f system_update
 
 system_upgrade() {
   print_message 'Updating system'
-  apt -y dist-upgrade
-  sudo $SUDO_OPT pip3 install --upgrade pip
-  sudo $SUDO_OPT pip3 install --upgrade osrframework
+  apt -y upgrade
   apt -y autoremove
   apt -y autoclean
 }
@@ -138,11 +136,9 @@ init_install() {
   print_message 'Ferramenta em script Bash Completa para Bug bounty ou Pentest ! Vai poupar seu Tempo na hora de configurar sua máquina para trabalhar.'
   printf "\n${CBold}${CFGWhite}=====================================================>${CReset}\n\n"
   if [[ ! -f $HOME/.local/.arno_init_install_successful ]]; then
-    apt -y install python3-pip apt-transport-https curl libcurl4-openssl-dev libssl-dev virtualbox-guest-x11 jq ruby-full libcurl4-openssl-dev ruby virtualbox-guest-utils libxml2 libxml2-dev libxslt1-dev ruby-dev dkms build-essential libgmp-dev hcxtools hcxdumptool zlib1g-dev perl chromium zsh fonts-powerline libio-socket-ssl-perl libdbd-sqlite3-perl libclass-dbi-perl libio-all-lwp-perl libparallel-forkmanager-perl libredis-perl libalgorithm-combinatorics-perl gem git cvs subversion git bzr mercurial build-essential libssl-dev libffi-dev python-dev-is-python3 ruby-ffi-yajl python-setuptools libldns-dev nmap rename docker.io parsero apache2 amass joomscan uniscan ssh tor privoxy wifite proxychains4 hashcat aptitude synaptic lolcat dialog golang-go exploitdb exploitdb-papers exploitdb-bin-sploits graphviz virtualenv reaver bats metagoofil openssl feroxbuster cargo
-    apt -y install kali-desktop-gnome gospider cmake crackmapexec realtek-rtl88xxau-dkms arjun dnsgen s3scanner
-    sudo $SUDO_OPT pip3 install --upgrade pip
-    sudo $SUDO_OPT pip3 install py-altdns==1.0.2 requests wfuzz holehe twint droopescan uro arjun dnsgen s3scanner emailfinder pipx one-lin3r win_unicode_console aiodnsbrute webscreenshot
-    sudo $SUDO_OPT pip install dnspython netaddr
+    apt -y install python3-pip apt-transport-https curl libcurl4-openssl-dev libssl-dev virtualbox-guest-x11 jq ruby-full libcurl4-openssl-dev ruby virtualbox-guest-utils libxml2 libxml2-dev libxslt1-dev ruby-dev dkms build-essential libgmp-dev hcxtools hcxdumptool zlib1g-dev perl chromium zsh fonts-powerline libio-socket-ssl-perl libdbd-sqlite3-perl libclass-dbi-perl libio-all-lwp-perl libparallel-forkmanager-perl libredis-perl libalgorithm-combinatorics-perl gem git cvs subversion git bzr mercurial build-essential libssl-dev libffi-dev python-dev-is-python3 ruby-ffi-yajl python-setuptools libldns-dev nmap rename docker.io parsero apache2 amass joomscan uniscan ssh tor privoxy wifite proxychains4 hashcat aptitude synaptic lolcat dialog golang-go exploitdb exploitdb-papers exploitdb-bin-sploits graphviz virtualenv reaver bats metagoofil openssl feroxbuster cargo gospider cmake crackmapexec realtek-rtl88xxau-dkms arjun dnsgen s3scanner
+    apt -y install kali-desktop-gnome
+    pip3 install --upgrade pip osrframework py-altdns==1.0.2 requests wfuzz holehe twint droopescan uro arjun dnsgen s3scanner emailfinder pipx one-lin3r win_unicode_console aiodnsbrute webscreenshot dnspython netaddr
     gem install typhoeus opt_parse_validator blunder wpscan
     mkdir -p "$HOME/.local"
     > $HOME/.local/.arno_init_install_successful

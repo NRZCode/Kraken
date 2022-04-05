@@ -166,7 +166,7 @@ read_package_ini() {
 }
 
 git_install() {
-  local repo=${1%/?(.git)}
+  local repo=${1%%+(.git|/)}
   local app=$2
   local cmd=$3
   if [[ $repo ]]; then
@@ -188,7 +188,7 @@ git_install() {
       result=$(cd "$installdir";pip3 install -q -r requirements.txt 2>>$logerr >>$logfile) | progressbar -s fast -m "${repo##*/}: Python requirements"
     fi
     if [[ -r "$installdir/setup.py" ]]; then
-      result=$(cd "$installdir";sudo python3 setup.py -q install 2>>$logerr >>$logfile) | progressbar -s fast -m "${repo##*/}: Installing setup.py"
+      result=$(cd "$installdir";python3 setup.py -q install 2>>$logerr >>$logfile) | progressbar -s fast -m "${repo##*/}: Installing setup.py"
     fi
   fi
 }

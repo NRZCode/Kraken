@@ -128,6 +128,12 @@ init_install() {
   export DEBIAN_FRONTEND=noninteractive
   mkdir -p "$srcdir"
   system_update
+  if [[ $force_update == 1 ]]; then
+    apt -f install
+    apt --fix-broken install -y
+    dpkg --configure -a
+    rm -f $HOME/.local/.arno_init_install_successful
+  fi
   # REQUIREMENTS
   print_message 'Ferramenta em script Bash Completa para Bug bounty ou Pentest ! Vai poupar seu Tempo na hora de configurar sua máquina para trabalhar.'
   printf "\n${CBold}${CFGWhite}=====================================================>${CReset}\n\n"
@@ -194,14 +200,23 @@ git_install() {
 checklist_report() {
   CFGBRed=$'\e[91m'
   CFGBGreen=$'\e[92m'
+  if [[ $check_mode == 1 ]]; then
+    print_message 'Checklist from package.ini'
+    for tool in ${!tools[*]}; do
+      IFS='|' read url script depends post_install <<< "${tools[$tool]}"
+      if [[ $url || $post_install ]]; then
+        [[ "$depends$script" ]] || printf '[%s]\nscript=%s\ndepends=%s\n%s: \e[33mWARNING\e[m: is not possible verify installation: depends is not defined\n\n\n' "$tool" "$script" "$depends" "$tool"
+      fi
+    done
+  fi
   print_message 'Checklist report from tools install'
   for tool in ${selection,,}; do
     tool_list=${!tools[*]}
     if in_array "$tool" ${tool_list,,}; then
       IFS='|' read url script depends post_install <<< "${tools[$tool]}"
-      if [[ $depends ]]; then
+      if [[ $depends || $script ]]; then
         status=$'Fail'
-        if type -t $depends >/dev/null; then
+        if type -t $depends ${script##*/} >/dev/null; then
           status='Ok'
         fi
         echo "${tool^} [$status]"
@@ -238,16 +253,16 @@ while [[ $1 ]]; do
       ;;
     -f|--force-update)
       force_update=1
-      apt -f install
-      apt --fix-broken install -y
-      dpkg --configure -a 
-      rm -f $HOME/.local/.arno_init_install_successful
       shift
       ;;
     -l|--list)
       [[ -f "$inifile" ]] && pkgs=$(grep -oP '(?<=^\[)[^]]+' $inifile)
       echo "  Uso: ./$basename" $pkgs
       exit 0
+      ;;
+    -c|--check)
+      check_mode=1
+      shift
       ;;
     *)
       packages+=($1)
@@ -275,6 +290,8 @@ selection="${packages[*]}"
 if [[ ${#packages[@]} == 0 ]]; then
   selection="${!tools[*]}"
 fi
+
+[[ $check_mode == 1 ]] && { checklist_report; exit; }
 
 init_install
 for tool in ${selection,,}; do

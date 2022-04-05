@@ -185,7 +185,7 @@ git_install() {
       ln -sf "$installdir/$app" "${bin%.*}"
     fi
     if [[ -r "$installdir/requirements.txt" ]]; then
-      result=$(cd "$installdir";sudo $SUDO_OPT pip3 install -q -r requirements.txt 2>>$logerr >>$logfile) | progressbar -s fast -m "${repo##*/}: Python requirements"
+      result=$(cd "$installdir";pip3 install -q -r requirements.txt 2>>$logerr >>$logfile) | progressbar -s fast -m "${repo##*/}: Python requirements"
     fi
     if [[ -r "$installdir/setup.py" ]]; then
       result=$(cd "$installdir";sudo python3 setup.py -q install 2>>$logerr >>$logfile) | progressbar -s fast -m "${repo##*/}: Installing setup.py"

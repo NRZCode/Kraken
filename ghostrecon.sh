@@ -208,7 +208,7 @@ report() {
         s|{{datetime}}|$datetime|;
         s|{{screenshots}}|$screenshots|;
         s|{{response-headers}}|$response_headers|;
-        s|{{nmap}}|$nmap|;
+        s|{{nmap}}|${nmap//|/\\|}|;
         s|{{host}}|$host|;" "$logdir/$href"
     fi
     tbody+=$(printf "<tr><td><a href='%s'>%s</a></td><td>%s</td></tr>" "$href" "$subdomain" "$n")
@@ -227,7 +227,7 @@ report() {
     s|{{whois}}|$whois|;
     s|{{download}}|$download|;
     s|{{pagination}}|$pagination|;
-    s|{{nmap}}|$nmap|;" "$workdir/resources/report.tpl" > "$logdir/${dtreport}report-01.html"
+    s|{{nmap}}|${nmap//|/\\|}|;" "$workdir/resources/report.tpl" > "$logdir/${dtreport}report-01.html"
   ##
   # Compact reports
   cp $logdir/${dtreport}report-01.html $logdir/report.html

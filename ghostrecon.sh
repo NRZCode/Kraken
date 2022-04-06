@@ -132,8 +132,8 @@ report_tools() {
   tools[whatweb]='Whatweb|whatweb|whatweb -a 3 -q -t 60 --no-errors "$domain" --log-brief="$logfile"'
   tools[owasp]='Owasp Getallurls|httpx waybackurls|httpx -l "$logdir/${dtreport}mrx.log" -silent -t 120 | waybackurls | sort -u > "$logfile"'
   tools[crt]='Certificate Search|curl|curl -s "https://crt.sh/?q=%25.${domain}&output=json" | anew > "$logfile"'
-  tools[nmap]='Nmap Ports|nmap|sudo nmap -sS -sCV "$domain" -Pn -oN "$logfile"'
-  tools[fnmap]='Nmap|nmap|sudo nmap -n -Pn -sS "$domain" --open -sV -oN "$logfile"'
+  tools[nmap]='Nmap Ports|nmap|nmap -sS -sCV "$domain" -Pn -oN "$logfile"'
+  tools[fnmap]='Nmap|nmap|nmap -n -Pn -sS "$domain" --open -sV -oN "$logfile"'
 }
 
 report() {

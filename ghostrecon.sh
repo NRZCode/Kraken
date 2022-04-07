@@ -279,7 +279,7 @@ banner() {
 "|/usr/games/lolcat
 
   echo "
- 🎯   Target              $domain
+ 🎯   Target                         $domain
  🚪   Scan Port                      true
  🧰   Redirect                       true
  🕘   Started at                     $(date +%Y/%m/%d_%H:%M:%S:%Z)"

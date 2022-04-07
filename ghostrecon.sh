@@ -278,11 +278,11 @@ banner() {
 
 "|/usr/games/lolcat
 
-  echo "
- 🎯   Target                         $domain
+  printf "
+ 🎯   Target                         ${CBold}${CFGYellow}https://$domain/ ${app}${CReset}
  🚪   Scan Port                      true
  🧰   Redirect                       true
- 🕘   Started at                     $(date +%Y/%m/%d_%H:%M:%S:%Z)"
+ 🕘   Started at                     $(date +%Y/%m/%d) $(date +%H:%M:%S)"
 }
 
 usage() {

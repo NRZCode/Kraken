@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-APP='Ghost Recon'
+APP='Kraken'
 version=0.0.15
 
 # ANSI Colors
@@ -80,7 +80,7 @@ check_dependencies() {
   local ver='2.17.1'
 
   if ! type -t $pkg >/dev/null; then
-    printf '%s: ERROR: Necessário pacote %s %s ou superior.\n' "$basename" "$pkg" "$ver" 1>&2
+    printf '%s: ERROR: Required package %s %s or higher.\n' "$basename" "$pkg" "$ver" 1>&2
     exit 1
   fi
 
@@ -271,7 +271,7 @@ banner() {
  █████╔╝ ██████╔╝███████║█████╔╝ █████╗  ██╔██╗ ██║
  ██╔═██╗ ██╔══██╗██╔══██║██╔═██╗ ██╔══╝  ██║╚██╗██║
  ██║  ██╗██║  ██║██║  ██║██║  ██╗███████╗██║ ╚████║
- ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝
+ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝®
                                     version: $version
 
  🐙 Powerful scan tool and parameter analyzer.
@@ -279,25 +279,45 @@ banner() {
 "|/usr/games/lolcat
 
   printf "
- 🎯   Target                         ${CBold}${CFGYellow}https://$domain/ ${app}${CReset}
- 🚪   Scan Port                      true
- 🧰   Redirect                       true
- 🕘   Started at                     $(date +%Y/%m/%d) $(date +%H:%M:%S)"
+ 🎯   Target                         〔${CBold}${CFGYellow}https://$domain/${app}${CReset}〕
+ 🚪   Scan Port                      〔true〕
+ 🧰   Redirect                       〔true〕
+ 🕘   Started at                     〔$(date +%Y/%m/%d) $(date +%H:%M:%S)〕"
 }
 
 usage() {
-  usage="  Usage: $basename [OPTIONS]
+  usage="
+ ██╗  ██╗██████╗  █████╗ ██╗  ██╗███████╗███╗   ██╗
+ ██║ ██╔╝██╔══██╗██╔══██╗██║ ██╔╝██╔════╝████╗  ██║
+ █████╔╝ ██████╔╝███████║█████╔╝ █████╗  ██╔██╗ ██║
+ ██╔═██╗ ██╔══██╗██╔══██║██╔═██╗ ██╔══╝  ██║╚██╗██║
+ ██║  ██╗██║  ██║██║  ██║██║  ██╗███████╗██║ ╚████║
+ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝®
+                                    version: $version                                  
+   
+Usage: $basename [OPTIONS]
 
-DESCRIPTION
-  GhostRecon is a based script for reconaissance domains
+Short Form	Long Form		Description
 
-OPTIONS
-  General options:
-    -d,--domain        Domain to find subdomains for
-    -a,--anon          Setup usage of anonsurf change IP (Default: On)
-    -V,--version       Print current version GhostRecon
-    -u,--update        Update ghostrecon for better performance
-    -h,--help          Show this help message and exit"
+ -d		--domain		Scan domain and subdomains
+ -dL		--list string    	file containing list of domains for subdomain discovery                  		        
+ -a 		--anon			Setup usage of anonsurf change IP                       〔 Default: On 〕	
+ -b		--bruteforce		Enable the subbrute bruteforce module 			〔 Default: Off〕
+ -t		--threads		Number of threads to use for subbrute bruteforce 	〔 Default: 20 〕
+ -s		--silent		Hide output in the terminal 				〔 Default: Off〕
+ -A		--agressive		Use all sources (slow) for enumeration 			〔 Default: Off〕
+ -v		--verbose		Enable the verbose mode and display results in realtime
+ -n		--no-subs		Scan only the domain given in -d domain.com
+ -f		--fast-scan		scan without options menu		
+ -u		--update		Update Kraken for better performance
+ -V 		--version               Print current version Kraken
+ -h		--help			show the help message and exit
+ -m             --max-time int	        minutes to wait for enumeration results 		〔 Default: 10〕
+ -T		--timeout int   	seconds to wait before timing out 			〔 Default: 30〕
+
+Example of use:
+kraken -d example.com -a off -n
+														"
   printf "${*:+$*\n}$usage\n"
   return 1
 }
@@ -309,7 +329,7 @@ init() {
   while [ -z "$domain" ]; do
     banner
     read -p 'Enter domain: ' domain
-#    if ! checkArgType domain domain "$domain"; then echo "$domain INVALIDO"; domain=''; fi
+#    if ! checkArgType domain domain "$domain"; then echo "$domain INVALID"; domain=''; fi
   done
   export domain=${domain#@(ht|f)tp?(s)://}
 
@@ -319,7 +339,7 @@ init() {
 }
 
 user_notification() {
-  notify-send -u critical -i bash 'GhostRecon Reconnaissance' "Recon de $domain concluído"
+  notify-send -u critical -i bash 'Kraken Reconnaissance' "Recon of $domain completed"
 }
 
 run_tools() {

@@ -302,10 +302,9 @@ Short Form	Long Form		Description
  -d		--domain		Scan domain and subdomains
  -dL		--list string    	file containing list of domains for subdomain discovery
  -a 		--anon			Setup usage of anonsurf change IP                       〔 Default: On 〕
- -t		--threads		Number of threads to use for subbrute bruteforce 	〔 Default: 20 〕
- -s		--silent		Hide output in the terminal 				〔 Default: Off〕
+ -t		--threads		Number of threads to be used 	 			〔 Default: 20 〕
  -A		--agressive		Use all sources (slow) for enumeration 			〔 Default: Off〕
- -v		--verbose		Enable the verbose mode and display results in realtime
+ -v		--verbose		Enable the verbose mode and display results in realtime 〔 Default: Off〕
  -n		--no-subs		Scan only the domain given in -d domain.com
  -f		--fast-scan		scan without options menu
  -u		--update		Update Kraken for better performance

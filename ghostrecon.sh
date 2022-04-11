@@ -300,15 +300,14 @@ Usage: $basename [OPTIONS]
 Short Form	Long Form		Description
 
  -d		--domain		Scan domain and subdomains
- -dL		--list string    	file containing list of domains for subdomain discovery                  		        
- -a 		--anon			Setup usage of anonsurf change IP                       〔 Default: On 〕	
- -b		--bruteforce		Enable the subbrute bruteforce module 			〔 Default: Off〕
+ -dL		--list string    	file containing list of domains for subdomain discovery
+ -a 		--anon			Setup usage of anonsurf change IP                       〔 Default: On 〕
  -t		--threads		Number of threads to use for subbrute bruteforce 	〔 Default: 20 〕
  -s		--silent		Hide output in the terminal 				〔 Default: Off〕
  -A		--agressive		Use all sources (slow) for enumeration 			〔 Default: Off〕
  -v		--verbose		Enable the verbose mode and display results in realtime
  -n		--no-subs		Scan only the domain given in -d domain.com
- -f		--fast-scan		scan without options menu		
+ -f		--fast-scan		scan without options menu
  -u		--update		Update Kraken for better performance
  -V 		--version               Print current version Kraken
  -h		--help			show the help message and exit
@@ -316,8 +315,8 @@ Short Form	Long Form		Description
  -T		--timeout int   	seconds to wait before timing out 			〔 Default: 30〕
 
 Example of use:
-kraken -d example.com -a off -n
-														"
+kraken -d example.com -a off -n"
+	
   printf "${*:+$*\n}$usage\n"
   return 1
 }

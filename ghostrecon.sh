@@ -126,14 +126,14 @@ dg_menu() {
 }
 
 report_tools() {
-  tools[mrx]='Mrx Scan Subdomains|subfinder findomain-linux assetfinder|for log in "$logdir/"{assetfinder,findomain,subfinder}.log; do > "$log"; done; sleep 3;findomain-linux -q -t "$domain" > "$logdir/findomain.log"; sleep 3; subfinder -d "$domain" -silent -t 60 -o "$logdir/subfinder.log"; sleep 3; assetfinder -subs-only "$domain" > "$logdir/assetfinder.log"; sort -u "$logdir/"{assetfinder,findomain,subfinder}.log -o "$logfile"; httpx -silent < "$logfile" > "$logdir/${dtreport}httpx.log"'
+  tools[mrx]='Mrx Scan Subdomains|subfinder findomain-linux assetfinder|for log in "$logdir/"{assetfinder,findomain,subfinder}.log; do > "$log"; done; sleep 2;findomain-linux -q -t "$domain" > "$logdir/findomain.log"; sleep 2; subfinder -d "$domain" -silent -t 60 -o "$logdir/subfinder.log"; sleep 2; assetfinder -subs-only "$domain" > "$logdir/assetfinder.log"; sort -u "$logdir/"{assetfinder,findomain,subfinder}.log -o "$logfile"; httpx -silent < "$logfile" > "$logdir/${dtreport}httpx.log"'
   tools[dirsearch]='Dirsearch|dirsearch|xargs -L1 python3 /usr/local/dirsearch/dirsearch.py -q -e php,asp,aspx,jsp,html,zip,jar -x 404-499,500-599 -w "$dicc" -t 50 --timeout 3 -o "$logfile" -u < <(httpx -silent <<< "$domain")'
   tools[feroxbuster]='Feroxbuster Scan sub-directories|feroxbuster|feroxbuster -q -x php,asp,aspx,jsp,html,zip,jar -t 80 --proxy socks5h://127.0.0.1:9050 -n -w "$dicc" -o "$logfile" -u "$domain"'
   tools[whatweb]='Whatweb|whatweb|whatweb -q -t 60 --no-errors "$domain" --log-brief="$logfile"'
   tools[owasp]='Owasp Getallurls|waybackurls uro anew|cat "$logdir/${dtreport}httpx.log" | waybackurls | uro | anew | sort -u > "$logfile"'
   tools[crt]='Certificate Search|curl|curl -s "https://crt.sh/?q=%25.${domain}&output=json" | anew > "$logfile"'
-  tools[nmap]='Nmap Ports|nmap|nmap -sS -sCV "$domain" -Pn -oN "$logfile"'
-  tools[fnmap]='Nmap|nmap|nmap -n -Pn -sS "$domain" --open -sV -oN "$logfile"'
+  tools[nmap]='Nmap Ports|nmap|nmap -sS -sCV "$domain" -T4 -Pn -oN "$logfile"'
+  tools[fnmap]='Nmap|nmap|nmap -n -Pn -sS "$domain" -T4 --open -sV -oN "$logfile"'
 }
 
 report() {

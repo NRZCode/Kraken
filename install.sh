@@ -76,9 +76,11 @@ banner() {
                                        ➥ version: '$version''
 
   social="   A Reconaissance Tool's Collection.
+  
  https://t.me/PeakyBlindersW
      〔Discord Community〕
  https://discord.gg/Z2C2CyVZFU
+ 
 »» Recode The Copyright Is Not Make You A Coder Dude"
   [[ -x /usr/games/lolcat ]] &&
     /usr/games/lolcat <(printf "$logo\n$social\n") ||
@@ -132,7 +134,7 @@ init_install() {
   print_message 'Complete tool to install and configure various tools for pentesting.'
   printf "\n${CBold}${CFGWhite}=====================================================>${CReset}\n\n"
   if [[ ! -f $HOME/.local/.arno_init_install_successful ]]; then
-    packages='python3-pip apt-transport-https curl libcurl4-openssl-dev libssl-dev virtualbox-guest-x11 jq ruby-full libcurl4-openssl-dev ruby virtualbox-guest-utils libxml2 libxml2-dev libxslt1-dev ruby-dev dkms build-essential libgmp-dev hcxdumptool zlib1g-dev perl zsh fonts-powerline libio-socket-ssl-perl libdbd-sqlite3-perl libclass-dbi-perl libio-all-lwp-perl libparallel-forkmanager-perl libredis-perl libalgorithm-combinatorics-perl gem git cvs subversion bzr mercurial build-essential libssl-dev libffi-dev python-dev-is-python3 ruby-ffi-yajl python-setuptools libldns-dev rename docker.io parsero apache2 ssh tor privoxy proxychains4 aptitude synaptic lolcat dialog golang-go graphviz virtualenv reaver bats openssl cargo cmake'
+    packages='python3-pip apt-transport-https curl libcurl4-openssl-dev libssl-dev jq ruby-full libcurl4-openssl-dev ruby libxml2 libxml2-dev libxslt1-dev ruby-dev dkms build-essential libgmp-dev hcxdumptool zlib1g-dev perl zsh fonts-powerline libio-socket-ssl-perl libdbd-sqlite3-perl libclass-dbi-perl libio-all-lwp-perl libparallel-forkmanager-perl libredis-perl libalgorithm-combinatorics-perl gem git cvs subversion bzr mercurial libssl-dev libffi-dev python-dev-is-python3 ruby-ffi-yajl python-setuptools libldns-dev rename docker.io parsero apache2 ssh tor privoxy proxychains4 aptitude synaptic lolcat dialog golang-go graphviz virtualenv reaver bats openssl cargo cmake'
     case $distro in
       Ubuntu)
         wget -O /tmp/go1.18.1.linux-amd64.tar.gz https://go.dev/dl/go1.18.1.linux-amd64.tar.gz
@@ -143,7 +145,7 @@ init_install() {
         ;;
       Kali)
         apt -y install kali-desktop-gnome
-        packages+=' hcxtools amass joomscan uniscan metagoofil gospider crackmapexec realtek-rtl88xxau-dkms arjun dnsgen s3scanner chromium'
+        packages+=' hcxtools amass joomscan uniscan metagoofil gospider crackmapexec arjun dnsgen s3scanner chromium'
         ;;
     esac
     apt -y install $packages

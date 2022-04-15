@@ -105,7 +105,7 @@ check_environments() {
 }
 
 update_tools() {
-  echo 'Aguarde um momento...'
+  echo 'wait a moment...'
   git -C "$workdir" pull --all
   for dir in /usr/local/*; do
     if [[ -d "$dir/.git" ]]; then
@@ -126,14 +126,14 @@ dg_menu() {
 }
 
 report_tools() {
-  tools[mrx]='Mrx Scan Subdomains|subfinder findomain-linux assetfinder|for log in "$logdir/"{assetfinder,findomain,subfinder}.log; do > "$log"; done; sleep 2;findomain-linux -q -t "$domain" > "$logdir/findomain.log"; sleep 2; subfinder -d "$domain" -silent -t 60 -o "$logdir/subfinder.log"; sleep 2; assetfinder -subs-only "$domain" > "$logdir/assetfinder.log"; sort -u "$logdir/"{assetfinder,findomain,subfinder}.log -o "$logfile"; httpx -silent < "$logfile" > "$logdir/${dtreport}httpx.log"'
-  tools[dirsearch]='Dirsearch|dirsearch|xargs -L1 python3 /usr/local/dirsearch/dirsearch.py -q -e php,asp,aspx,jsp,html,zip,jar -x 404-499,500-599 -w "$dicc" -t 50 --timeout 3 -o "$logfile" -u < <(httpx -silent <<< "$domain")'
-  tools[feroxbuster]='Feroxbuster Scan sub-directories|feroxbuster|feroxbuster -q -x php,asp,aspx,jsp,html,zip,jar -t 80 --proxy socks5h://127.0.0.1:9050 -n -w "$dicc" -o "$logfile" -u "$domain"'
+  tools[mrx]='Mrx Scan Subdomains|subfinder findomain-linux assetfinder|for log in "$logdir/"{assetfinder,findomain,subfinder}.log; do > "$log"; done; sleep 2;findomain-linux -q -t "$domain" > "$logdir/findomain.log"; sleep 2; subfinder -d "$domain" -silent -t 40 -o "$logdir/subfinder.log"; sleep 2; assetfinder -subs-only "$domain" > "$logdir/assetfinder.log"; sort -u "$logdir/"{assetfinder,findomain,subfinder}.log -o "$logfile"; httpx -silent < "$logfile" > "$logdir/${dtreport}httpx.log"'
+  tools[dirsearch]='Dirsearch|dirsearch|xargs -L1 python3 /usr/local/dirsearch/dirsearch.py -q -e php,aspx,jsp,html,zip,jar -x 404-499,500-599 -w "$dicc" --random-agent -o "$logfile" -u < <(httpx -silent <<< "$domain"); sleep 2'
+  tools[feroxbuster]='Feroxbuster Scan sub-directories|feroxbuster|feroxbuster -q -x php,asp,aspx,jsp,html,zip,jar -t 80 -n -w "$dicc" -o "$logfile" -u "$domain"'
   tools[whatweb]='Whatweb|whatweb|whatweb -q -t 60 --no-errors "$domain" --log-brief="$logfile"'
   tools[owasp]='Owasp Getallurls|waybackurls uro anew|cat "$logdir/${dtreport}httpx.log" | waybackurls | uro | anew | sort -u > "$logfile"'
   tools[crt]='Certificate Search|curl|curl -s "https://crt.sh/?q=%25.${domain}&output=json" | anew > "$logfile"'
   tools[nmap]='Nmap Ports|nmap|nmap -sS -sCV "$domain" -T4 -Pn -oN "$logfile"'
-  tools[fnmap]='Nmap|nmap|nmap -n -Pn -sS "$domain" -T4 --open -sV -oN "$logfile"'
+  tools[fnmap]='Nmap|nmap|nmap -n -Pn -sS "$domain" -T4 --open -sV -oN "$logdir/fnmap.log"'
 }
 
 report() {
@@ -371,12 +371,12 @@ run() {
     # Tools for report
     run_tools nmap
     [[ $anon_mode == 1 ]] && anonsurf start &> /dev/null
-    run_tools mrx whatweb crt owasp ${selection,,}
+    run_tools mrx whatweb owasp ${selection,,}
 
     ##
     # Search and report subdomains
     printf "\n\n${CBold}${CFGCyan}[${CFGWhite}+${CFGCyan}] Starting Scan on Subdomains${CReset}\n"
-    aquatone -chrome-path /usr/bin/chromium -scan-timeout 500 -screenshot-timeout 300000 -http-timeout 30000 -out "$logdir" -threads 5 -silent 2>>$logerr >/dev/null < "$logdir/${dtreport}mrx.log"
+    aquatone -chrome-path /usr/bin/chromium -thumbnail-size 1440,900 -silent -out "$logdir" 2>>$logerr >/dev/null < "$logdir/${dtreport}mrx.log"
     IFS='|' read app depends cmd <<< ${tools[dirsearch]}
     (
       while read domain && [[ $domain ]]; do
@@ -392,7 +392,7 @@ run() {
     (
       while read domain && [[ $domain ]]; do
         logfile="$logdir/${dtreport}${domain}nmap.log"
-        result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s normal -m "NMAP $domain"
+        result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s normal -m "Nmap $domain"
       done < "$logdir/${dtreport}mrx.log"
     )
     report

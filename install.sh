@@ -129,7 +129,7 @@ init_install() {
     rm -f $HOME/.local/.arno_init_install_successful
   fi
   # REQUIREMENTS
-  print_message 'Ferramenta em script Bash Completa para Bug bounty ou Pentest ! Vai poupar seu Tempo na hora de configurar sua máquina para trabalhar.'
+  print_message 'Complete tool to install and configure various tools for pentesting.'
   printf "\n${CBold}${CFGWhite}=====================================================>${CReset}\n\n"
   if [[ ! -f $HOME/.local/.arno_init_install_successful ]]; then
     apt -y install python3-pip apt-transport-https curl libcurl4-openssl-dev libssl-dev virtualbox-guest-x11 jq ruby-full libcurl4-openssl-dev ruby virtualbox-guest-utils libxml2 libxml2-dev libxslt1-dev ruby-dev dkms build-essential libgmp-dev hcxdumptool zlib1g-dev perl zsh fonts-powerline libio-socket-ssl-perl libdbd-sqlite3-perl libclass-dbi-perl libio-all-lwp-perl libparallel-forkmanager-perl libredis-perl libalgorithm-combinatorics-perl gem git cvs subversion bzr mercurial build-essential libssl-dev libffi-dev python-dev-is-python3 ruby-ffi-yajl python-setuptools libldns-dev rename docker.io parsero apache2 ssh tor privoxy proxychains4 aptitude synaptic lolcat dialog golang-go graphviz virtualenv reaver bats openssl cargo cmake

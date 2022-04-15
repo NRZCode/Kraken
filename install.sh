@@ -65,13 +65,13 @@ banner_color() {
 
 banner() {
   logo='
-   █████████   ███████████   ██████   █████    ███████ ®   
-  ███░░░░░███ ░░███░░░░░███ ░░██████ ░░███   ███░░░░░███ 
+   █████████   ███████████   ██████   █████    ███████ ®
+  ███░░░░░███ ░░███░░░░░███ ░░██████ ░░███   ███░░░░░███
  ░███    ░███  ░███    ░███  ░███░███ ░███  ███     ░░███
  ░███████████  ░██████████   ░███░░███░███ ░███      ░███
  ░███░░░░░███  ░███░░░░░███  ░███ ░░██████ ░███      ░███
- ░███    ░███  ░███    ░███  ░███  ░░█████ ░░███     ███ 
- █████   █████ █████   █████ █████  ░░█████ ░░░███████░  
+ ░███    ░███  ░███    ░███  ░███  ░░█████ ░░███     ███
+ █████   █████ █████   █████ █████  ░░█████ ░░░███████░
 ░░░░░   ░░░░░ ░░░░░   ░░░░░ ░░░░░    ░░░░░    ░░░░░░░
                                        ➥ version: '$version''
 
@@ -139,11 +139,11 @@ init_install() {
         rm -rf /usr/local/go
         tar -C /usr/local -xzf /tmp/go1.18.1.linux-amd64.tar.gz
         ln -s /usr/local/go/bin/go /usr/local/bin/go
-        packages+='chromium-browser whois'
+        packages+=' chromium-browser whois'
         ;;
       Kali)
         apt -y install kali-desktop-gnome
-        packages+='hcxtools amass joomscan uniscan metagoofil gospider crackmapexec realtek-rtl88xxau-dkms arjun dnsgen s3scanner chromium'
+        packages+=' hcxtools amass joomscan uniscan metagoofil gospider crackmapexec realtek-rtl88xxau-dkms arjun dnsgen s3scanner chromium'
         ;;
     esac
     apt -y install $packages

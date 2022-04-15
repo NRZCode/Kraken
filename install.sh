@@ -64,26 +64,22 @@ banner_color() {
 }
 
 banner() {
-  logo=' █████╗ ██████╗ ███╗   ██╗ ██████╗
-██╔══██╗██╔══██╗████╗  ██║██╔═══██╗
-███████║██████╔╝██╔██╗ ██║██║   ██║
-██╔══██║██╔══██╗██║╚██╗██║██║   ██║
-██║  ██║██║  ██║██║ ╚████║╚██████╔╝
-╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝'
+  logo='
+   █████████   ███████████   ██████   █████    ███████ ®   
+  ███░░░░░███ ░░███░░░░░███ ░░██████ ░░███   ███░░░░░███ 
+ ░███    ░███  ░███    ░███  ░███░███ ░███  ███     ░░███
+ ░███████████  ░██████████   ░███░░███░███ ░███      ░███
+ ░███░░░░░███  ░███░░░░░███  ░███ ░░██████ ░███      ░███
+ ░███    ░███  ░███    ░███  ░███  ░░█████ ░░███     ███ 
+ █████   █████ █████   █████ █████  ░░█████ ░░░███████░  
+░░░░░   ░░░░░ ░░░░░   ░░░░░ ░░░░░    ░░░░░    ░░░░░░░
+                                       ➥ version: '$version''
+
   social="   A Reconaissance Tool's Collection.
-
-╔════════════════════════════════════╗
-║                                    ║
-║ https://t.me/PeakyBlindersW        ║
-║                                    ║
-║ https://github.com/DonatoReis/arno ║
-║                                    ║
-║      Discord Community             ║
-║ https://discord.gg/Z2C2CyVZFU      ║
-╚════════════════════════════════════╝
-                              version: $version
-
-Recode The Copyright Is Not Make You A Coder Dude"
+ https://t.me/PeakyBlindersW
+     〔Discord Community〕
+ https://discord.gg/Z2C2CyVZFU
+»» Recode The Copyright Is Not Make You A Coder Dude"
   [[ -x /usr/games/lolcat ]] &&
     /usr/games/lolcat <(printf "$logo\n$social\n") ||
     { banner_color "$logo"; echo "$social"; }

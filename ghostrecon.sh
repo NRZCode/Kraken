@@ -293,8 +293,8 @@ usage() {
  ██╔═██╗ ██╔══██╗██╔══██║██╔═██╗ ██╔══╝  ██║╚██╗██║
  ██║  ██╗██║  ██║██║  ██║██║  ██╗███████╗██║ ╚████║
  ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝®
-                                    version: $version                                  
-   
+                                    version: $version
+
 Usage: $basename [OPTIONS]
 
 Short Form	Long Form		Description
@@ -315,7 +315,7 @@ Short Form	Long Form		Description
 
 Example of use:
 kraken -d example.com -a off -n"
-	
+
   printf "${*:+$*\n}$usage\n"
   return 1
 }
@@ -324,15 +324,10 @@ init() {
   local OPTIND OPTARG
   load_ansi_colors
 
-  while [ -z "$domain" ]; do
-    banner
-    read -p 'Enter domain: ' domain
-#    if ! checkArgType domain domain "$domain"; then echo "$domain INVALID"; domain=''; fi
-  done
   export domain=${domain#@(ht|f)tp?(s)://}
 
   if [ -z "$domain" ]; then
-    usage; exit 1;
+    usage; return 1;
   fi
 }
 
@@ -427,11 +422,6 @@ main() {
     printf 'This script must be run as root!\nRun as:\n$ sudo ./%s\n' "$basename $*"
     exit 1
   fi
-  homedir=$HOME
-  if [[ $SUDO_USER ]]; then
-    SUDO_OPT="-H -E -u $SUDO_USER"
-    homedir=$(getent passwd $SUDO_USER|cut -d: -f6)
-  fi
   workdir=$dirname
   inifile="$workdir/package.ini"
 
@@ -442,14 +432,16 @@ main() {
   SECONDS=0
   read_package_ini
   report_tools
-  # Ferramentas não selecionáveis
-  # nmap sublist3r subfinder assetfinder amass
   mapfile -t dg_options < <(for tool in "${!descriptions[@]}"; do IFS='|' read t d <<< "${descriptions[$tool]}"; printf "%s\n%s\n$dg_checklist_mode\n" "$t" "$d"; done)
 
   [[ $update_mode == 1 ]] && update_tools
   shopt -s extglob
-  init
-  run
+  domains="$domain"
+  [[ -t 0 ]] || domains="$(</dev/stdin)"
+  while read domain && [[ $domain ]]; do
+    init
+    run
+  done <<< "$domains"
 }
 
 declare -A tools

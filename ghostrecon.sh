@@ -234,7 +234,7 @@ report() {
     s|{{host}}|$host|;
     s|{{whois}}|$whois|;
     s|{{download}}|$download|;
-    s|{{nmap-cvss}}|$nmap_cvs|;
+    s|{{nmap-cvss}}|$nmap_cvss|;
     s|{{nmap}}|${nmap//|/\\|}|;" "$workdir/resources/report.tpl" > "$logdir/${dtreport}report-01.html"
   ##
   # Compact reports

@@ -219,6 +219,14 @@ report() {
   host=$(host "$domain"|sed -z 's/\n/\\n/g')
   whois=$(whois "$domain"|sed -z 's/\n/\\n/g')
   nmap=$(sed -z 's/\n/\\n/g' "$logdir/${dtreport}nmap.log")
+  nmap_cvss=$(
+    while read p cve score url; do
+      if [[ $p == '|' && $score =~ [0-9]+\.[0-9] ]]; then
+        url=$(sed -E 's|((ht|f)tps?[^[:space:]]+)|<a href="\1" target="_blank">\1</a>|g' <<< "$url")
+        printf '<tr><td>%s</td><td>%s</td><td>%s</td></tr>' "$cve" "$score" "$url"
+      fi
+    done < "$logdir/${dtreport}nmap-cvss.log"
+  )
   sed "s|{{domain}}|$domain|g;
     s|{{datetime}}|$datetime|;
     s|{{subdomains}}|$tbody|;
@@ -364,7 +372,7 @@ run() {
     banner
 
     # Tools for report
-    run_tools nmap
+    run_tools nmap nmap-cvss
     [[ $anon_mode == 1 ]] && anonsurf start &> /dev/null
     run_tools mrx whatweb owasp ${selection,,}
 

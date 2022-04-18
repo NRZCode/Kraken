@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 APP='Kraken'
-version=0.0.15
+version=0.0.17
 
 # ANSI Colors
 function load_ansi_colors() {
@@ -199,7 +199,7 @@ report() {
       (
         sed '1,/{{subdomains}}/!d; s/{{subdomains}}.*/\n/' "$workdir/resources/subreport.tpl"
         while read code method lines words chars url; do
-          url=$(sed -E 's|((ht|f)tps?[^[:space:]]+)|<a href="\1" target="_blank">\1</a>|g' <<< "$url")
+          url=$(sed -E 's@((ht|f)tps?[^[:space:]]+)@<a href="\1" target="_blank">\1</a>@g' <<< "$url")
           printf '<tr><td>%s</td><td>%s</td><td>%s</td></tr>' "$code" "$lines $words $chars" "$url"
         done < <(grep -Ev '^(#|$)' "$logfile")
         sed '/{{subdomains}}/,$!d; s/.*{{subdomains}}/\n/' "$workdir/resources/subreport.tpl"

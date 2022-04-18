@@ -100,7 +100,7 @@
         <script src='https://nrzcode.github.io/assets/wp-content/plugins/visualizer/js/lib/datatables.min.js?ver=3.6.1' id='visualizer-datatables-js'></script>
 
         <script>$(document).ready(function () {
-                $("#tsubdomains").DataTable({
+                $("#tsubdomains,#tnmap-cvss").DataTable({
                     "paging": true,
                     "ordering": true,
                     "info": false,
@@ -440,9 +440,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                                             <table id="tnmap-cvss">
                                                                                 <thead>
                                                                                     <tr>
-                                                                                        <th>#</th>
-                                                                                        <th>#</th>
-                                                                                        <th>#</th>
+                                                                                        <th>CVE</th>
+                                                                                        <th>Score</th>
+                                                                                        <th>Url</th>
                                                                                     </tr>
                                                                                 </thead>
                                                                                 <tfoot></tfoot>

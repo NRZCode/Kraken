@@ -222,7 +222,7 @@ report() {
   nmap_cvss=$(
     while read p cve score url; do
       if [[ $p == '|' && $score =~ [0-9]+\.[0-9] ]]; then
-        url=$(sed -E 's|((ht|f)tps?[^[:space:]]+)|<a href="\1" target="_blank">\1</a>|g' <<< "$url")
+        url=$(sed -E 's@((ht|f)tps?[^[:space:]]+)@<a href="\1" target="_blank">\1</a>@g' <<< "$url")
         printf '<tr><td>%s</td><td>%s</td><td>%s</td></tr>' "$cve" "$score" "$url"
       fi
     done < "$logdir/${dtreport}nmap-cvss.log"

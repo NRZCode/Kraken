@@ -219,23 +219,24 @@ report() {
   host=$(host "$domain"|sed -z 's/\n/\\n/g')
   whois=$(whois "$domain"|sed -z 's/\n/\\n/g')
   nmap=$(sed -z 's/\n/\\n/g' "$logdir/${dtreport}nmap.log")
-  nmap_cvss=$(
+  (
+    sed '1,/{{nmap-cvss}}/!d; s/{{nmap-cvss}}.*/\n/' "$workdir/resources/report.tpl"
     while read p cve score url; do
-      if [[ $p == '|' && $score =~ [0-9]+\.[0-9] ]]; then
+      if [[ $p == '|' && $score =~ [0-9]+\.[0-9] && $url =~ (ht|f)tp ]]; then
         url=$(sed -E 's@((ht|f)tps?[^[:space:]]+)@<a href="\1" target="_blank">\1</a>@g' <<< "$url")
         printf '<tr><td>%s</td><td>%s</td><td>%s</td></tr>' "$cve" "$score" "$url"
       fi
     done < "$logdir/${dtreport}nmap-cvss.log"
-  )
-  sed "s|{{domain}}|$domain|g;
+    sed '/{{nmap-cvss}}/,$!d; s/.*{{nmap-cvss}}/\n/' "$workdir/resources/report.tpl"
+  ) > "$logdir/${dtreport}report-01.html"
+  sed -i "s|{{domain}}|$domain|g;
     s|{{datetime}}|$datetime|;
     s|{{subdomains}}|$tbody|;
     s|{{dig}}|$dig|;
     s|{{host}}|$host|;
     s|{{whois}}|$whois|;
     s|{{download}}|$download|;
-    s|{{nmap-cvss}}|$nmap_cvss|;
-    s|{{nmap}}|${nmap//|/\\|}|;" "$workdir/resources/report.tpl" > "$logdir/${dtreport}report-01.html"
+    s|{{nmap}}|${nmap//|/\\|}|;" "$logdir/${dtreport}report-01.html"
   ##
   # Compact reports
   cp $logdir/${dtreport}report-01.html $logdir/report.html

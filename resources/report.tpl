@@ -349,7 +349,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                                                         </div>
                                                                                         <div class="counter-content">
                                                                                             <p class="iq-counter-info">
-                                                                                                <span class="timer" data-to="6" data-speed="5000">6</span>
+                                                                                                <span class="timer" data-to="{{subdomains-qtde}}" data-speed="5000">{{subdomains-qtde}}</span>
                                                                                                 <span class="counter-after-content"></span>
                                                                                                 <span class="counter-symbol"></span>
                                                                                             </p>
@@ -370,7 +370,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                                                         </div>
                                                                                         <div class="counter-content">
                                                                                             <p class="iq-counter-info">
-                                                                                                <span class="timer" data-to="9.4" data-speed="5000">9,4</span>
+                                                                                                <span class="timer" data-to="{{max-score}}" data-speed="5000">{{max-score}}</span>
                                                                                                 <span class="counter-after-content"></span>
                                                                                                 <span class="counter-symbol"></span>
                                                                                             </p>
@@ -391,7 +391,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                                                         </div>
                                                                                         <div class="counter-content">
                                                                                             <p class="iq-counter-info">
-                                                                                                <span class="timer" data-to="60589" data-speed="5000">60589</span>
+                                                                                                <span class="timer" data-to="{{scanned-urls}}" data-speed="5000">{{scanned-urls}}</span>
                                                                                                 <span class="counter-after-content"></span>
                                                                                                 <span class="counter-symbol"></span>
                                                                                             </p>

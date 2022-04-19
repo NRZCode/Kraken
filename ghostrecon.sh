@@ -167,6 +167,7 @@ report() {
   while read subdomain && [[ $subdomain ]]; do
     logfile="$logdir/${dtreport}${subdomain/:\/\//.}.log"
     n=$(($([[ -f "$logfile" ]] && wc -l < "$logfile" 2>&-)))
+    ((scanned_urls+=n))
     href='#'
     if [[ $n -gt 0 ]]; then
       href="${dtreport}${subdomain/:\/\//.}.html"
@@ -212,6 +213,7 @@ report() {
         s|{{host}}|$host|;" "$logdir/$href"
     fi
     tbody+=$(printf "<tr><td><a href='%s'>%s</a></td><td>%s</td></tr>" "$href" "$subdomain" "$n")
+    ((subdomains_qtde++))
   done < "$logdir/${dtreport}httpx.log"
   ##
   # Domain report
@@ -219,6 +221,7 @@ report() {
   host=$(host "$domain"|sed -z 's/\n/\\n/g')
   whois=$(whois "$domain"|sed -z 's/\n/\\n/g')
   nmap=$(sed -z 's/\n/\\n/g' "$logdir/${dtreport}nmap.log")
+  max_score=$(awk '{if (max < $3) max=$3} END {print max}' "$logdir/${dtreport}nmap-cvss.log")
   (
     sed '1,/{{nmap-cvss}}/!d; s/{{nmap-cvss}}.*/\n/' "$workdir/resources/report.tpl"
     while read p cve score url; do
@@ -235,6 +238,9 @@ report() {
     s|{{dig}}|$dig|;
     s|{{host}}|$host|;
     s|{{whois}}|$whois|;
+    s|{{scanned-urls}}|$scanned_urls|g;
+    s|{{subdomains-qtde}}|$subdomains_qtde|g;
+    s|{{max-score}}|$max_score|g;
     s|{{download}}|$download|;
     s|{{nmap}}|${nmap//|/\\|}|;" "$logdir/${dtreport}report-01.html"
   ##

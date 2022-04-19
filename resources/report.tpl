@@ -304,6 +304,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     <canvas id="canvas1" class="banner-bg"></canvas>
     <div id="page" class="site vertical-site-content">
+        <div class="responsive-vertical-logo-btn" id="responsive-logo-btn">
+            <div class="container-fluid">
+              <div class="row align-items-center">
+                <div class="col-6">
+                  <a class="vertical-navbar-brand" href="#">
+
+                          <img class="img-fluid logo" src="https://nrzcode.github.io/assets/img/logo.png" alt="GhostRecon">         </a>
+                </div>
+
+                <div class="col-6 text-right">
+                </div>
+              </div>
+            </div>
+          </div>
         <a class="skip-link screen-reader-text" href="#content"></a>
         <div class="site-content-contain">
             <div id="content" class="site-content"><div id="primary" class="content-area">

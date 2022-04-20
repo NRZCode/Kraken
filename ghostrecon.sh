@@ -125,6 +125,13 @@ dg_menu() {
   selection=$("${dg[@]}" "${dg_options[@]}")
 }
 
+nmap_report() {
+  local file=$1
+  awk '/^PORT/{flag=1} /^Service/{flag=0} flag {printf "%s\\n", $0}' "$file"
+}
+
+domain_info_report() [[ $1 == @(host|whois|dig) ]] && $1 "$2" | sed -z 's/\n/\\n/g'
+
 report_tools() {
   tools[mrx]='Mrx Scan Subdomains|subfinder findomain-linux assetfinder|for log in "$logdir/"{assetfinder,findomain,subfinder}.log; do > "$log"; done; sleep 5;findomain-linux -q -t "$domain" > "$logdir/findomain.log"; sleep 5; subfinder -d "$domain" -silent -t 40 -o "$logdir/subfinder.log"; sleep 5; assetfinder -subs-only "$domain" > "$logdir/assetfinder.log"; sort -u "$logdir/"{assetfinder,findomain,subfinder}.log -o "$logfile"; httpx -silent < "$logfile" > "$logdir/${dtreport}httpx.log"'
   tools[dirsearch]='Dirsearch|dirsearch|xargs -L1 python3 /usr/local/dirsearch/dirsearch.py -q -e php,aspx,jsp,html,zip,jar -x 404-499,500-599 -w "$dicc" --random-agent -o "$logfile" -u < <(httpx -silent <<< "$domain"); sleep 5'
@@ -171,8 +178,8 @@ report() {
     href='#'
     if [[ $n -gt 0 ]]; then
       href="${dtreport}${subdomain/:\/\//.}.html"
-      host=$(host "${subdomain#@(ht|f)tp?(s)://}"|sed -z 's/\n/\\n/g')
-      nmap=$(sed -z 's/\n/\\n/g' "$logdir/${dtreport}${subdomain#@(ht|f)tp?(s)://}nmap.log")
+      host=$(domain_info_report host "${subdomain#@(ht|f)tp?(s)://}")
+      nmap=$(nmap_report "$logdir/${dtreport}${subdomain#@(ht|f)tp?(s)://}nmap.log")
       screenshots=$(
       for f in $logdir/screenshots/*${subdomain//./_}*png; do
         re="(https?)__${subdomain//./_}__(([0-9]+)__)?[[:alnum:]]+\.png"
@@ -217,10 +224,10 @@ report() {
   done < "$logdir/${dtreport}httpx.log"
   ##
   # Domain report
-  dig=$(dig "$domain"|sed -z 's/\n/\\n/g')
-  host=$(host "$domain"|sed -z 's/\n/\\n/g')
-  whois=$(whois "$domain"|sed -z 's/\n/\\n/g')
-  nmap=$(sed -z 's/\n/\\n/g' "$logdir/${dtreport}nmap.log")
+  dig=$(domain_info_report dig "$domain")
+  host=$(domain_info_report host "$domain")
+  whois=$(domain_info_report whois "$domain")
+  nmap=$(nmap_report "$logdir/${dtreport}nmap.log")
   max_score=$(awk '/^\|/{if (max < +$3) max=$3} END {print max}' "$logdir/${dtreport}nmap-cvss.log")
   (
     sed '1,/{{nmap-cvss}}/!d; s/{{nmap-cvss}}.*/\n/' "$workdir/resources/report.tpl"

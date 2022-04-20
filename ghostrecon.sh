@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 APP='Kraken'
-version=0.0.17
+version=0.0.19
 
 # ANSI Colors
 function load_ansi_colors() {
@@ -221,7 +221,7 @@ report() {
   host=$(host "$domain"|sed -z 's/\n/\\n/g')
   whois=$(whois "$domain"|sed -z 's/\n/\\n/g')
   nmap=$(sed -z 's/\n/\\n/g' "$logdir/${dtreport}nmap.log")
-  max_score=$(awk '{if (max < $3) max=$3} END {print max}' "$logdir/${dtreport}nmap-cvss.log")
+  max_score=$(awk '/^\|/{if (max < +$3) max=$3} END {print max}' "$logdir/${dtreport}nmap-cvss.log")
   (
     sed '1,/{{nmap-cvss}}/!d; s/{{nmap-cvss}}.*/\n/' "$workdir/resources/report.tpl"
     while read p cve score url; do
@@ -233,6 +233,7 @@ report() {
     sed '/{{nmap-cvss}}/,$!d; s/.*{{nmap-cvss}}/\n/' "$workdir/resources/report.tpl"
   ) > "$logdir/${dtreport}report-01.html"
   sed -i "s|{{domain}}|$domain|g;
+    s|{{app}}|$APP|;
     s|{{datetime}}|$datetime|;
     s|{{subdomains}}|$tbody|;
     s|{{dig}}|$dig|;
@@ -406,7 +407,7 @@ run() {
     report
 
     user_notification
-    elapsedtime 'TOTAL Reconaissance'
+    elapsedtime 'TOTAL Reconnaissance'
     return 0
   fi
 

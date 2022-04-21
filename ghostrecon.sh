@@ -153,26 +153,10 @@ report() {
   download=${dtreport}${domain}.zip
   ##
   # Page reports
-  side=1
-  page=2
-  while read paginate; do
-    printf -v report '%sreport-%02d.html' $dtreport $page
-    pagination+="<a style='margin-left: 1em' href='$report'>Página $((page++))</a>"
-    (
-      sed "s|{{datetime}}|$datetime|;
-        s|{{download}}|$download|;
-        s|{{domain}}|$domain|g" "$workdir/resources/pagereport.tpl"
-      while read tools; do
-        for t in $tools; do
-          echo -n "<div><h2>$t</h2></div><pre>$(<${pagereports[$t]})</pre>"
-        done
-        ((side % 2)) && echo -n '</div></article><article class="post-container-right" itemscope="" itemtype="http://schema.org/BlogPosting"><header class="post-header"></header><div class="post-content clearfix" itemprop="articleBody">'
-        ((side++))
-      done < <(xargs -n3 <<< $paginate)
-      echo '</div></article></div></div></div></body></html>'
-    ) > "$logdir/$report"
-  done < <(xargs -n6 <<< ${!pagereports[@]})
-  [[ $pagination ]] && pagination="<a style='margin-left: 1em' href='report.html'>Página 1</a>$pagination"
+  unset pagereports[nmap]
+  for report in "${!pagereports[@]}"; do
+    [[ -s ${pagereports[$report]} ]] || unset pagereports[$report]
+  done
   ##
   # Subdomains reports
   while read subdomain && [[ $subdomain ]]; do
@@ -242,10 +226,31 @@ report() {
       fi
     done < "$logdir/${dtreport}nmap-cvss.log"
     sed '/{{nmap-cvss}}/,$!d; s/.*{{nmap-cvss}}/\n/' "$workdir/resources/report.tpl"
+  ) > "$logdir/temp.tpl"
+  ##
+  # Cards report
+  (
+    sed '1,/{{cards-reports}}/!d; s/{{cards-reports}}.*/\n/' "$logdir/temp.tpl"
+    while read paginate; do
+      i=1
+      while read cards; do
+        sed '1,/{{row}}/!d; s/{{row}}.*/\n/' "$workdir/resources/card-row.tpl"
+        for card in $cards; do
+          printf -v template "$workdir/resources/card-%02d.tpl" $((i++))
+          sed "1,/{{logfile}}/!d; s/{{title}}/${card^}/; s/{{logfile}}.*/\n/" "$template"
+          cat "${pagereports[$card]}"
+          sed '/{{logfile}}/,$!d; s/.*{{logfile}}/\n/' "$template"
+        done
+        sed '/{{row}}/,$!d; s/.*{{row}}/\n/' "$workdir/resources/card-row.tpl"
+      done < <(xargs -n2 <<< $paginate)
+    done < <(xargs -n4 <<< ${!pagereports[@]})
+    sed '/{{cards-reports}}/,$!d; s/.*{{cards-reports}}/\n/' "$logdir/temp.tpl"
   ) > "$logdir/${dtreport}report-01.html"
+  rm "$logdir/temp.tpl"
   sed -i "s|{{domain}}|$domain|g;
     s|{{app}}|$APP|;
     s|{{datetime}}|$datetime|;
+    s|{{year}}|$(date +%Y)|;
     s|{{subdomains}}|$tbody|;
     s|{{dig}}|$dig|;
     s|{{host}}|$host|;

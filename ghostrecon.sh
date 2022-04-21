@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 APP='Kraken'
-version=0.0.19
+version=0.0.20
 
 # ANSI Colors
 function load_ansi_colors() {
@@ -130,7 +130,11 @@ nmap_report() {
   awk '/^PORT/{flag=1} /^Service/{flag=0} flag {printf "%s\\n", $0}' "$file"
 }
 
-domain_info_report() [[ $1 == @(host|whois|dig) ]] && $1 "$2" | sed -z 's/\n/\\n/g'
+domain_info_report() {
+  if [[ $1 == @(host|whois|dig) ]]; then
+    $1 "$2" | sed -z 's/\n/\\n/g'
+  fi
+}
 
 report_tools() {
   tools[mrx]='Mrx Scan Subdomains|subfinder findomain-linux assetfinder|for log in "$logdir/"{assetfinder,findomain,subfinder}.log; do > "$log"; done; sleep 5;findomain-linux -q -t "$domain" > "$logdir/findomain.log"; sleep 5; subfinder -d "$domain" -silent -t 40 -o "$logdir/subfinder.log"; sleep 5; assetfinder -subs-only "$domain" > "$logdir/assetfinder.log"; sort -u "$logdir/"{assetfinder,findomain,subfinder}.log -o "$logfile"; httpx -silent < "$logfile" > "$logdir/${dtreport}httpx.log"'

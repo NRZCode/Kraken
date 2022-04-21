@@ -127,7 +127,7 @@ dg_menu() {
 
 nmap_report() {
   local file=$1
-  awk '/^PORT/{flag=1} /^Service/{flag=0} flag {printf "%s\\n", $0}' "$file"
+  awk '/^PORT/{flag=1} /^Service/{flag=0} flag {gsub(/\|/, "\\|"); printf "%s\\n", $0}' "$file"
 }
 
 domain_info_report() {
@@ -153,7 +153,6 @@ report() {
   download=${dtreport}${domain}.zip
   ##
   # Page reports
-  unset pagereports[nmap] pagereports[nmap-cvss]
   for report in "${!pagereports[@]}"; do
     [[ -s ${pagereports[$report]} ]] || unset pagereports[$report]
   done
@@ -204,7 +203,7 @@ report() {
         s|{{datetime}}|$datetime|;
         s|{{screenshots}}|$screenshots|;
         s|{{response-headers}}|$response_headers|;
-        s|{{nmap}}|${nmap//|/\\|}|;
+        s|{{nmap}}|$nmap|;
         s|{{host}}|$host|;" "$logdir/$href"
     fi
     tbody+=$(printf "<tr><td><a href='%s'>%s</a></td><td>%s</td></tr>" "$href" "$subdomain" "$n")
@@ -227,6 +226,7 @@ report() {
     done < "$logdir/${dtreport}nmap-cvss.log"
     sed '/{{nmap-cvss}}/,$!d; s/.*{{nmap-cvss}}/\n/' "$workdir/resources/report.tpl"
   ) > "$logdir/temp.tpl"
+  unset pagereports[nmap] pagereports[nmap-cvss]
   ##
   # Cards report
   (
@@ -259,7 +259,7 @@ report() {
     s|{{subdomains-qtde}}|$subdomains_qtde|g;
     s|{{max-score}}|$max_score|g;
     s|{{download}}|$download|;
-    s|{{nmap}}|${nmap//|/\\|}|;" "$logdir/${dtreport}report-01.html"
+    s|{{nmap}}|$nmap|;" "$logdir/${dtreport}report-01.html"
   ##
   # Compact reports
   cp $logdir/${dtreport}report-01.html $logdir/report.html

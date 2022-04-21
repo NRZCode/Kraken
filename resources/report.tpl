@@ -503,7 +503,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                         <div class="elementor-widget-wrap elementor-element-populated">
                                                             <div class="elementor-element elementor-element-602a2db5 elementor-invisible elementor-widget elementor-widget-bubble_chart" data-id="602a2db5" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;fadeInLeft&quot;}" data-widget_type="bubble_chart.default">
                                                                 <div class="elementor-widget-container">
-
                                                                     <div class="chart-card">
                                                                         <div class="">
                                                                             <h4 class="heading graphina-chart-heading" style="text-align: center; color: #FFFFFF;">Whois Info</h4>
@@ -520,7 +519,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                         <div class="elementor-widget-wrap elementor-element-populated">
                                                             <div class="elementor-element elementor-element-602a2db5 elementor-invisible elementor-widget elementor-widget-line_chart" data-id="48d16ba5" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;fadeInRight&quot;,&quot;_animation_delay&quot;:600}" data-widget_type="line_chart.default">
                                                                 <div class="elementor-widget-container">
-
                                                                     <div class="chart-card">
                                                                         <div class="">
                                                                             <h4 class="heading graphina-chart-heading" style="text-align: center;  color: #FFFFFF;">Dig Info</h4>
@@ -541,7 +539,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                         <div class="elementor-widget-wrap elementor-element-populated">
                                                             <div class="elementor-element elementor-element-1e43bd68 elementor-invisible elementor-widget elementor-widget-polar_chart" data-id="1e43bd68" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;fadeInUp&quot;,&quot;_animation_delay&quot;:300}" data-widget_type="polar_chart.default">
                                                                 <div class="elementor-widget-container">
-
                                                                     <div class="chart-card">
                                                                         <div class="">
                                                                             <h4 class="heading graphina-chart-heading" style="text-align: center; color: #FFFFFF;">Host Info</h4>
@@ -558,7 +555,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                         <div class="elementor-widget-wrap elementor-element-populated">
                                                             <div class="elementor-element elementor-element-7d48b111 elementor-invisible elementor-widget elementor-widget-donut_chart" data-id="7d48b111" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;fadeInUp&quot;,&quot;_animation_delay&quot;:600}" data-widget_type="donut_chart.default">
                                                                 <div class="elementor-widget-container">
-
                                                                     <div class="chart-card">
                                                                         <div class="">
                                                                             <h4 class="heading graphina-chart-heading" style="text-align: center; color: #FFFFFF;">NMAP Results</h4>
@@ -573,83 +569,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div data-marvy_enable_birds_animation="false" data-marvy_enable_cells_animation="false" data-marvy_enable_dots_animation="false" data-marvy_enable_fog_animation="false" data-marvy_enable_globe_animation="false" data-marvy_enable_halo_animation="false" data-marvy_enable_net_animation="false" data-marvy_enable_trunk_animation="false" data-marvy_enable_fluid_animation="false" data-marvy_enable_digitalStream_animation="false" data-marvy_enable_floating_heart_animation="false" data-marvy_enable_particles_wave_animation="false" data-marvy_enable_dna_animation="false" data-marvy_enable_drop_animation="false" data-marvy_enable_fancy_rotate="false" data-marvy_enable_flying_object="false" data-marvy_enable_ripples_animation="false" data-marvy_enable_waves_animation="false" data-marvy_enable_rings_animation="false" data-marvy_enable_topology_animation="false" data-marvy_enable_gradient_animation="false" data-marvy_enable_snow_animation="false" data-marvy_enable_firework_animation="false" class="elementor-section elementor-top-section elementor-element elementor-element-4137f17 elementor-section-boxed elementor-section-height-default elementor-section-height-default" data-id="4137f17" data-element_type="section">
-                                                <div class="elementor-container elementor-column-gap-default">
-                                                    <div class="elementor-column elementor-col-50 elementor-top-column elementor-element elementor-element-4c8ed024" data-id="4c8ed024" data-element_type="column">
-                                                        <div class="elementor-widget-wrap elementor-element-populated">
-                                                            <div class="elementor-element elementor-element-602a2db5 elementor-invisible elementor-widget elementor-widget-bubble_chart" data-id="602a2db5" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;fadeInLeft&quot;}" data-widget_type="bubble_chart.default">
-                                                                <div class="elementor-widget-container">
-
-                                                                    <div class="chart-card">
-                                                                        <div class="">
-                                                                            <h4 class="heading graphina-chart-heading" style="text-align: center; color: #FFFFFF;">Whois Info</h4>
-                                                                        </div>
-                                                                        <div class="">
-                                                                            <pre>{{whois}}</pre>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="elementor-column elementor-col-50 elementor-top-column elementor-element elementor-element-5f6ff11c" data-id="5f6ff11c" data-element_type="column">
-                                                        <div class="elementor-widget-wrap elementor-element-populated">
-                                                            <div class="elementor-element elementor-element-602a2db5 elementor-invisible elementor-widget elementor-widget-line_chart" data-id="48d16ba5" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;fadeInRight&quot;,&quot;_animation_delay&quot;:600}" data-widget_type="line_chart.default">
-                                                                <div class="elementor-widget-container">
-
-                                                                    <div class="chart-card">
-                                                                        <div class="">
-                                                                            <h4 class="heading graphina-chart-heading" style="text-align: center;  color: #FFFFFF;">Dig Info</h4>
-                                                                        </div>
-                                                                        <div class="">
-                                                                            <pre>{{dig}}</pre>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div data-marvy_enable_birds_animation="false" data-marvy_enable_cells_animation="false" data-marvy_enable_dots_animation="false" data-marvy_enable_fog_animation="false" data-marvy_enable_globe_animation="false" data-marvy_enable_halo_animation="false" data-marvy_enable_net_animation="false" data-marvy_enable_trunk_animation="false" data-marvy_enable_fluid_animation="false" data-marvy_enable_digitalStream_animation="false" data-marvy_enable_floating_heart_animation="false" data-marvy_enable_particles_wave_animation="false" data-marvy_enable_dna_animation="false" data-marvy_enable_drop_animation="false" data-marvy_enable_fancy_rotate="false" data-marvy_enable_flying_object="false" data-marvy_enable_ripples_animation="false" data-marvy_enable_waves_animation="false" data-marvy_enable_rings_animation="false" data-marvy_enable_topology_animation="false" data-marvy_enable_gradient_animation="false" data-marvy_enable_snow_animation="false" data-marvy_enable_firework_animation="false" class="elementor-section elementor-top-section elementor-element elementor-element-43f4db83 elementor-section-boxed elementor-section-height-default elementor-section-height-default" data-id="43f4db83" data-element_type="section">
-                                                <div class="elementor-container elementor-column-gap-default">
-                                                    <div class="elementor-column elementor-col-50 elementor-top-column elementor-element elementor-element-5a40950a" data-id="5a40950a" data-element_type="column">
-                                                        <div class="elementor-widget-wrap elementor-element-populated">
-                                                            <div class="elementor-element elementor-element-1e43bd68 elementor-invisible elementor-widget elementor-widget-polar_chart" data-id="1e43bd68" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;fadeInUp&quot;,&quot;_animation_delay&quot;:300}" data-widget_type="polar_chart.default">
-                                                                <div class="elementor-widget-container">
-
-                                                                    <div class="chart-card">
-                                                                        <div class="">
-                                                                            <h4 class="heading graphina-chart-heading" style="text-align: center; color: #FFFFFF;">Host Info</h4>
-                                                                        </div>
-                                                                        <div class="">
-                                                                            <pre>{{host}}</pre>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="elementor-column elementor-col-50 elementor-top-column elementor-element elementor-element-437c1cd7" data-id="437c1cd7"                             data-element_type="column">
-                                                        <div class="elementor-widget-wrap elementor-element-populated">
-                                                            <div class="elementor-element elementor-element-7d48b111 elementor-invisible elementor-widget elementor-widget-donut_chart" data-id="7d48b111" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;fadeInUp&quot;,&quot;_animation_delay&quot;:600}" data-widget_type="donut_chart.default">
-                                                                <div class="elementor-widget-container">
-
-                                                                    <div class="chart-card">
-                                                                        <div class="">
-                                                                            <h4 class="heading graphina-chart-heading" style="text-align: center; color: #FFFFFF;">NMAP Results</h4>
-                                                                        </div>
-                                                                        <div class="">
-                                                                            <pre>{{nmap}}</pre>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
+                                            {{cards-reports}}
                                             <section data-marvy_enable_birds_animation="false" data-marvy_enable_cells_animation="false" data-marvy_enable_dots_animation="false" data-marvy_enable_fog_animation="false" data-marvy_enable_globe_animation="false" data-marvy_enable_halo_animation="false" data-marvy_enable_net_animation="false" data-marvy_enable_trunk_animation="false" data-marvy_enable_fluid_animation="false" data-marvy_enable_digitalStream_animation="false" data-marvy_enable_floating_heart_animation="false" data-marvy_enable_particles_wave_animation="false" data-marvy_enable_dna_animation="false" data-marvy_enable_drop_animation="false" data-marvy_enable_fancy_rotate="false" data-marvy_enable_flying_object="false" data-marvy_enable_ripples_animation="true" data-marvy_ripples_animation_circle_color="#2F74C5" data-marvy_ripples_animation_circle_position="top" data-marvy_ripples_animation_circle_size="50" data-marvy_enable_waves_animation="false" data-marvy_enable_rings_animation="false" data-marvy_enable_topology_animation="false" data-marvy_enable_gradient_animation="false" data-marvy_enable_snow_animation="false" data-marvy_enable_firework_animation="false" class="elementor-section elementor-top-section elementor-element elementor-element-f2b1714 elementor-section-full_width elementor-section-height-min-height elementor-section-stretched elementor-section-height-default elementor-section-items-middle" data-id="f2b1714" data-element_type="section" data-settings="{&quot;stretch_section&quot;:&quot;section-stretched&quot;}">
                                                 <div class="elementor-container elementor-column-gap-default">
                                                     <div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-368e323" data-id="368e323" data-element_type="column">
@@ -682,7 +602,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <div class="pt-3 pb-3">
                             <div class="row flex-row-reverse justify-content-between">
                                 <div class="col-md-12 text-center">
-                                    <span class="copyright">Copyright 2021 umetric All Rights Reserved.</span>
+                                    <span class="copyright">Copyright {{year}} All Rights Reserved.</span>
                                 </div>
                             </div>
                         </div>
@@ -818,5 +738,4 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <script src='https://nrzcode.github.io/assets/wp-content/plugins/elementor/assets/js/frontend.min.js?ver=3.3.1' id='elementor-frontend-js'></script>
     <script src='https://nrzcode.github.io/assets/wp-content/plugins/elementor/assets/js/preloaded-modules.min.js?ver=3.3.1' id='preloaded-modules-js'></script>
 </body>
-
 </html>

@@ -153,7 +153,7 @@ report() {
   download=${dtreport}${domain}.zip
   ##
   # Page reports
-  unset pagereports[nmap]
+  unset pagereports[nmap] pagereports[nmap-cvss]
   for report in "${!pagereports[@]}"; do
     [[ -s ${pagereports[$report]} ]] || unset pagereports[$report]
   done

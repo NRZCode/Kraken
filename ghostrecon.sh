@@ -169,6 +169,7 @@ risk_rating_levels() {
   level_medium=(${scores[2]} ${scores[3]})
   level_low=(${scores[4]} ${scores[5]})
   level_info=(${scores[6]} ${scores[7]})
+  declare -p level_{high,medium,low,info} > /tmp/debug
   max_score=${scores[8]}
 }
 

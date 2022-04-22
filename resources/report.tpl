@@ -287,24 +287,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             }
         </style>
         <style>
-            .elementor-element.elementor-element-27517a4 .iq-progressbar-box .show-progress,
-            .elementor-element.elementor-element-27517a4 .iq-progressbar-style-4 .progress-value,
-            .elementor-element.elementor-element-27517a4 .iq-progressbar-style-4 .progress-value::before {
+            elementor-element.elementor-element-27517a4 .iq-progressbar-box .show-progress {
                 background-color: #00D2FF;
             }
-            .elementor-element.elementor-element-27517a3 .iq-progressbar-box .show-progress,
-            .elementor-element.elementor-element-27517a3 .iq-progressbar-style-3 .progress-value,
-            .elementor-element.elementor-element-27517a3 .iq-progressbar-style-3 .progress-value::before {
-                background-color: #CAB92E;
-            }
-            .elementor-element.elementor-element-27517a2 .iq-progressbar-box .show-progress,
-            .elementor-element.elementor-element-27517a2 .iq-progressbar-style-2 .progress-value,
-            .elementor-element.elementor-element-27517a2 .iq-progressbar-style-2 .progress-value::before {
+            .elementor-element.elementor-element-27517a3 .iq-progressbar-box .show-progress {
                 background-color: #269B1C;
             }
-            .elementor-element.elementor-element-27517a1 .iq-progressbar-box .show-progress,
-            .elementor-element.elementor-element-27517a1 .iq-progressbar-style-1 .progress-value,
-            .elementor-element.elementor-element-27517a1 .iq-progressbar-style-1 .progress-value::before {
+            .elementor-element.elementor-element-27517a2 .iq-progressbar-box .show-progress {
+                background-color: #CAB92E;
+            }
+            .elementor-element.elementor-element-27517a1 .iq-progressbar-box .show-progress {
                 background-color: #F94F58;
             }
         </style>
@@ -468,7 +460,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                             </div>
                                                             <div class="elementor-element elementor-element-27517a2 elementor-widget elementor-widget-iqonic_progressbar" data-id="27517a2" data-element_type="widget" data-settings="{&quot;flip_back_back_background&quot;:&quot;classic&quot;}" data-widget_type="iqonic_progressbar.default">
                                                                 <div class="elementor-widget-container">
-                                                                    <div class="iq-progressbar-box iq-progressbar-style-2">
+                                                                    <div class="iq-progressbar-box iq-progressbar-style-1">
                                                                         <div class="iq-progressbar-content">
                                                                             <span class="progress-title">Medium</span>
                                                                             <span class="progress-value">{{count-medium}}</span>
@@ -481,10 +473,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                             </div>
                                                             <div class="elementor-element elementor-element-27517a3 elementor-widget elementor-widget-iqonic_progressbar" data-id="27517a3" data-element_type="widget" data-settings="{&quot;flip_back_back_background&quot;:&quot;classic&quot;}" data-widget_type="iqonic_progressbar.default">
                                                                 <div class="elementor-widget-container">
-                                                                    <div class="iq-progressbar-box iq-progressbar-style-3">
+                                                                    <div class="iq-progressbar-box iq-progressbar-style-1">
                                                                         <div class="iq-progressbar-content">
                                                                             <span class="progress-title">Low</span>
-                                                                            <span class="progress-value">{{count-low}}</span><div class="iq-progress-bar">
+                                                                            <span class="progress-value">{{count-low}}</span>
+                                                                            <div class="iq-progress-bar">
                                                                                 <span class="show-progress" data-percent="{{level-low}}" style="transition: width 2s ease 0s; width: {{level-low}}%;"></span>
                                                                             </div>
                                                                         </div>
@@ -493,7 +486,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                             </div>
                                                             <div class="elementor-element elementor-element-27517a4 elementor-widget elementor-widget-iqonic_progressbar" data-id="27517a4" data-element_type="widget" data-settings="{&quot;flip_back_back_background&quot;:&quot;classic&quot;}" data-widget_type="iqonic_progressbar.default">
                                                                 <div class="elementor-widget-container">
-                                                                    <div class="iq-progressbar-box iq-progressbar-style-4">
+                                                                    <div class="iq-progressbar-box iq-progressbar-style-1">
                                                                         <div class="iq-progressbar-content">
                                                                             <span class="progress-title">Info</span>
                                                                             <span class="progress-value">{{count-info}}</span>

@@ -128,31 +128,41 @@ dg_menu() {
 risk_rating_levels() {
   local file=$1
   scores=$(awk 'BEGIN {
-    level_high=0
-    level_medium=0
-    level_low=0
-    level_info=0
+    count_high=0
+    count_medium=0
+    count_low=0
+    count_info=0
     total=0
   }
   /^\|/ && $3 ~ /[0-9]+\.[0-9]/ {
     if (+$3 >= 10) {
-      level_high++
+      count_high++
     } else if (+$3 >= 7) {
-      level_medium++
+      count_medium++
     } else if (+$3 >= 4) {
-      level_low++
+      count_low++
     } else {
-      level_info++
+      count_info++
     }
     if (max < +$3)
       max=$3
     total++
   } END {
+    level_high=0
+    level_medium=0
+    level_low=0
+    level_info=0
+    if (total) {
+      level_high=100*count_high/total
+      level_medium=100*count_medium/total
+      level_low=100*count_low/total
+      level_info=100*count_info/total
+    }
     printf "%d %d\n%d %d\n%d %d\n%d %d\n%d\n",
-      level_high, 100*level_high/total,
-      level_medium, 100*level_medium/total,
-      level_low, 100*level_low/total,
-      level_info, 100*level_info/total,
+      count_high, level_high,
+      count_medium, level_medium,
+      count_low, level_low,
+      count_info, level_info,
       max
   }' "$file")
   level_high=(${scores[0]} ${scores[1]})

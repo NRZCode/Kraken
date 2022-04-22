@@ -286,6 +286,28 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 font-size: 14px;
             }
         </style>
+        <style>
+            .elementor-element.elementor-element-27517a4 .iq-progressbar-box .show-progress,
+            .elementor-element.elementor-element-27517a4 .iq-progressbar-style-4 .progress-value,
+            .elementor-element.elementor-element-27517a4 .iq-progressbar-style-4 .progress-value::before {
+                background-color: #00D2FF;
+            }
+            .elementor-element.elementor-element-27517a3 .iq-progressbar-box .show-progress,
+            .elementor-element.elementor-element-27517a3 .iq-progressbar-style-3 .progress-value,
+            .elementor-element.elementor-element-27517a3 .iq-progressbar-style-3 .progress-value::before {
+                background-color: #CAB92E;
+            }
+            .elementor-element.elementor-element-27517a2 .iq-progressbar-box .show-progress,
+            .elementor-element.elementor-element-27517a2 .iq-progressbar-style-2 .progress-value,
+            .elementor-element.elementor-element-27517a2 .iq-progressbar-style-2 .progress-value::before {
+                background-color: #269B1C;
+            }
+            .elementor-element.elementor-element-27517a1 .iq-progressbar-box .show-progress,
+            .elementor-element.elementor-element-27517a1 .iq-progressbar-style-1 .progress-value,
+            .elementor-element.elementor-element-27517a1 .iq-progressbar-style-1 .progress-value::before {
+                background-color: #F94F58;
+            }
+        </style>
     </head>
 
     <body data-spy="scroll" data-offset="80" class="page-template-default page page-id-4516 has-header-image page-two-column colors-light boxed_layout iq-dark-mode vertical-menu-collapsed elementor-default elementor-kit-5623 elementor-page elementor-page-4516">
@@ -306,18 +328,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <div id="page" class="site vertical-site-content">
         <div class="responsive-vertical-logo-btn" id="responsive-logo-btn">
             <div class="container-fluid">
-              <div class="row align-items-center">
-                <div class="col-6">
-                  <a class="" href="#">
+                <div class="row align-items-center">
+                    <div class="col-6">
+                        <a class="" href="#">
 
-                          <img class="img-fluid logo" src="https://nrzcode.github.io/assets/img/logo.png" alt="{{app}}">         </a>
-                </div>
+                            <img class="img-fluid logo" src="https://nrzcode.github.io/assets/img/logo.png" alt="{{app}}">         </a>
+                    </div>
 
-                <div class="col-6 text-right">
+                    <div class="col-6 text-right">
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
+        </div>
         <a class="skip-link screen-reader-text" href="#content"></a>
         <div class="site-content-contain">
             <div id="content" class="site-content"><div id="primary" class="content-area">
@@ -416,26 +438,72 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                    <!--
-                                                                    <div class="elementor-column elementor-col-25 elementor-inner-column elementor-element elementor-element-6983d4d" data-id="6983d4d" data-element_type="column">
-                                                                        <div class="elementor-widget-wrap elementor-element-populated">
-                                                                            <div class="elementor-element elementor-element-104ac20 elementor-invisible elementor-widget elementor-widget-iqonic_counter" data-id="104ac20" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;fadeInUp&quot;,&quot;_animation_delay&quot;:300}" data-widget_type="iqonic_counter.default">
-                                                                                <div class="elementor-widget-container">
-                                                                                    <div class="iq-counter  iq-counter-style-2">
-                                                                                        <div class="iq-counter-icon">
-                                                                                            <i aria-hidden="true" class="flaticon flaticon-flaticon flaticon-zip-file-document-variant"></i>
-                                                                                        </div>
-                                                                                        <div class="counter-content">
-                                                                                            <h6 class="counter-title-text">Download report</h6>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
+                                                                </div>
+                                                            </section>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div data-marvy_enable_birds_animation="false" data-marvy_enable_cells_animation="false" data-marvy_enable_dots_animation="false" data-marvy_enable_fog_animation="false" data-marvy_enable_globe_animation="false" data-marvy_enable_halo_animation="false" data-marvy_enable_net_animation="false" data-marvy_enable_trunk_animation="false" data-marvy_enable_fluid_animation="false" data-marvy_enable_digitalstream_animation="false" data-marvy_enable_floating_heart_animation="false" data-marvy_enable_particles_wave_animation="false" data-marvy_enable_dna_animation="false" data-marvy_enable_drop_animation="false" data-marvy_enable_fancy_rotate="false" data-marvy_enable_flying_object="false" data-marvy_enable_ripples_animation="false" data-marvy_enable_waves_animation="false" data-marvy_enable_rings_animation="false" data-marvy_enable_topology_animation="false" data-marvy_enable_gradient_animation="false" data-marvy_enable_snow_animation="false" data-marvy_enable_firework_animation="false" class="elementor-section elementor-top-section elementor-element elementor-element-72c3a417 elementor-section-boxed elementor-section-height-default elementor-section-height-default" data-id="72c3a417" data-element_type="section" data-settings="{&quot;background_background&quot;:&quot;classic&quot;}">
+                                                <div class="elementor-container elementor-column-gap-default">
+                                                    <div data-id="23042bad" data-element_type="column" data-settings="{&quot;animation&quot;:&quot;fadeInUp&quot;,&quot;animation_delay&quot;:800}" class="elementor-column elementor-col-100 elementor-inner-column elementor-element elementor-element-23042bad animated fadeInUp">
+                                                        <div class="elementor-widget-wrap elementor-element-populated">
+                                                            <div class="elementor-element elementor-element-4663d7d elementor-widget elementor-widget-heading" data-id="4663d7d" data-element_type="widget" data-widget_type="heading.default">
+                                                                <div class="elementor-widget-container">
+                                                                    <p class="elementor-heading-title elementor-size-default">Risk ratings</p>		
+                                                                </div>
+                                                            </div>
+                                                            <div class="elementor-element elementor-element-27517a1 elementor-widget elementor-widget-iqonic_progressbar" data-id="27517a1" data-element_type="widget" data-settings="{&quot;flip_back_back_background&quot;:&quot;classic&quot;}" data-widget_type="iqonic_progressbar.default">
+                                                                <div class="elementor-widget-container">
+                                                                    <div class="iq-progressbar-box iq-progressbar-style-1">
+                                                                        <div class="iq-progressbar-content">
+                                                                            <span class="progress-title">High</span>
+                                                                            <span class="progress-value">{{count-high}}</span>
+                                                                            <div class="iq-progress-bar">
+                                                                                <span class="show-progress" data-percent="{{level-high}}" style="transition: width 2s ease 0s; width: {{level-high}}%;"></span>
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                    -->
                                                                 </div>
-                                                            </section>
+                                                            </div>
+                                                            <div class="elementor-element elementor-element-27517a2 elementor-widget elementor-widget-iqonic_progressbar" data-id="27517a2" data-element_type="widget" data-settings="{&quot;flip_back_back_background&quot;:&quot;classic&quot;}" data-widget_type="iqonic_progressbar.default">
+                                                                <div class="elementor-widget-container">
+                                                                    <div class="iq-progressbar-box iq-progressbar-style-2">
+                                                                        <div class="iq-progressbar-content">
+                                                                            <span class="progress-title">Medium</span>
+                                                                            <span class="progress-value">{{count-medium}}</span>
+                                                                            <div class="iq-progress-bar">
+                                                                                <span class="show-progress" data-percent="{{level-medium}}" style="transition: width 2s ease 0s; width: {{level-medium}}%;"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="elementor-element elementor-element-27517a3 elementor-widget elementor-widget-iqonic_progressbar" data-id="27517a3" data-element_type="widget" data-settings="{&quot;flip_back_back_background&quot;:&quot;classic&quot;}" data-widget_type="iqonic_progressbar.default">
+                                                                <div class="elementor-widget-container">
+                                                                    <div class="iq-progressbar-box iq-progressbar-style-3">
+                                                                        <div class="iq-progressbar-content">
+                                                                            <span class="progress-title">Low</span>
+                                                                            <span class="progress-value">{{count-low}}</span><div class="iq-progress-bar">
+                                                                                <span class="show-progress" data-percent="{{level-low}}" style="transition: width 2s ease 0s; width: {{level-low}}%;"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="elementor-element elementor-element-27517a4 elementor-widget elementor-widget-iqonic_progressbar" data-id="27517a4" data-element_type="widget" data-settings="{&quot;flip_back_back_background&quot;:&quot;classic&quot;}" data-widget_type="iqonic_progressbar.default">
+                                                                <div class="elementor-widget-container">
+                                                                    <div class="iq-progressbar-box iq-progressbar-style-4">
+                                                                        <div class="iq-progressbar-content">
+                                                                            <span class="progress-title">Info</span>
+                                                                            <span class="progress-value">{{count-info}}</span>
+                                                                            <div class="iq-progress-bar">
+                                                                                <span data-percent="{{level-info}}" class="show-progress" style="transition: width 2s ease 0s; width: {{level-info}}%;"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>

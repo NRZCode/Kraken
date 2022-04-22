@@ -125,6 +125,43 @@ dg_menu() {
   selection=$("${dg[@]}" "${dg_options[@]}")
 }
 
+risk_rating_levels() {
+  local file=$1
+  scores=$(awk 'BEGIN {
+    level_high=0
+    level_medium=0
+    level_low=0
+    level_info=0
+    total=0
+  }
+  /^\|/ && $3 ~ /[0-9]+\.[0-9]/ {
+    if (+$3 >= 10) {
+      level_high++
+    } else if (+$3 >= 7) {
+      level_medium++
+    } else if (+$3 >= 4) {
+      level_low++
+    } else {
+      level_info++
+    }
+    if (max < +$3)
+      max=$3
+    total++
+  } END {
+    printf "%d %d\n%d %d\n%d %d\n%d %d\n%d\n",
+      level_high, 100*level_high/total,
+      level_medium, 100*level_medium/total,
+      level_low, 100*level_low/total,
+      level_info, 100*level_info/total,
+      max
+  }' "$file")
+  level_high=(${scores[0]} ${scores[1]})
+  level_medium=(${scores[2]} ${scores[3]})
+  level_low=(${scores[4]} ${scores[5]})
+  level_info=(${scores[6]} ${scores[7]})
+  max_score=${scores[8]}
+}
+
 nmap_report() {
   local file=$1
   awk '/^PORT/{flag=1} /^Service/{flag=0} flag {gsub(/\|/, "\\|"); printf "%s\\n", $0}' "$file"
@@ -215,7 +252,7 @@ report() {
   host=$(domain_info_report host "$domain")
   whois=$(domain_info_report whois "$domain")
   nmap=$(nmap_report "$logdir/${dtreport}nmap.log")
-  max_score=$(awk '/^\|/ && $3 ~ /[0-9]+\.[0-9]/ {if (max < +$3) max=$3} END {print max}' "$logdir/${dtreport}nmap-cvss.log")
+  risk_rating_levels "$logdir/${dtreport}nmap-cvss.log"
   (
     sed '1,/{{nmap-cvss}}/!d; s/{{nmap-cvss}}.*/\n/' "$workdir/resources/report.tpl"
     while read p cve score url; do
@@ -257,6 +294,14 @@ report() {
     s|{{whois}}|$whois|;
     s|{{scanned-urls}}|$scanned_urls|g;
     s|{{subdomains-qtde}}|$subdomains_qtde|g;
+    s|{{count-high}}|${level_high[0]}|g;
+    s|{{level-high}}|${level_high[1]}|g;
+    s|{{count-medium}}|${level_medium[0]}|g;
+    s|{{level-medium}}|${level_medium[1]}|g;
+    s|{{count-low}}|${level_low[0]}|g;
+    s|{{level-low}}|${level_low[1]}|g;
+    s|{{count-info}}|${level_info[0]}|g;
+    s|{{level-info}}|${level_info[1]}|g;
     s|{{max-score}}|$max_score|g;
     s|{{download}}|$download|;
     s|{{nmap}}|$nmap|;" "$logdir/${dtreport}report-01.html"

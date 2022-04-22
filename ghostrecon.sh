@@ -127,7 +127,7 @@ dg_menu() {
 
 risk_rating_levels() {
   local file=$1
-  scores=$(awk 'BEGIN {
+  scores=($(awk 'BEGIN {
     count_high=0
     count_medium=0
     count_low=0
@@ -164,12 +164,11 @@ risk_rating_levels() {
       count_low, level_low,
       count_info, level_info,
       max
-  }' "$file")
+  }' "$file"))
   level_high=(${scores[0]} ${scores[1]})
   level_medium=(${scores[2]} ${scores[3]})
   level_low=(${scores[4]} ${scores[5]})
   level_info=(${scores[6]} ${scores[7]})
-  declare -p level_{high,medium,low,info} > /tmp/debug
   max_score=${scores[8]}
 }
 

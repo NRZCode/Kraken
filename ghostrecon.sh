@@ -242,6 +242,7 @@ report() {
         sed '/{{subdomains}}/,$!d; s/.*{{subdomains}}/\n/' "$workdir/resources/subreport.tpl"
       ) > "$logdir/$href"
       sed -i "s|{{domain}}|$subdomain|g;
+        s|{{app}}|$APP|;
         s|{{datetime}}|$datetime|;
         s|{{screenshot-80}}|$screenshot_80|g;
         s|{{screenshot-443}}|$screenshot_443|g;

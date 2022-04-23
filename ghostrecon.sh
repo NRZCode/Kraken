@@ -214,8 +214,9 @@ report() {
       href="${dtreport}${subdomain/:\/\//.}.html"
       host=$(domain_info_report host "${subdomain#@(ht|f)tp?(s)://}")
       nmap=$(nmap_report "$logdir/${dtreport}${subdomain#@(ht|f)tp?(s)://}nmap.log")
-      for f in $logdir/screenshots/*${subdomain//./_}*png; do
-        re="(https?)__${subdomain//./_}__(([0-9]+)__)?[[:alnum:]]+\.png"
+      : "${subdomain#@(ht|f)tp?(s)://}"
+      for f in $logdir/screenshots/*${_//./_}*png; do
+        re="(https?)__.*__(([0-9]+)__)?[[:alnum:]]+\.png"
         if [[ $f =~ $re ]]; then
           if [[ ${BASH_REMATCH[1]} == https ]]; then
             port=443
@@ -227,7 +228,8 @@ report() {
         fi
       done
       response_headers=$(
-      for f in "$logdir/"headers/*${subdomain//./_}*txt; do
+      : "${subdomain#@(ht|f)tp?(s)://}"
+      for f in "$logdir/"headers/*${_//./_}*txt; do
         if [[ -f "$f" ]]; then
           printf "==> $f <==\n$(<$f)\n"
         fi
@@ -244,6 +246,7 @@ report() {
       sed -i "s|{{domain}}|$subdomain|g;
         s|{{app}}|$APP|;
         s|{{datetime}}|$datetime|;
+        s|{{year}}|$(date +%Y)|;
         s|{{screenshot-80}}|$screenshot_80|g;
         s|{{screenshot-443}}|$screenshot_443|g;
         s|{{response-headers}}|$response_headers|;

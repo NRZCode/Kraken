@@ -453,7 +453,6 @@ run() {
     ##
     # Search and report subdomains
     printf "\n\n${CBold}${CFGCyan}[${CFGWhite}+${CFGCyan}] Starting Scan on Subdomains${CReset}\n"
-    aquatone -chrome-path /usr/bin/chromium -thumbnail-size 1440,900 -silent -out "$logdir" 2>>$logerr >/dev/null < "$logdir/${dtreport}mrx.log"
     IFS='|' read app depends cmd <<< ${tools[feroxbuster]}
     (
       while read domain && [[ $domain ]]; do
@@ -472,6 +471,7 @@ run() {
         result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s normal -m "Nmap $domain"
       done < "$logdir/${dtreport}mrx.log"
     )
+    aquatone -chrome-path /usr/bin/chromium -out "$logdir" 2>>$logerr < "$logdir/${dtreport}mrx.log"
     report
 
     user_notification

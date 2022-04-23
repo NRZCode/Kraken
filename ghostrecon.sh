@@ -315,6 +315,7 @@ report() {
     s|{{max-score}}|$max_score|g;
     s|{{download}}|$download|;
     s|{{nmap}}|$nmap|;" "$logdir/${dtreport}report-01.html"
+  [[ $max_score -eq 0 ]] && sed -i '/{{risk-ratings-report}}/,/{{risk-ratings-report}}/d' "$logdir/${dtreport}report-01.html"
   ##
   # Compact reports
   cp $logdir/${dtreport}report-01.html $logdir/report.html

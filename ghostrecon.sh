@@ -214,7 +214,6 @@ report() {
       href="${dtreport}${subdomain/:\/\//.}.html"
       host=$(domain_info_report host "${subdomain#@(ht|f)tp?(s)://}")
       nmap=$(nmap_report "$logdir/${dtreport}${subdomain#@(ht|f)tp?(s)://}nmap.log")
-      screenshots=$(
       for f in $logdir/screenshots/*${subdomain//./_}*png; do
         re="(https?)__${subdomain//./_}__(([0-9]+)__)?[[:alnum:]]+\.png"
         if [[ $f =~ $re ]]; then
@@ -224,13 +223,9 @@ report() {
             port=80
           fi
           port=${BASH_REMATCH[4]:-$port}
-          printf '<div class="column">Port %d<a href="%s"><img src="%s"></a></div>' \
-            "$port" \
-            "screenshots/${f##*/}" \
-            "screenshots/${f##*/}"
+          printf -v "screenshot_$port" '%s' "screenshots/${f##*/}"
         fi
       done
-      )
       response_headers=$(
       for f in "$logdir/"headers/*${subdomain//./_}*txt; do
         if [[ -f "$f" ]]; then
@@ -248,7 +243,8 @@ report() {
       ) > "$logdir/$href"
       sed -i "s|{{domain}}|$subdomain|g;
         s|{{datetime}}|$datetime|;
-        s|{{screenshots}}|$screenshots|;
+        s|{{screenshot-80}}|$screenshot_80|g;
+        s|{{screenshot-443}}|$screenshot_443|g;
         s|{{response-headers}}|$response_headers|;
         s|{{nmap}}|$nmap|;
         s|{{host}}|$host|;" "$logdir/$href"

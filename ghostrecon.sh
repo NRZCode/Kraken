@@ -174,7 +174,7 @@ risk_rating_levels() {
 
 nmap_report() {
   local file=$1
-  awk '/^PORT/{flag=1} /^Service/{flag=0} flag {gsub(/\|/, "\\|"); printf "%s\\n", $0}' "$file"
+  [[ -r "$file" ]] && awk '/^PORT/{flag=1} /^Service/{flag=0} flag {gsub(/\|/, "\\|"); printf "%s\\n", $0}' "$file"
 }
 
 domain_info_report() {

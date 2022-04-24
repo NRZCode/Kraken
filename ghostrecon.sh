@@ -475,7 +475,7 @@ run() {
         result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s normal -m "Nmap $domain"
       done < "$logdir/${dtreport}mrx.log"
     )
-    aquatone -chrome-path /usr/bin/chromium -out "$logdir" 2>>$logerr < "$logdir/${dtreport}mrx.log"
+    aquatone -chrome-path /usr/bin/chromium -out "$logdir" 2>>$logerr >/dev/null < "$logdir/${dtreport}mrx.log"
     report
 
     user_notification

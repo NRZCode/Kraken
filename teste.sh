@@ -1,0 +1,390 @@
+[Dalfox]
+post_install='go install github.com/hahwul/dalfox/v2@latest'
+depends=dalfox
+command='dalfox url https://$domain/ -F --waf-evasion -S --no-color --output-all > "$logdir/${dtreport}dalfox.log"'
+description='Powerful XSS scan tool'
+[Subjs]
+post_install='go install -v github.com/lc/subjs@latest'
+depends=subjs
+command='cat "$logdir/${dtreport}mrx.log" | gauplus --random-agent -t 25 | subjs -c 40 | sort -u  > "$logfile"'
+description='Parsing javascript files can help you find undocumented endpoints, secrets etc.'
+[Gauplus]
+post_install='go install github.com/bp0lr/gauplus@latest'
+depends=gauplus
+command='cat "$logdir/${dtreport}mrx.log" | gauplus --random-agent -b eot,jpg,jpeg,gif,css,tif,tiff,png,ttf,otf,woff,woff2,ico,pdf,svg,txt -t 25 | uro | anew > "$logfile"'
+description='Modified version of (gau) for personal use. Support workers, proxies and some extra stuff.'
+[Naabu]
+post_install='go install -v github.com/projectdiscovery/naabu/v2/cmd/naabu@latest'
+depends=naabu
+command='naabu -host "$domain" -r /usr/local/janmasarik/resolvers/resolvers.txt -scan-all-ips -nc -tp 1000 -silent | anew > "$logfile"'
+description='Quick SYN/CONNECT scans on host/host list'
+[RustScan]
+post_install='wget -qO /tmp/rustscan_2.0.1_amd64.deb https://github.com/RustScan/RustScan/releases/download/2.0.1/rustscan_2.0.1_amd64.deb; dpkg -i /tmp/rustscan_2.0.1_amd64.deb'
+depends=rustscan
+command='rustscan -a "IP" -- -sS -sCV -Pn > "$logfile"'
+description='Modern Port Scanner. Fast, smart, effective.'
+[Gospider]
+post_install='go install github.com/jaeles-project/gospider@latest'
+depends=gospider
+command='gospider -s "https://$domain/" -d 10 -c 20 -t 50 -K 3 --js -a -w --blacklist ".(eot|jpg|jpeg|gif|css|tif|tiff|png|ttf|otf|woff|woff2|ico|svg|txt)" --include-subs -q | anew > "$logdir/${dtreport}gospider.log"'
+description='Fast web spider'
+[Gobuster]
+post_install='go install github.com/OJ/gobuster/v3@latest'
+depends=gobuster
+command='gobuster dir --url "https://$domain/" --no-error --wildcard -z -q -t 80 -w /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt | anew > "$logfile"'
+description='Gobuster is a tool used to brute-force'
+[Crlfuzz]
+post_install='go install github.com/dwisiswant0/crlfuzz/cmd/crlfuzz@latest'
+depends=crlfuzz
+command='crlfuzz -u https://$domain/ -c 30 -s -o "$logfile"'
+description='Fast tool to scan CRLF vulnerability written in Go'
+[Ffuf]
+post_install='go install github.com/ffuf/ffuf@latest'
+depends=ffuf
+command='ffuf -u http://FUZZ.$domain/ -t 100 -p '1.0-2.0' -s -w /usr/local/danielmiessler/SecLists/Discovery/DNS/deepmagic.com-prefixes-top50000.txt -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36" -mc 200 -r -o "$logfile"'
+description='Fast web fuzzer'
+[Nuclei]
+post_install='go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest'
+url=https://github.com/projectdiscovery/nuclei-templates
+depends=nuclei
+command='nuclei -update-templates; nuclei -l "$logdir/${dtreport}mrx.log" -silent -t /usr/local/projectdiscovery/nuclei-templates -o "$logfile"'
+description='Fast and customizable DSL-based vulnerability scanner'
+[ParamSpider]
+url=https://github.com/devanshbatham/ParamSpider
+script=paramspider.py
+depends=paramspider
+command='paramspider -d "$domain" --quiet --subs True --level high -o "$logfile"'
+description='Finds parameters of subdomains and web files'
+[sqlmap]
+url=https://github.com/sqlmapproject/sqlmap
+script=sqlmap.py
+command='sqlmap --update; sqlmap -u https://$domain/ --threads 10 --batch --level 2 --risk 2 -a --random-agent --output "$logfile"'
+description='Open source tool that automates the SQL injection detection and exploitation process'
+[massdns]
+url=https://github.com/blechschmidt/massdns
+post_install='cd "$installdir"; make'
+script=bin/massdns
+command='massdns -r /usr/local/blechschmidt/massdns/lists/resolvers.txt "$logdir/${dtreport}mrx.log" -o S -w "$logfile"'
+description='MassDNS is a simple high-performance DNS stub resolver'
+[XSStrike]
+url=https://github.com/s0md3v/XSStrike
+script=xsstrike.py
+depends=xsstrike
+command='xsstrike --update; xsstrike -u "https://$domain" --crawl -l 3 --skip -t 4 --blind --file-log-level INFO --log-file "$logfile"'
+description='Explore xss on websites'
+[Joomscan]
+url=https://github.com/OWASP/joomscan
+script=joomscan.pl
+depends=joomscan
+command='perl /usr/local/bin/joomscan.pl -u "https://$domain/" -ec -r > "$logdir/${dtreport}joomscan.log"'
+description='Vulnerability Scanner'
+[Corsy]
+url=https://github.com/s0md3v/Corsy
+script=corsy.py
+depends=corsy
+command='corsy -i "$logdir/${dtreport}httpx.log" -t 20 -d 2 > "$logfile"'
+description='CORS Misconfiguration Scanner'
+[CrackMapExec]
+depends=cme crackmapexec
+command='cme smb "$logdir/${dtreport}mrx.log" > "$logfile"'
+description='Vulnerability SMB'
+[Sslyze]
+url=https://github.com/nabla-c0d3/sslyze
+post_install='pip3 install "$installdir"'
+depends=sslyze
+command='sslyze --update_trust_stores; sslyze $domain --quiet --slow_connection --compression --mozilla_config intermediate > "$logfile"'
+description='Fast and powerful SSL/TLS scan tool'
+[Sslscan]
+url=https://github.com/rbsec/sslscan
+post_install='cd "$installdir"; make static'
+depends=sslscan
+command='sslscan --tlsall --show-certificate --no-colour --sleep=1000 $domain > "$logfile"'
+description='Detailing SSL/TLS cipher suites'
+[KiteRunner]
+url=https://github.com/assetnote/kiterunner
+post_install='cd "$installdir"; make build'
+script='dist/kr'
+depends=kr
+command='kr scan "$domain" -A=apiroutes-210328:20000 -x 25 -j 150 -q -o "$logfile"'
+description='API Discovery'
+[PwnedOrNot]
+url=https://github.com/thewhiteh4t/pwnedOrNot
+post_install='cd "$installdir"; bash ./install.sh'
+script=pwnedornot.py
+depends=pwnedornot
+command='pwnedornot -e exemplo@google.com -c'
+[Ghunt]
+url=https://github.com/mxrch/ghunt
+depends=ghunt.py
+command='ghunt email exemplo@google.com'
+[EmailHarvester]
+url=https://github.com/maldevel/EmailHarvester
+post_install='printf "#!/usr/bin/env bash\\ncd $installdir\\n$installdir/EmailHarvester.py \\"\\$@\\"\\n" > "$bindir/EmailHarvester"; chmod +x "$bindir/EmailHarvester"'
+depends=EmailHarvester
+command='EmailHarvester -d $domain -e all -s > "$logfile"'
+description='Retrieve Domain email addresses from Search Engines'
+[Emailfinder]
+depends=emailfinder
+command='emailfinder -d $domain > "$logfile"'
+[NMAP-CVSs]
+depends=nmap
+command='nmap -sV --script vulners --script-args mincvss=1.0 "$domain" -oN "$logfile"'
+description='Vulnerability-based CVE Exploitation Tool'
+[Gitdumper]
+url=https://github.com/arthaud/git-dumper
+script=git_dumper.py
+depends=git-dumper
+command='git-dumper "https://$domain/.git/" DIR > "$logfile"'
+description='Tool to dump a git repository from a website'
+[Wpscan]
+depends=wpscan
+command='wpscan --url "http://$domain/" --no-banner --api-token "$wpscan_api_token" --force -e | tee "$logfile"; wpscan --url "http://$domain/" --no-banner --force -e | tee "$logfile"'
+description='WordPress Security Scanner'
+[Droopescan]
+depends=droopescan
+command='droopescan scan joomla --quiet -t 8 -e a -U "$logdir/${dtreport}httpx.log" > "$logfile"; droopescan scan drupal --quiet -t 8 -e a -U "$logdir/${dtreport}httpx.log" > "$logfile"; droopescan scan silverstripe --quiet -t 8 -e a -U "$logdir/${dtreport}httpx.log" > "$logfile"; droopescan scan moodle --quiet -t 8 -e a -U "$logdir/${dtreport}httpx.log" > "$logfile"'
+description='Scanner identifying CMS issues'
+[Commix]
+url=https://github.com/commixproject/commix
+script=commix.py
+command='commix --update; commix -u https://$domain/ --all --level 3 --crawl 2 --batch --random-agent --output-dir="$logfile"'
+description='Is an open source penetration testing tool'
+[OpenRedireX]
+url=https://github.com/devanshbatham/OpenRedireX
+script=openredirex.py
+depends=openredirex
+command='openredirex -l "$logdir/${dtreport}owasp.log" -p "$payloadredirect" --keyword FUZZ > "$logfile"'
+description='Asynchronous Open redirect Fuzzer'
+[Testssl]
+url=https://github.com/drwetter/testssl.sh
+script=testssl.sh
+depends=testssl
+command='testssl -U -9 --color 0 --quiet $domain > "$logfile"'
+description='Support of TLS/SSL ciphers, protocols, as well as some cryptographic flaws'
+[Hakrawler]
+post_install='go install github.com/hakluke/hakrawler@latest'
+depends=hakrawler haktrails
+command='echo "https://$domain/" | haktrails subdomains | hakrawler -subs -u > "$logfile"'
+description='Fast golang web crawler for gathering URLs and JavaSript file locations'
+[Gxss]
+post_install='go install github.com/KathanP19/Gxss@latest'
+depends=Gxss waybackurls httpx dalfox
+command='cat "$logdir/${dtreport}mrx.log" | waybackurls | httpx -silent | Gxss -c 100 -p Xss | sort -u | dalfox pipe -F --waf-evasion -S --no-color --output-all > "$logdir/${dtreport}gxss.log"'
+description='A Light Weight Tool for checking reflecting Parameters in a URL.'
+[GetJS]
+post_install='go install github.com/003random/getJS@latest'
+depends=getJS
+command='getJS --input "$logdir/${dtreport}httpx.log" --complete --nocolors --resolve > "$logfile"'
+description='getJS is a tool to extract all the javascript files from a set of given urls.'
+[Jaeles]
+post_install='go install github.com/jaeles-project/jaeles@latest'
+dependes=jaeles
+command='jaeles scan -G -q --fi -c 50 -s '/root/.jaeles/base-signatures/.*' -U "$logdir/${dtreport}httpx.log" > "$logfile"'
+description='Jaeles is a powerful, flexible and easily extensible framework.'
+[Cf-check]
+post_install='go install github.com/dwisiswant0/cf-check@latest'
+depends=cf-check anew findomain-linux naabu httpx filter-resolved
+command='cat "$logdir/${dtreport}mrx.log" | filter-resolved | cf-check -d | anew | naabu -silent -verify > "$logfile"'
+description='Check an Host is Owned by CloudFlare.'
+[LinkFinder]
+url=https://github.com/GerbenJavado/LinkFinder
+script=linkfinder.py
+depends=linkfinder
+command='linkfinder -i https://$domain/ -d -o cli > "$logfile"'
+description='Script written to discover endpoints and their parameters in JavaScript files.'
+[Infoga]
+url=https://github.com/m4ll0k/Infoga
+script=Infoga/infoga.py
+depends=infoga
+command='infoga -d $domain --breach --report "$logfile"'
+description='tool gathering email accounts informations'
+[Sherlock]
+url=https://github.com/sherlock-project/sherlock
+script=sherlock/sherlock.py
+depebds=sherlock
+command='sherlock $username --print-found > "$logfile"'
+description='Hunt down social media accounts'
+[Dirsearch]
+url=https://github.com/maurosoria/dirsearch.git
+[Takeover]
+url=https://github.com/m4ll0k/takeover
+[Knock]
+url=https://github.com/guelfoweb/knock
+[Bluto]
+url=https://github.com/darryllane/Bluto
+[Dnspython]
+url=https://github.com/rthalley/dnspython
+[SocialFish]
+url=https://github.com/UndeadSec/SocialFish
+[SecLists]
+url=https://github.com/danielmiessler/SecLists
+[Feroxbuster]
+post_install='cd "$bindir"; curl -sL https://raw.githubusercontent.com/epi052/feroxbuster/master/install-nix.sh | bash'
+depends=feroxbuster
+[Urldedupe]
+url=https://github.com/ameenmaali/urldedupe.git
+post_install='cd "$installdir"; cmake CMakeLists.txt; make'
+[Anonsurf]
+url=https://github.com/Und3rf10w/kali-anonsurf
+post_install='cd "$installdir"; sed -E -i "/-y/! s/apt-get (-f )?install/& -y/" installer.sh; ./installer.sh'
+[Gf-Patterns]
+url=https://github.com/1ndianl33t/Gf-Patterns
+post_install="sudo $SUDO_OPT sh -c 'mkdir -p \$HOME/.gf; cp $installdir/*.json ~/.gf' && rm -rf $installdir"
+[Janmasarik]
+url=https://github.com/janmasarik/resolvers
+post_install='wget -q https://raw.githubusercontent.com/janmasarik/resolvers/master/resolvers.txt > resolvers.txt'
+[pyrit]
+url=https://github.com/hacker3983/pyrit-installer
+post_install='cd "$installdir"; bash ./install.sh'
+[Liffy]
+url=http://github.com/mzfr/liffy
+script=liffy.py
+[The-endorser]
+url=https://github.com/eth0izzle/the-endorser
+script=the-endorser.py
+[Anon-SMS]
+url=https://github.com/HACK3RY2J/Anon-SMS
+[Saycheese]
+url=https://github.com/hangetzzu/saycheese
+script=saycheese.sh
+[Seeker]
+url=https://github.com/thewhiteh4t/seeker
+script=seeker.py
+[Osintgram]
+url=https://github.com/Datalux/Osintgram
+[theHarvest]
+url=https://github.com/laramies/theHarvester
+script='bin/theHarvester'
+[Sayhello]
+url=https://github.com/d093w1z/sayhello
+script=sayhello.sh
+[Twitter-info]
+url=https://github.com/D4Vinci/Twitter-Info
+script=Twitter_info.py
+[Pwndb]
+url=https://github.com/davidtavarez/pwndb
+script=pwndb.py
+[zphisher]
+url=https://github.com/htr-tech/zphisher
+script=zphisher.sh
+[Sublist3r]
+url=https://github.com/aboul3la/Sublist3r
+[Uro]
+url=https://github.com/s0md3v/uro
+[Findomain]
+post_install='wget -O "$bindir/findomain-linux" https://github.com/findomain/findomain/releases/latest/download/findomain-linux; chmod +x "$bindir/findomain-linux"'
+[Poetry]
+post_install='curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -'
+script=poetry
+[Ctfr]
+url=https://github.com/UnaPibaGeek/ctfr
+script=ctfr.py
+[DNSCewl]
+url=https://github.com/codingo/DNSCewl
+script=DNSCewl
+[Dnsrecon]
+url=https://github.com/darkoperator/dnsrecon
+script=dnsrecon.py
+[Dnsvalidator]
+url=https://github.com/vortexau/dnsvalidator
+script=dnsvalidator
+[Fff]
+url=https://github.com/dylanaraps/fff
+script=fff
+[Gorgo]
+url=https://github.com/pry0cc/gorgo
+script=gorgo.py
+[Interlace]
+url=https://github.com/codingo/Interlace
+script=interlace
+[Masscan]
+url=https://github.com/robertdavidgraham/masscan
+script=masscan
+[Medusajs]
+url=https://github.com/medusajs/admin medusa-admin
+script=medusa
+[Ufw]
+url=https://github.com/jbq/ufw
+script=ufw
+[Unimap]
+url=https://github.com/Edu4rdSHL/unimap
+script=unimap
+[Wafw00f]
+url=https://github.com/EnableSecurity/wafw00f
+script=wafw00f
+[Leaky-paths]
+url=https://github.com/ayoubfathi/leaky-paths
+[aws-cli]
+post_install='apt -y install awscli'
+[Aquatone]
+post_install='wget -qO /tmp/v1.9.1-shelld3v.zip https://github.com/shelld3v/aquatone/archive/refs/tags/v1.9.1-shelld3v.zip; unzip -o /tmp/v1.9.1-shelld3v.zip aquatone -d /usr/local/bin; rm /tmp/v1.9.1-shelld3v.zip;'
+[Ngrok]
+post_install='wget -qO /etc/apt/trusted.gpg.d/ngrok.asc https://ngrok-agent.s3.amazonaws.com/ngrok.asc; echo "deb https://ngrok-agent.s3.amazonaws.com buster main" > /etc/apt/sources.list.d/ngrok.list; apt update; apt -y install ngrok'
+[Brave]
+post_install='curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg; echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main" > /etc/apt/sources.list.d/brave-browser-release.list; apt update; apt -y install brave-browser'
+[PhoneInfoga]
+post_install='cd /tmp; curl -sSL https://raw.githubusercontent.com/sundowndev/phoneinfoga/master/support/scripts/install | bash'
+[Notify]
+post_install='go install -v github.com/projectdiscovery/notify/cmd/notify@latest'
+[Haktrails]
+post_install='go install -v github.com/hakluke/haktrails@latest'
+[Subfinder]
+post_install='go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest'
+[Httpx]
+post_install='go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest'
+[Chaos-client]
+post_install='go install -v github.com/projectdiscovery/chaos-client/cmd/chaos@latest'
+[Interactsh]
+post_install='go install -v github.com/projectdiscovery/interactsh/cmd/interactsh-client@latest'
+[Shuffledns]
+post_install='go install -v github.com/projectdiscovery/shuffledns/cmd/shuffledns@latest'
+[Dnsx]
+post_install='go install -v github.com/projectdiscovery/dnsx/cmd/dnsx@latest'
+[Crobat]
+post_install='go install github.com/cgboal/sonarsearch/cmd/crobat@latest'
+[Waybackurls]
+post_install='go install github.com/tomnomnom/waybackurls@latest'
+[Kxss]
+post_install='go install github.com/Emoe/kxss@latest'
+[Qsreplace]
+post_install='go install github.com/tomnomnom/qsreplace@latest'
+[filter-resolved]
+post_install='go install github.com/tomnomnom/hacks/filter-resolved@latest'
+[Puredns]
+post_install='go install github.com/d3mondev/puredns/v2@latest'
+[Gowitness]
+post_install='go install github.com/sensepost/gowitness@latest'
+[Gau]
+post_install='go install github.com/lc/gau/v2/cmd/gau@latest'
+[GF]
+post_install='go install github.com/tomnomnom/gf@latest'
+[Httprobe]
+post_install='go install github.com/tomnomnom/httprobe@latest'
+[unfurl]
+post_install='go install github.com/tomnomnom/unfurl@latest'
+[Assetfinder]
+post_install='go install github.com/tomnomnom/assetfinder@latest'
+[Anew]
+post_install='go install github.com/tomnomnom/anew@latest'
+[Github-subdomains]
+post_install='go install github.com/gwen001/github-subdomains@latest'
+[Gron]
+post_install='go install github.com/tomnomnom/gron@latest'
+[Concurl]
+post_install='go install github.com/tomnomnom/concurl@latest'
+[Meg]
+post_install='go install github.com/tomnomnom/meg@latest'
+[Dirdar]
+post_install='go install github.com/m4dm0e/dirdar@latest'
+[Cngo]
+post_install='go install github.com/yghonem14/cngo@latest'
+[Soxy]
+post_install='go install github.com/pry0cc/soxy@latest'
+[Subjack]
+post_install='go install github.com/haccer/subjack@latest'
+[Http2smugl]
+post_install='go install github.com/neex/http2smugl@latest'
+[Burl]
+post_install='go install github.com/tomnomnom/burl@latest'
+[Cent]
+post_install='go install github.com/xm1k3/cent@latest'

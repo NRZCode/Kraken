@@ -372,11 +372,11 @@ run() {
     # Search and report subdomains
     printf "\n\n${CBold}${CFGCyan}[${CFGWhite}+${CFGCyan}] Starting Scan on Subdomains${CReset}\n"
     aquatone -chrome-path /usr/bin/chromium -thumbnail-size 1440,900 -silent -out "$logdir" 2>>$logerr >/dev/null < "$logdir/${dtreport}mrx.log"
-    IFS='|' read app depends cmd <<< ${tools[dirsearch]}
+    IFS='|' read app depends cmd <<< ${tools[feroxbuster]}
     (
       while read domain && [[ $domain ]]; do
         logfile="$logdir/${dtreport}${domain/:\/\//.}.log"
-        result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s slow -m "Dirsearch $domain"
+        result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s slow -m "Feroxbuster $domain"
         [[ $anon_mode == 1 ]] && anonsurf change &> /dev/null
       done < "$logdir/${dtreport}httpx.log"
     )

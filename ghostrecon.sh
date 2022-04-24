@@ -214,9 +214,9 @@ report() {
       href="${dtreport}${subdomain/:\/\//.}.html"
       host=$(domain_info_report host "${subdomain#@(ht|f)tp?(s)://}")
       nmap=$(nmap_report "$logdir/${dtreport}${subdomain#@(ht|f)tp?(s)://}nmap.log")
-      : "${subdomain#@(ht|f)tp?(s)://}"
-      for f in $logdir/screenshots/*${_//./_}*png; do
-        re="(https?)__.*__(([0-9]+)__)?[[:alnum:]]+\.png"
+      d="${subdomain#@(ht|f)tp?(s)://}"
+      for f in $logdir/screenshots/*${d//./_}*png; do
+        re="(https?)__${d//./_}__(([0-9]+)__)?[[:alnum:]]+\.png"
         if [[ $f =~ $re ]]; then
           if [[ ${BASH_REMATCH[1]} == https ]]; then
             port=443

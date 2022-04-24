@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 APP='Kraken'
-version=0.0.22
+version=0.0.23
 
 # ANSI Colors
 function load_ansi_colors() {
@@ -370,10 +370,9 @@ banner_logo() {
 banner() {
   {
   banner_logo
-  echo "
- 🐙 Powerful scan tool and parameter analyzer.
-
-"; } | /usr/games/lolcat
+  echo '
+ 🐙 Powerful scan tool and parameter analyzer.'
+  } | /usr/games/lolcat
 
   printf "
  🎯   Target                         〔${CBold}${CFGYellow}https://$domain${CReset}〕

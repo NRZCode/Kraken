@@ -179,7 +179,7 @@ nmap_report() {
 
 domain_info_report() {
   if [[ $1 == @(host|whois|dig) ]]; then
-    $1 "$2" | awk '$0 !~ /^%/{printf "%s\\n", $0}'
+    $1 "$2" | awk '$0 !~ /^%/{gsub(/\|/, "\\|"); printf "%s\\n", $0}'
   fi
 }
 

@@ -324,8 +324,8 @@ report() {
   xdg-open "$logdir/${dtreport}report-01.html" &
   ##
   # Menu reports
-  btview='<a href="%s" class="mdl-cell mdl-cell--6-col-desktop mdl-cell--4-col-tablet mdl-cell--2-col-phone"><button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" data-upgraded=",MaterialButton,MaterialRipple"><i class="material-icons">insert_chart</i><span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></button>Visualizar</a>'
-  btdownload='<a href="%s" class="mdl-cell mdl-cell--6-col-desktop mdl-cell--4-col-tablet mdl-cell--2-col-phone"><button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" data-upgraded=",MaterialButton,MaterialRipple"><i class="material-icons">file_download</i><span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></button>Download</a>'
+  btview='<a href="%s" class="btn-menu"><i class="fa fa-bar-chart"></i>&nbsp;Visualizar</a>'
+  btdownload='<a href="%s" class="btn-menu"><i class="fa fa-file-archive-o"></i>&nbsp;Download</a>'
   rows=$(
   for domain in $workdir/log/*; do
     for report in $domain/*; do
@@ -342,7 +342,7 @@ report() {
     if [[ $report =~ (([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})) ]]; then
       printf -v bt1 "$btview" "$domain/${BASH_REMATCH[1]}report-01.html"
       printf -v bt2 "$btdownload" "$domain/${BASH_REMATCH[1]}.zip"
-      printf '<tr><td><a href="%s">%s %s/%s/%s %s:%s</a></td><td>%s %s</td></tr>' \
+      printf '<tr><td><a href="%s">%s %s/%s/%s %s:%s</a></td><td>%s&nbsp;&nbsp;%s</td></tr>' \
         "$domain/${BASH_REMATCH[1]}report-01.html" \
         "$domain" "${BASH_REMATCH[4]}" "${BASH_REMATCH[3]}" "${BASH_REMATCH[2]}" "${BASH_REMATCH[5]}" "${BASH_REMATCH[6]}" \
         "$bt1" "$bt2"

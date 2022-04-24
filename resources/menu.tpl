@@ -106,6 +106,16 @@
                 });
             });
         </script>
+        <style>
+          .btn-menu {
+            color: white;
+            padding: 5px 16px;
+            text-decoration: none;
+            cursor: pointer;
+            border: 1px solid #FFF;
+            border-radius: 5px;
+          }
+        </style>
         <script id='graphina-charts-for-elementor-public-js-extra'>
             /* <![CDATA[ */
             var graphina_localize = {"ajaxurl":"https:\/\/wordpress.iqonic.design\/umetric\/wp-admin\/admin-ajax.php","nonce":"0d4c663823","graphinaAllGraphs":[],"graphinaAllGraphsOptions":[],"graphinaBlockCharts":[]};
@@ -367,7 +377,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                                                 <thead>
                                                                                     <tr>
                                                                                         <th>Domain</th>
-                                                                                        <th style="width: 280px">#</th>
+                                                                                        <th style="width: 300px">#</th>
                                                                                     </tr>
                                                                                 </thead>
                                                                                 <tfoot></tfoot>

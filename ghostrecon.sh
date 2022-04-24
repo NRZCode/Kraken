@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 APP='Kraken'
-version=0.0.20
+version=0.0.22
 
 # ANSI Colors
 function load_ansi_colors() {
@@ -418,7 +418,8 @@ init() {
 }
 
 user_notification() {
-  notify-send -u critical -i bash 'Kraken Reconnaissance' "Recon of $domain completed"
+  local icon=$workdir/share/icons/ghostrecon-48x48.png
+  notify-send -u critical -i "$icon" "$APP Reconnaissance" "Recon of $domain completed"
 }
 
 run_tools() {

@@ -489,14 +489,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                     </div>
                                                 </div>
                                             </div>
-                                            <section data-marvy_enable_birds_animation="false" data-marvy_enable_cells_animation="false" data-marvy_enable_dots_animation="false" data-marvy_enable_fog_animation="false" data-marvy_enable_globe_animation="false" data-marvy_enable_halo_animation="false" data-marvy_enable_net_animation="false" data-marvy_enable_trunk_animation="false" data-marvy_enable_fluid_animation="false" data-marvy_enable_digitalStream_animation="false" data-marvy_enable_floating_heart_animation="false" data-marvy_enable_particles_wave_animation="false" data-marvy_enable_dna_animation="false" data-marvy_enable_drop_animation="false" data-marvy_enable_fancy_rotate="false" data-marvy_enable_flying_object="false" data-marvy_enable_ripples_animation="true" data-marvy_ripples_animation_circle_color="#2F74C5" data-marvy_ripples_animation_circle_position="top" data-marvy_ripples_animation_circle_size="50" data-marvy_enable_waves_animation="false" data-marvy_enable_rings_animation="false" data-marvy_enable_topology_animation="false" data-marvy_enable_gradient_animation="false" data-marvy_enable_snow_animation="false" data-marvy_enable_firework_animation="false" class="elementor-section elementor-top-section elementor-element elementor-element-f2b1714 elementor-section-full_width elementor-section-height-min-height elementor-section-stretched elementor-section-height-default elementor-section-items-middle" data-id="f2b1714" data-element_type="section" data-settings="{&quot;stretch_section&quot;:&quot;section-stretched&quot;}">
-                                                <div class="elementor-container elementor-column-gap-default">
-                                                    <div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-368e323" data-id="368e323" data-element_type="column">
-                                                        <div class="elementor-widget-wrap">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </section>
                                         </div>
                                     </div>
                                 </div><!-- .sf-content -->

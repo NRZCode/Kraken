@@ -335,7 +335,8 @@ report() {
     done
   done | sort -u
   )
-  reports=$(
+  (
+  sed '1,/{{reports}}/!d; s/{{reports}}.*/\n/' "$workdir/resources/menu.tpl"
   while read report; do
     domain=${report%%/*}
     if [[ $report =~ (([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})) ]]; then
@@ -347,8 +348,10 @@ report() {
         "$bt1" "$bt2"
     fi
   done <<< "$rows"
-  )
-  sed "s|{{reports}}|$reports|;" "$workdir/resources/menu.tpl" > "$workdir/log/menu.html"
+  sed '/{{reports}}/,$!d; s/.*{{reports}}/\n/' "$workdir/resources/menu.tpl"
+  ) > "$workdir/log/menu.html"
+  sed -i "s|{{app}}|$APP|g;
+    s|{{year}}|$(date +%Y)|;" "$workdir/resources/menu.tpl"
   xdg-open "$workdir/log/menu.html" &
 }
 

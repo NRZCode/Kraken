@@ -77,7 +77,7 @@ read_package_ini() {
 
 check_dependencies() {
   local exit_code=0
-  for pkg in git cfg_parser dialog; do
+  for pkg in git dialog; do
     if ! type -t $pkg >/dev/null; then
       printf '%s: ERROR: Required package %s.\n' "$basename" "$pkg" 1>&2
       exit_code=1

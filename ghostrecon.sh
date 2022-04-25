@@ -227,29 +227,31 @@ report() {
           printf -v "screenshot_$port" '%s' "screenshots/${f##*/}"
         fi
       done
-      response_headers=$(
-      : "${subdomain#@(ht|f)tp?(s)://}"
-      for f in "$logdir/"headers/*${_//./_}*txt; do
-        if [[ -f "$f" ]]; then
-          printf "==> $f <==\n$(<$f)\n"
-        fi
-      done
-      )
       (
-        sed '1,/{{subdomains}}/!d; s/{{subdomains}}.*/\n/' "$workdir/resources/subreport.tpl"
+        sed '1,/{{response-headers}}/!d; s/{{response-headers}}.*/\n/' "$workdir/resources/subreport.tpl"
+        : "${subdomain#@(ht|f)tp?(s)://}"
+        for f in "$logdir/"headers/*${_//./_}*txt; do
+          if [[ -s "$f" ]]; then
+            printf "==> $f <==\n$(<$f)\n"
+          fi
+        done
+        sed '/{{response-headers}}/,$!d; s/.*{{response-headers}}/\n/' "$workdir/resources/subreport.tpl"
+      ) > "$logdir/temp.tpl"
+      (
+        sed '1,/{{subdomains}}/!d; s/{{subdomains}}.*/\n/' "$logdir/temp.tpl"
         while read x code x length x url; do
           url=$(sed -E 's@((ht|f)tps?[^[:space:]]+)@<a href="\1" target="_blank">\1</a>@g' <<< "$url")
           printf '<tr><td>%s</td><td>%s</td><td>%s</td></tr>' "$code" "$length" "$url"
         done < <(grep -Ev '^(#|$)' "$logfile")
-        sed '/{{subdomains}}/,$!d; s/.*{{subdomains}}/\n/' "$workdir/resources/subreport.tpl"
+        sed '/{{subdomains}}/,$!d; s/.*{{subdomains}}/\n/' "$logdir/temp.tpl"
       ) > "$logdir/$href"
+      rm "$logdir/temp.tpl"
       sed -i "s|{{domain}}|$subdomain|g;
         s|{{app}}|$APP|;
         s|{{datetime}}|$datetime|;
         s|{{year}}|$(date +%Y)|;
         s|{{screenshot-80}}|$screenshot_80|g;
         s|{{screenshot-443}}|$screenshot_443|g;
-        s|{{response-headers}}|$response_headers|;
         s|{{nmap}}|$nmap|;
         s|{{host}}|$host|;" "$logdir/$href"
     fi

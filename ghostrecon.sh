@@ -374,13 +374,12 @@ banner_logo() {
  ██╔═██╗ ██╔══██╗██╔══██║██╔═██╗ ██╔══╝  ██║╚██╗██║
  ██║  ██╗██║  ██║██║  ██║██║  ██╗███████╗██║ ╚████║
  ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝®
-                                    version: $version
-"
+                                    version: $version"
 }
 
 banner() {
   banner_logo
-  lolcat $'\n 🐙 Powerful scan tool and parameter analyzer.'
+  lolcat $'\n\n 🐙 Powerful scan tool and parameter analyzer.'
   printf "
  🎯   Target                         〔${CBold}${CFGYellow}https://$domain${CReset}〕
  🚪   Scan Port                      〔true〕

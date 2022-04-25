@@ -239,7 +239,7 @@ report() {
       ) > "$logdir/temp.tpl"
       (
         sed '1,/{{subdomains}}/!d; s/{{subdomains}}.*/\n/' "$logdir/temp.tpl"
-        while read x code x length x url; do
+        while read code length url; do
           url=$(sed -E 's@((ht|f)tps?[^[:space:]]+)@<a href="\1" target="_blank">\1</a>@g' <<< "$url")
           printf '<tr><td>%s</td><td>%s</td><td>%s</td></tr>' "$code" "$length" "$url"
         done < <(grep -Ev '^(#|$)' "$logfile")

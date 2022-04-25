@@ -427,16 +427,16 @@ user_notification() {
 }
 
 run_tools() {
-  local logfile tools=()
+  local logfile list=()
   while [[ $1 ]]; do
     case $1 in
       -f|--logfile) logfile=$2; shift 2;;
-      *)  tools+=("$1"); shift;;
+      *)  list+=("$1"); shift;;
     esac
   done
-  for tool in "${tools[@]}"; do
+  for tool in "${list[@]}"; do
     [[ $anon_mode == 1 ]] && anonsurf change &> /dev/null
-    IFS='|' read app depends cmd <<< ${tools[$tool]}
+    IFS='|' read app depends cmd <<< ${tools[${tool,,}]}
     if type -t $depends > /dev/null; then
       printf "\n\n${CBold}${CFGCyan}[${CFGWhite}+${CFGCyan}] Starting ${app}${CReset}\n"
       if [[ -z "$logfile" ]]; then

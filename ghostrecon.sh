@@ -422,7 +422,7 @@ init() {
 }
 
 user_notification() {
-  local icon=$workdir/share/icons/ghostrecon-48x48.png
+  local icon=$workdir/share/icons/logo-48x48.png
   notify-send -u critical -i "$icon" "$APP Reconnaissance" "Recon of $domain completed"
 }
 
@@ -477,7 +477,7 @@ run() {
     printf "\n\n${CBold}${CFGCyan}[${CFGWhite}+${CFGCyan}] Starting Scan on Subdomains${CReset}\n"
     (
       while read domain && [[ $domain ]]; do
-        run_tools -f "$logdir/${dtreport}${domain/:\/\//.}.log" dirsearch
+        run_tools -f "$logdir/${dtreport}${domain/:\/\//.}.log" -s slowest dirsearch
       done < "$logdir/${dtreport}httpx.log"
     )
 

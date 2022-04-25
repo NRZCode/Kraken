@@ -413,7 +413,7 @@ OPTIONS
 Example of use:
 # $basename -d example.com -a off -n"
   banner_logo
-  printf "${*:+$*\n}$usage\n"
+  printf "$usage\n${*:+$*\n}"
 }
 
 init() {

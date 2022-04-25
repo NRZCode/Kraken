@@ -427,29 +427,28 @@ user_notification() {
 }
 
 run_tools() {
-  local logfile list=()
+  local file list=()
+  export logfile
   while [[ $1 ]]; do
     case $1 in
-      -f|--logfile) logfile=$2; shift 2;;
+      -f|--logfile) file=$2; shift 2;;
       *)  list+=("$1"); shift;;
     esac
   done
   for tool in "${list[@]}"; do
-    (
-      [[ $anon_mode == 1 ]] && anonsurf change &> /dev/null
-      IFS='|' read app depends cmd <<< ${tools[${tool,,}]}
-      if type -t $depends > /dev/null; then
-        printf "\n\n${CBold}${CFGCyan}[${CFGWhite}+${CFGCyan}] Starting ${app}${CReset}\n"
-        if [[ -z "$logfile" ]]; then
-          logfile="$logdir/${dtreport}${tool,,}.log";
-          pagereports[${tool,,}]="$logfile"
-        fi
-        > $logfile
-        export logfile
-        result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s normal -m "${tool^} $domain"
-        elapsedtime -p "${tool^}"
+    [[ $anon_mode == 1 ]] && anonsurf change &> /dev/null
+    IFS='|' read app depends cmd <<< ${tools[${tool,,}]}
+    if type -t $depends > /dev/null; then
+      printf "\n\n${CBold}${CFGCyan}[${CFGWhite}+${CFGCyan}] Starting ${app}${CReset}\n"
+      logfile="$file"
+      if [[ -z "$file" ]]; then
+        logfile="$logdir/${dtreport}${tool,,}.log";
+        pagereports[${tool,,}]="$logfile"
       fi
-    )
+      > $logfile
+      result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s normal -m "${tool^} $domain"
+      elapsedtime -p "${tool^}"
+    fi
   done
 }
 

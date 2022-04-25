@@ -87,9 +87,10 @@ check_dependencies() {
     if ! type -t $pkg >/dev/null; then
       printf '%s: ERROR: Required package %s.\n' "$basename" "$pkg" 1>&2
       exit_code=1
+      read
     fi
   done
-  [[ $exit_code == 1 ]] && { usage; exit $exit_code; }
+  [[ $exit_code == 1 ]] && { usage; read $exit_code; }
 }
 
 check_inifile() {

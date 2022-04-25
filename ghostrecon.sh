@@ -444,7 +444,8 @@ run_tools() {
           logfile="$logdir/${dtreport}${tool,,}.log";
           pagereports[${tool,,}]="$logfile"
         fi
-        : > $logfile
+        > $logfile
+        export logfile
         result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s normal -m "${tool^} $domain"
         elapsedtime -p "${tool^}"
       fi

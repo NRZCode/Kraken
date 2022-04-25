@@ -435,18 +435,20 @@ run_tools() {
     esac
   done
   for tool in "${list[@]}"; do
-    [[ $anon_mode == 1 ]] && anonsurf change &> /dev/null
-    IFS='|' read app depends cmd <<< ${tools[${tool,,}]}
-    if type -t $depends > /dev/null; then
-      printf "\n\n${CBold}${CFGCyan}[${CFGWhite}+${CFGCyan}] Starting ${app}${CReset}\n"
-      if [[ -z "$logfile" ]]; then
-        logfile="$logdir/${dtreport}${tool,,}.log";
-        pagereports[${tool,,}]="$logfile"
+    (
+      [[ $anon_mode == 1 ]] && anonsurf change &> /dev/null
+      IFS='|' read app depends cmd <<< ${tools[${tool,,}]}
+      if type -t $depends > /dev/null; then
+        printf "\n\n${CBold}${CFGCyan}[${CFGWhite}+${CFGCyan}] Starting ${app}${CReset}\n"
+        if [[ -z "$logfile" ]]; then
+          logfile="$logdir/${dtreport}${tool,,}.log";
+          pagereports[${tool,,}]="$logfile"
+        fi
+        : > $logfile
+        result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s normal -m "${tool^} $domain"
+        elapsedtime -p "${tool^}"
       fi
-      : > $logfile
-      result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s normal -m "${tool^} $domain"
-      elapsedtime -p "${tool^}"
-    fi
+    )
   done
 }
 

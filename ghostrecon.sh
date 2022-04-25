@@ -425,7 +425,6 @@ init() {
 
   [[ -z "$domain" ]] && read -p 'Enter domain: ' domain
   [[ -z "$domain" ]] && {usage; return 1;}
-  fi
 }
 
 user_notification() {

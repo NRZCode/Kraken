@@ -422,7 +422,7 @@ init() {
 
   export domain=${domain#@(ht|f)tp?(s)://}
 
-  [[ -z "$domain" ]] && { usage; return 1; }
+  [[ -z "$domain" ]] && { usage "$basename: ERROR: Invalid domain"; return 1; }
 }
 
 user_notification() {

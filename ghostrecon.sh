@@ -78,14 +78,14 @@ read_package_ini() {
 check_dependencies() {
   local exit_code=0
   if [[ ! -r "$workdir/vendor/NRZCode/bash-ini-parser/bash-ini-parser" ]]; then
-    usage
-    exit 1
+    git clone -q 'https://github.com/NRZCode/bash-ini-parser' "$workdir/vendor/NRZCode/bash-ini-parser"
+    git clone -q 'https://github.com/NRZCode/progressbar' "$workdir/vendor/NRZCode/progressbar"
   fi
   source "$workdir/vendor/NRZCode/bash-ini-parser/bash-ini-parser"
 
   for pkg in git cfg_parser; do
     if ! type -t $pkg >/dev/null; then
-      printf '%s: ERROR: Required package %s.\n' "$basename" "$pkg" "$ver" 1>&2
+      printf '%s: ERROR: Required package %s.\n' "$basename" "$pkg" 1>&2
       exit_code=1
     fi
   done

@@ -552,7 +552,7 @@ main() {
   domains="$domain"
   [[ -t 0 ]] || domains="$(</dev/stdin)"
   while read domain; do
-    init
+    init || continue
     run
   done <<< "$domains"
 }

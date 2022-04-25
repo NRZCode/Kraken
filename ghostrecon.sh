@@ -78,7 +78,8 @@ read_package_ini() {
 check_dependencies() {
   local exit_code=0
   if [[ ! -r "$workdir/vendor/NRZCode/bash-ini-parser/bash-ini-parser" ]]; then
-    exit_code=1
+    usage
+    exit 1
   fi
   source "$workdir/vendor/NRZCode/bash-ini-parser/bash-ini-parser"
 
@@ -388,8 +389,7 @@ banner() {
 }
 
 usage() {
-  usage="
-  Usage: $basename -d DOMAIN [OPTIONS]
+  usage="  Usage: $basename -d DOMAIN [OPTIONS]
 
 DESCRIPTION
   Reconnaissance tools

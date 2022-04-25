@@ -422,8 +422,15 @@ init() {
 }
 
 user_notification() {
-  local icon=$workdir/share/icons/logo-48x48.png
-  notify-send -u critical -i "$icon" "$APP Reconnaissance" "Recon of $domain completed"
+  local summary body urgency icon=$workdir/share/icons/logo-48x48.png
+  while [[ $1 ]]; do
+    case $1 in
+      -u|--urgency) urgency=$2; shift 2;;
+      -s|--summary) summary=$2; shift 2;;
+      -b|--body) body=$2; shift 2;;
+    esac
+  done
+  notify-send -u ${urgency:-low} -i "$icon" "$summary" "$body"
 }
 
 run_tools() {
@@ -448,6 +455,7 @@ run_tools() {
       fi
       > $logfile
       result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s ${speed:-normal} -m "${tool^} $domain"
+      user_notification -s "$APP Reconnaissance" -b "Scanning ${tool^} completed"
       elapsedtime -p "${tool^}"
     fi
   done
@@ -491,7 +499,7 @@ run() {
     aquatone -chrome-path /usr/bin/chromium -out "$logdir" 2>>$logerr >/dev/null < "$logdir/${dtreport}mrx.log"
     report
 
-    user_notification
+    user_notification -u critical -s "$APP Reconnaissance" -b "Recon of $domain completed"
     elapsedtime 'TOTAL Reconnaissance'
     return 0
   fi

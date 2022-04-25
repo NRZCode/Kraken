@@ -424,7 +424,7 @@ init() {
   export domain=${domain#@(ht|f)tp?(s)://}
 
   [[ -z "$domain" ]] && read -p 'Enter domain: ' domain
-  [[ -z "$domain" ]] && {usage; return 1;}
+  [[ -z "$domain" ]] && { usage; return 1; }
 }
 
 user_notification() {

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 APP='Kraken'
-version=0.0.23
+version=0.0.24
 
 # ANSI Colors
 function load_ansi_colors() {
@@ -185,7 +185,7 @@ domain_info_report() {
 
 report_tools() {
   tools[mrx]='Mrx Scan Subdomains|subfinder findomain-linux assetfinder|for log in "$logdir/"{assetfinder,findomain,subfinder}.log; do > "$log"; done; sleep 5;findomain-linux -q -t "$domain" > "$logdir/findomain.log"; sleep 5; subfinder -d "$domain" -silent -t 40 -o "$logdir/subfinder.log"; sleep 5; assetfinder -subs-only "$domain" > "$logdir/assetfinder.log"; sort -u "$logdir/"{assetfinder,findomain,subfinder}.log -o "$logfile"; httpx -silent < "$logfile" > "$logdir/${dtreport}httpx.log"'
-  tools[dirsearch]='Dirsearch|dirsearch|xargs -L1 python3 /usr/local/dirsearch/dirsearch.py -q -e php,aspx,jsp,html,zip,jar -x 404-499,500-599 -w "$dicc" --random-agent -o "$logfile" -u < <(httpx -silent <<< "$domain"); sleep 5'
+  tools[dirsearch]='Dirsearch|dirsearch|dirsearch -q -e php,aspx,jsp,html,zip,jar -x 404-499,500-599 -w "$dicc" --random-agent -o "$logfile" -u "$domain"'
   tools[feroxbuster]='Feroxbuster Scan sub-directories|feroxbuster|feroxbuster -q -x php,asp,aspx,jsp,html,zip,jar -A --rate-limit 50 --time-limit 30m -t 30 -L 1 --extract-links -w "$dicc" -o "$logfile" -u "$domain"; sleep 5'
   tools[whatweb]='Whatweb|whatweb|whatweb -q -t 50 --no-errors "$domain" --log-brief="$logfile"'
   tools[owasp]='Owasp Getallurls|waybackurls uro anew|cat "$logdir/${dtreport}httpx.log" | waybackurls | uro | anew | sort -u > "$logfile"'
@@ -237,9 +237,9 @@ report() {
       )
       (
         sed '1,/{{subdomains}}/!d; s/{{subdomains}}.*/\n/' "$workdir/resources/subreport.tpl"
-        while read code method lines words chars url; do
+        while read x code x length x url; do
           url=$(sed -E 's@((ht|f)tps?[^[:space:]]+)@<a href="\1" target="_blank">\1</a>@g' <<< "$url")
-          printf '<tr><td>%s</td><td>%s</td><td>%s</td></tr>' "$code" "$lines $words $chars" "$url"
+          printf '<tr><td>%s</td><td>%s</td><td>%s</td></tr>' "$code" "$length" "$url"
         done < <(grep -Ev '^(#|$)' "$logfile")
         sed '/{{subdomains}}/,$!d; s/.*{{subdomains}}/\n/' "$workdir/resources/subreport.tpl"
       ) > "$logdir/$href"
@@ -351,7 +351,7 @@ report() {
   sed '/{{reports}}/,$!d; s/.*{{reports}}/\n/' "$workdir/resources/menu.tpl"
   ) > "$workdir/log/menu.html"
   sed -i "s|{{app}}|$APP|g;
-    s|{{year}}|$(date +%Y)|;" "$workdir/resources/menu.tpl"
+    s|{{year}}|$(date +%Y)|;" "$workdir/log/menu.html"
   xdg-open "$workdir/log/menu.html" &
 }
 
@@ -425,13 +425,23 @@ user_notification() {
 }
 
 run_tools() {
-  for tool; do
+  local logfile tools=()
+  while [[ $1 ]]; do
+    case $1 in
+      -f|--logfile) logfile=$2; shift 2;;
+      *)  tools+=("$1"); shift;;
+    esac
+  done
+  for tool in "${tools[@]}"; do
     [[ $anon_mode == 1 ]] && anonsurf change &> /dev/null
     IFS='|' read app depends cmd <<< ${tools[$tool]}
     if type -t $depends > /dev/null; then
       printf "\n\n${CBold}${CFGCyan}[${CFGWhite}+${CFGCyan}] Starting ${app}${CReset}\n"
-      export logfile="$logdir/${dtreport}${tool}.log"; > $logfile
-      pagereports[$tool]="$logfile"
+      if [[ -z "$logfile" ]]; then
+        logfile="$logdir/${dtreport}${tool,,}.log";
+        pagereports[${tool,,}]="$logfile"
+      fi
+      : > $logfile
       result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s normal -m "${tool^} $domain"
       elapsedtime -p "${tool^}"
     fi
@@ -460,22 +470,17 @@ run() {
     ##
     # Search and report subdomains
     printf "\n\n${CBold}${CFGCyan}[${CFGWhite}+${CFGCyan}] Starting Scan on Subdomains${CReset}\n"
-    IFS='|' read app depends cmd <<< ${tools[feroxbuster]}
     (
       while read domain && [[ $domain ]]; do
-        logfile="$logdir/${dtreport}${domain/:\/\//.}.log"
-        result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s slow -m "Feroxbuster $domain"
-        [[ $anon_mode == 1 ]] && anonsurf change &> /dev/null
+        run_tools -f "$logdir/${dtreport}${domain/:\/\//.}.log" dirsearch
       done < "$logdir/${dtreport}httpx.log"
     )
 
     [[ $anon_mode == 1 ]] && anonsurf stop &> /dev/null
-    sleep 10
-    IFS='|' read app depends cmd <<< ${tools[fnmap]}
     (
+      anon_mode=0
       while read domain && [[ $domain ]]; do
-        logfile="$logdir/${dtreport}${domain}nmap.log"
-        result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s normal -m "Nmap $domain"
+        run_tools -f "$logdir/${dtreport}${domain}nmap.log" fnmap
       done < "$logdir/${dtreport}mrx.log"
     )
     aquatone -chrome-path /usr/bin/chromium -out "$logdir" 2>>$logerr >/dev/null < "$logdir/${dtreport}mrx.log"

@@ -83,7 +83,7 @@ check_dependencies() {
       exit_code=1
     fi
   done
-  [[ $exit_code == 1 ]] && { usage; exit $exit_code; }
+  [[ $exit_code == 1 ]] && exit $exit_code
 
   if [[ ! -r "$workdir/vendor/NRZCode/bash-ini-parser/bash-ini-parser" ]]; then
     git clone -q 'https://github.com/NRZCode/bash-ini-parser' "$workdir/vendor/NRZCode/bash-ini-parser"

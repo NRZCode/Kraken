@@ -87,10 +87,9 @@ check_dependencies() {
     if ! type -t $pkg >/dev/null; then
       printf '%s: ERROR: Required package %s.\n' "$basename" "$pkg" 1>&2
       exit_code=1
-      read
     fi
   done
-  [[ $exit_code == 1 ]] && { usage; read $exit_code; }
+  [[ $exit_code == 1 ]] && { usage; exit $exit_code; }
 }
 
 check_inifile() {
@@ -423,7 +422,6 @@ init() {
 
   export domain=${domain#@(ht|f)tp?(s)://}
 
-  [[ -z "$domain" ]] && read -p 'Enter domain: ' domain
   [[ -z "$domain" ]] && { usage; return 1; }
 }
 
@@ -550,6 +548,7 @@ main() {
 
   [[ $update_mode == 1 ]] && update_tools
   shopt -s extglob
+  [[ -z "$domain" ]] && { banner_logo; read -p 'Enter domain: ' domain; }
   domains="$domain"
   [[ -t 0 ]] || domains="$(</dev/stdin)"
   while read domain; do

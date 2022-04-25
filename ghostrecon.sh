@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 APP='Kraken'
-version=0.0.24
+version=0.0.25
 
 # ANSI Colors
 function load_ansi_colors() {
@@ -76,15 +76,19 @@ read_package_ini() {
 }
 
 check_dependencies() {
-  local pkg='git'
-  local ver='2.17.1'
-
-  if ! type -t $pkg >/dev/null; then
-    printf '%s: ERROR: Required package %s %s or higher.\n' "$basename" "$pkg" "$ver" 1>&2
-    exit 1
+  local exit_code=0
+  if [[ ! -r "$workdir/vendor/NRZCode/bash-ini-parser/bash-ini-parser" ]]; then
+    exit_code=1
   fi
-
   source "$workdir/vendor/NRZCode/bash-ini-parser/bash-ini-parser"
+
+  for pkg in git cfg_parser; do
+    if ! type -t $pkg >/dev/null; then
+      printf '%s: ERROR: Required package %s.\n' "$basename" "$pkg" "$ver" 1>&2
+      exit_code=1
+    fi
+  done
+  [[ $exit_code == 1 ]] && { usage; exit $exit_code; }
 }
 
 check_inifile() {
@@ -357,8 +361,13 @@ report() {
   xdg-open "$workdir/log/menu.html" &
 }
 
+lolcat() {
+  lolcat=/usr/games/lolcat
+  if type -t $lolcat >/dev/null; then $lolcat; else cat; fi <<< "$1"
+}
+
 banner_logo() {
-  echo "
+  lolcat "
  ██╗  ██╗██████╗  █████╗ ██╗  ██╗███████╗███╗   ██╗
  ██║ ██╔╝██╔══██╗██╔══██╗██║ ██╔╝██╔════╝████╗  ██║
  █████╔╝ ██████╔╝███████║█████╔╝ █████╗  ██╔██╗ ██║
@@ -370,12 +379,8 @@ banner_logo() {
 }
 
 banner() {
-  {
   banner_logo
-  echo '
- 🐙 Powerful scan tool and parameter analyzer.'
-  } | /usr/games/lolcat
-
+  lolcat $'\n 🐙 Powerful scan tool and parameter analyzer.'
   printf "
  🎯   Target                         〔${CBold}${CFGYellow}https://$domain${CReset}〕
  🚪   Scan Port                      〔true〕
@@ -385,27 +390,29 @@ banner() {
 
 usage() {
   usage="
+  Usage: $basename -d DOMAIN [OPTIONS]
 
-Usage: $basename [OPTIONS]
+DESCRIPTION
+  Reconnaissance tools
 
-Short Form	Long Form		Description
-
- -d		--domain		Scan domain and subdomains
- -dL		--list string    	file containing list of domains for subdomain discovery
- -a 		--anon			Setup usage of anonsurf change IP                       〔 Default: On 〕
- -t		--threads		Number of threads to be used 	 			〔 Default: 20 〕
- -A		--agressive		Use all sources (slow) for enumeration 			〔 Default: Off〕
- -v		--verbose		Enable the verbose mode and display results in realtime 〔 Default: Off〕
- -n		--no-subs		Scan only the domain given in -d domain.com
- -f		--fast-scan		scan without options menu
- -u		--update		Update Kraken for better performance
- -V 		--version               Print current version Kraken
- -h		--help			show the help message and exit
- -m             --max-time int	        minutes to wait for enumeration results 		〔 Default: 10〕
- -T		--timeout int   	seconds to wait before timing out 			〔 Default: 30〕
+OPTIONS
+  General options
+    -d, --domain           Scan domain and subdomains
+    -dL,--list string      File containing list of domains for subdomain discovery
+    -a, --anon             Setup usage of anonsurf change IP 〔 Default: On 〕
+    -t, --threads          Number of threads to be used 〔 Default: 20 〕
+    -A, --agressive        Use all sources (slow) for enumeration 〔 Default: Off 〕
+    -v, --verbose          Enable the verbose mode and display results in realtime 〔 Default: Off 〕
+    -n, --no-subs          Scan only the domain given in -d domain.com
+    -f, --fast-scan        Scan without options menu
+    -u, --update           Update script for better performance
+    -V, --version          Print current version
+    -h, --help             Show the help message and exit
+    -m, --max-time int     Minutes to wait for enumeration results 〔 Default: 10 〕
+    -T, --timeout int      Seconds to wait before timing out 〔 Default: 30 〕
 
 Example of use:
-kraken -d example.com -a off -n"
+# $basename -d example.com -a off -n"
   banner_logo
   printf "${*:+$*\n}$usage\n"
 }
@@ -416,8 +423,8 @@ init() {
 
   export domain=${domain#@(ht|f)tp?(s)://}
 
-  if [ -z "$domain" ]; then
-    usage; return 1;
+  [[ -z "$domain" ]] && read -p 'Enter domain: ' domain
+  [[ -z "$domain" ]] && {usage; return 1;}
   fi
 }
 
@@ -485,7 +492,7 @@ run() {
     printf "\n\n${CBold}${CFGCyan}[${CFGWhite}+${CFGCyan}] Starting Scan on Subdomains${CReset}\n"
     (
       while read domain && [[ $domain ]]; do
-        run_tools -f "$logdir/${dtreport}${domain/:\/\//.}.log" -s slowest dirsearch
+        run_tools -f "$logdir/${dtreport}${domain/:\/\//.}.log" -s slow dirsearch
       done < "$logdir/${dtreport}httpx.log"
     )
 
@@ -526,7 +533,8 @@ main() {
     exit 1
   fi
   if [[ 0 != $EUID ]]; then
-    printf 'This script must be run as root!\nRun as:\n$ sudo ./%s\n' "$basename $*"
+    usage
+    printf 'This script must be run as root!\nRun as:\n# %s\n' "$(realpath $0) $*"
     exit 1
   fi
   workdir=$dirname
@@ -545,7 +553,7 @@ main() {
   shopt -s extglob
   domains="$domain"
   [[ -t 0 ]] || domains="$(</dev/stdin)"
-  while read domain && [[ $domain ]]; do
+  while read domain; do
     init
     run
   done <<< "$domains"

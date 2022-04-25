@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 version=1.0.9
 usage() {
-  usage=' Usage: $basename [OPTIONS]
+  usage="  Usage: $basename [OPTIONS]
 
 DESCRIPTION
   Arno is a based script for automatize installation
@@ -11,7 +11,7 @@ OPTIONS
     -h,--help,help
     -l,--list
     -v,--version
-    -f,--force-update'
+    -f,--force-update"
   printf "$usage\n"
 }
 
@@ -76,11 +76,11 @@ banner() {
                                        ➥ version: '$version''
 
   social="   A Reconaissance Tool's Collection.
-  
+
  https://t.me/PeakyBlindersW
      〔Discord Community〕
  https://discord.gg/Z2C2CyVZFU
- 
+
 »» Recode The Copyright Is Not Make You A Coder Dude"
   [[ -x /usr/games/lolcat ]] &&
     /usr/games/lolcat <(printf "$logo\n$social\n") ||

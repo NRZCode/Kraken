@@ -427,11 +427,12 @@ user_notification() {
 }
 
 run_tools() {
-  local file list=()
+  local file speed list=()
   export logfile
   while [[ $1 ]]; do
     case $1 in
       -f|--logfile) file=$2; shift 2;;
+      -s) speed=$2; shift 2;;
       *)  list+=("$1"); shift;;
     esac
   done
@@ -446,7 +447,7 @@ run_tools() {
         pagereports[${tool,,}]="$logfile"
       fi
       > $logfile
-      result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s normal -m "${tool^} $domain"
+      result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s ${speed:-normal} -m "${tool^} $domain"
       elapsedtime -p "${tool^}"
     fi
   done

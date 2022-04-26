@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 APP='Kraken'
-version=0.0.25
+version=0.0.26
 
 # ANSI Colors
 function load_ansi_colors() {
@@ -77,7 +77,7 @@ read_package_ini() {
 
 check_dependencies() {
   local exit_code=0
-  for pkg in git dialog; do
+  for pkg in git dialog nmap httpx anonsurf; do
     if ! type -t $pkg >/dev/null; then
       printf '%s: ERROR: Required package %s.\n' "$basename" "$pkg" 1>&2
       exit_code=1

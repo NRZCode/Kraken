@@ -536,6 +536,7 @@ main() {
     exit 1
   fi
   workdir=$dirname
+  wordlistdir="$workdir/share/wordlists"
   inifile="$workdir/package.ini"
 
   check_dependencies

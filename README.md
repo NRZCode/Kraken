@@ -1,7 +1,7 @@
-# Ghost Recon
+# Kraken
 Shell script to easy install and use reconnaissance tools
 
 ## Reconnaissance Tools
 ```sh
-ghostrecon -d domain.com
+kraken -d domain.com
 ```

@@ -102,9 +102,9 @@ system_upgrade() {
 }
 
 check_dependencies() {
-  git_install 'https://github.com/NRZCode/GhostRecon' 'ghostrecon.sh'
+  git_install 'https://github.com/NRZCode/Kraken' 'kraken.sh'
   (
-    srcdir="$srcdir/NRZCode/GhostRecon/vendor"
+    srcdir="$srcdir/NRZCode/Kraken/vendor"
     git_install 'https://github.com/NRZCode/progressbar'
     git_install 'https://github.com/NRZCode/bash-ini-parser'
   )
@@ -115,7 +115,7 @@ check_inifile() {
   if [[ ! -r "$inifile" ]]; then
     [[ -r "$workdir/package-dist.ini" ]] &&
       cp "$workdir"/package{-dist,}.ini ||
-      wget -qO "$workdir/package.ini" https://github.com/NRZCode/GhostRecon/raw/master/package-dist.ini
+      wget -qO "$workdir/package.ini" https://github.com/NRZCode/Kraken/raw/master/package-dist.ini
   fi
   [[ -r "$inifile" ]] || exit 1
 }
@@ -254,7 +254,7 @@ basename=${0##*/}
 export srcdir=${srcdir:-/usr/local}
 export bindir=${bindir:-$srcdir/bin}
 export GOBIN=$bindir GOPATH=$bindir
-workdir="$srcdir/NRZCode/GhostRecon"
+workdir="$srcdir/NRZCode/Kraken"
 logfile="$workdir/${basename%.*}.log"
 logerr="$workdir/${basename%.*}.err"
 inifile="$workdir/package.ini"

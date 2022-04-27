@@ -1,4 +1,4 @@
-# Ghost Recon
+# Kraken
 Shell script to easy install and use reconnaissance tools
 Complete shell script tool for Bug bounty or Pentest ! It will save 90% of your time when setting up your machine to work.
 It already configures all the tools for you to work, you won't need to configure it manually.
@@ -24,22 +24,26 @@ Httpx|Infoga|Gobuster|Anonsurf|Gittools|Droopescan
 Joomscan|Sslyze|Sslscan
 
 ### Full installation
+#### Run commands as root
 #### cURL, wget mode
 ```sh
-curl -L https://github.com/NRZCode/ghostrecon/raw/master/install.sh | sudo bash
-
-# Can install some tools
-curl -L https://github.com/NRZCode/ghostrecon/raw/master/install.sh | sudo bash -s tool1 tool2 toolN
+curl -sL https://github.com/NRZCode/kraken/raw/master/install.sh | bash
+```
+### Can install just only tools from a list
+```sh
+curl -sL https://github.com/NRZCode/kraken/raw/master/install.sh | bash -s dirseach ngrok httpx
 ```
 #### Git mode
 ```sh
-git clone https://github.com/NRZCode/ghostrecon
-sudo ghostrecon/install.sh
-
-# Can install some tools
-sudo ghostrecon/install.sh tool1 tool2 toolN
+git clone https://github.com/NRZCode/kraken
+sudo kraken/install.sh
 ```
-#### List available tools
+
+### Can install just only tools from a list
 ```sh
-ghostrecon/install.sh --list
+sudo kraken/install.sh anonsurf feroxbuster gobuster
+```
+#### List all available tools in application
+```sh
+kraken/install.sh --list
 ```

@@ -48,7 +48,7 @@ in_array() {
 
 print_message() {
   if [[ $* ]]; then
-    message_fmt="\n\n${CBold}${CFGCyan}[${CFGWhite}+${CFGCyan}] %s${CReset}\n"
+    message_fmt="\n\n${CBold}${CFGCyan}〔${CFGWhite}✓${CFGCyan}〕%s${CReset}\n"
     printf "$message_fmt" "$*"
   fi
 }
@@ -77,11 +77,10 @@ banner() {
 
   social="   A Reconaissance Tool's Collection.
 
- https://t.me/PeakyBlindersW
-     〔Discord Community〕
- https://discord.gg/Z2C2CyVZFU
+📥 Discord Community
 
-»» Recode The Copyright Is Not Make You A Coder Dude"
+ 〔https://discord.io/thekrakenhacker〕
+🛠  Recode The Copyright Is Not Make You A Coder Dude\n"
   [[ -x /usr/games/lolcat ]] &&
     /usr/games/lolcat <(printf "$logo\n$social\n") ||
     { banner_color "$logo"; echo "$social"; }
@@ -132,9 +131,9 @@ init_install() {
   fi
   # REQUIREMENTS
   print_message 'Complete tool to install and configure various tools for pentesting.'
-  printf "\n${CBold}${CFGWhite}=====================================================>${CReset}\n\n"
+  printf "\n${CBold}${CFGWhite}◖»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»${CReset}\n\n"
   if [[ ! -f $HOME/.local/.arno_init_install_successful ]]; then
-    packages='python3-pip apt-transport-https curl libcurl4-openssl-dev libssl-dev jq ruby-full libcurl4-openssl-dev ruby libxml2 libxml2-dev libxslt1-dev ruby-dev dkms build-essential libgmp-dev hcxdumptool zlib1g-dev perl zsh fonts-powerline libio-socket-ssl-perl libdbd-sqlite3-perl libclass-dbi-perl libio-all-lwp-perl libparallel-forkmanager-perl libredis-perl libalgorithm-combinatorics-perl gem git cvs subversion bzr mercurial libssl-dev libffi-dev python-dev-is-python3 ruby-ffi-yajl python-setuptools libldns-dev rename docker.io parsero apache2 ssh tor privoxy proxychains4 aptitude synaptic lolcat dialog golang-go graphviz virtualenv reaver bats openssl cargo cmake'
+    packages='python3-pip apt-transport-https curl libcurl4-openssl-dev libssl-dev jq ruby-full libcurl4-openssl-dev ruby libxml2 libxml2-dev libxslt1-dev ruby-dev dkms build-essential libgmp-dev hcxdumptool zlib1g-dev perl zsh fonts-powerline libio-socket-ssl-perl libdbd-sqlite3-perl libclass-dbi-perl libio-all-lwp-perl libparallel-forkmanager-perl libredis-perl libalgorithm-combinatorics-perl gem git cvs subversion bzr mercurial libssl-dev libffi-dev python-dev-is-python3 ruby-ffi-yajl python-setuptools libldns-dev rename docker.io parsero apache2 ssh tor privoxy proxychains4 aptitude synaptic lolcat dialog golang-go graphviz virtualenv reaver bats openssl cargo cmake libwacom-common'
     wget -O /tmp/go1.18.1.linux-amd64.tar.gz https://go.dev/dl/go1.18.1.linux-amd64.tar.gz
     rm -rf /usr/local/go
     tar -C /usr/local -xzf /tmp/go1.18.1.linux-amd64.tar.gz
@@ -152,7 +151,7 @@ init_install() {
     pip3 install --upgrade pip osrframework py-altdns==1.0.2 requests wfuzz holehe twint droopescan uro arjun dnsgen s3scanner emailfinder pipx one-lin3r win_unicode_console aiodnsbrute webscreenshot dnspython netaddr git-dumper
     gem install typhoeus opt_parse_validator blunder wpscan
     mkdir -p "$HOME/.local"
-    : > $HOME/.local/.arno_init_install_successful
+    > $HOME/.local/.arno_init_install_successful
   fi
 }
 
@@ -252,7 +251,7 @@ basename=${0##*/}
 
 export srcdir=${srcdir:-/usr/local}
 export bindir=${bindir:-$srcdir/bin}
-export GOBIN=$bindir GOPATH=$bindir
+export GOBIN=$bindir GOPATH=$bindir GO111MODULE=off
 workdir="$srcdir/NRZCode/Kraken"
 logfile="$workdir/${basename%.*}.log"
 logerr="$workdir/${basename%.*}.err"

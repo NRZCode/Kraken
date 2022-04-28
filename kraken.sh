@@ -211,58 +211,60 @@ report() {
   done
   ##
   # Subdomains reports
-  while read subdomain && [[ $subdomain ]]; do
-    logfile="$logdir/${dtreport}${subdomain/:\/\//.}.log"
-    n=$(($([[ -f "$logfile" ]] && wc -l < "$logfile" 2>&-)))
-    ((scanned_urls+=n))
-    href='#'
-    if [[ $n -gt 0 ]]; then
-      href="${dtreport}${subdomain/:\/\//.}.html"
-      host=$(domain_info_report host "${subdomain#@(ht|f)tp?(s)://}")
-      nmap=$(nmap_report "$logdir/${dtreport}${subdomain#@(ht|f)tp?(s)://}nmap.log")
-      d="${subdomain#@(ht|f)tp?(s)://}"
-      for f in $logdir/screenshots/*${d//./_}*png; do
-        re="(https?)__${d//./_}__(([0-9]+)__)?[[:alnum:]]+\.png"
-        if [[ $f =~ $re ]]; then
-          if [[ ${BASH_REMATCH[1]} == https ]]; then
-            port=443
-          elif [[ ${BASH_REMATCH[1]} == http ]]; then
-            port=80
-          fi
-          port=${BASH_REMATCH[4]:-$port}
-          printf -v "screenshot_$port" '%s' "screenshots/${f##*/}"
-        fi
-      done
-      (
-        sed '1,/{{response-headers}}/!d; s/{{response-headers}}.*/\n/' "$workdir/resources/subreport.tpl"
-        : "${subdomain#@(ht|f)tp?(s)://}"
-        for f in "$logdir/"headers/*${_//./_}*txt; do
-          if [[ -s "$f" ]]; then
-            printf "==> $f <==\n$(<$f)\n"
+  while read subdomain; do
+    if [[ $subdomain ]]; then
+      logfile="$logdir/${dtreport}${subdomain/:\/\//.}.log"
+      n=$(($([[ -f "$logfile" ]] && wc -l < "$logfile" 2>&-)))
+      ((scanned_urls+=n))
+      href='#'
+      if [[ $n -gt 0 ]]; then
+        href="${dtreport}${subdomain/:\/\//.}.html"
+        host=$(domain_info_report host "${subdomain#@(ht|f)tp?(s)://}")
+        nmap=$(nmap_report "$logdir/${dtreport}${subdomain#@(ht|f)tp?(s)://}nmap.log")
+        d="${subdomain#@(ht|f)tp?(s)://}"
+        for f in $logdir/screenshots/*${d//./_}*png; do
+          re="(https?)__${d//./_}__(([0-9]+)__)?[[:alnum:]]+\.png"
+          if [[ $f =~ $re ]]; then
+            if [[ ${BASH_REMATCH[1]} == https ]]; then
+              port=443
+            elif [[ ${BASH_REMATCH[1]} == http ]]; then
+              port=80
+            fi
+            port=${BASH_REMATCH[4]:-$port}
+            printf -v "screenshot_$port" '%s' "screenshots/${f##*/}"
           fi
         done
-        sed '/{{response-headers}}/,$!d; s/.*{{response-headers}}/\n/' "$workdir/resources/subreport.tpl"
-      ) > "$logdir/temp.tpl"
-      (
-        sed '1,/{{subdomains}}/!d; s/{{subdomains}}.*/\n/' "$logdir/temp.tpl"
-        while read code length url; do
-          url=$(sed -E 's@((ht|f)tps?[^[:space:]]+)@<a href="\1" target="_blank">\1</a>@g' <<< "$url")
-          printf '<tr><td>%s</td><td>%s</td><td>%s</td></tr>' "$code" "$length" "$url"
-        done < <(grep -Ev '^(#|$)' "$logfile")
-        sed '/{{subdomains}}/,$!d; s/.*{{subdomains}}/\n/' "$logdir/temp.tpl"
-      ) > "$logdir/$href"
-      rm "$logdir/temp.tpl"
-      sed -i "s|{{domain}}|$subdomain|g;
-        s|{{app}}|$APP|;
-        s|{{datetime}}|$datetime|;
-        s|{{year}}|$(date +%Y)|;
-        s|{{screenshot-80}}|$screenshot_80|g;
-        s|{{screenshot-443}}|$screenshot_443|g;
-        s|{{nmap}}|$nmap|;
-        s|{{host}}|$host|;" "$logdir/$href"
+        (
+          sed '1,/{{response-headers}}/!d; s/{{response-headers}}.*/\n/' "$workdir/resources/subreport.tpl"
+          : "${subdomain#@(ht|f)tp?(s)://}"
+          for f in "$logdir/"headers/*${_//./_}*txt; do
+            if [[ -s "$f" ]]; then
+              printf "==> $f <==\n$(<$f)\n"
+            fi
+          done
+          sed '/{{response-headers}}/,$!d; s/.*{{response-headers}}/\n/' "$workdir/resources/subreport.tpl"
+        ) > "$logdir/temp.tpl"
+        (
+          sed '1,/{{subdomains}}/!d; s/{{subdomains}}.*/\n/' "$logdir/temp.tpl"
+          while read code length url; do
+            url=$(sed -E 's@((ht|f)tps?[^[:space:]]+)@<a href="\1" target="_blank">\1</a>@g' <<< "$url")
+            printf '<tr><td>%s</td><td>%s</td><td>%s</td></tr>' "$code" "$length" "$url"
+          done < <(grep -Ev '^(#|$)' "$logfile")
+          sed '/{{subdomains}}/,$!d; s/.*{{subdomains}}/\n/' "$logdir/temp.tpl"
+        ) > "$logdir/$href"
+        rm "$logdir/temp.tpl"
+        sed -i "s|{{domain}}|$subdomain|g;
+          s|{{app}}|$APP|;
+          s|{{datetime}}|$datetime|;
+          s|{{year}}|$(date +%Y)|;
+          s|{{screenshot-80}}|$screenshot_80|g;
+          s|{{screenshot-443}}|$screenshot_443|g;
+          s|{{nmap}}|$nmap|;
+          s|{{host}}|$host|;" "$logdir/$href"
+      fi
+      tbody+=$(printf "<tr><td><a href='%s'>%s</a></td><td>%s</td></tr>" "$href" "$subdomain" "$n")
+      ((subdomains_qtde++))
     fi
-    tbody+=$(printf "<tr><td><a href='%s'>%s</a></td><td>%s</td></tr>" "$href" "$subdomain" "$n")
-    ((subdomains_qtde++))
   done < "$logdir/${dtreport}httpx.log"
   ##
   # Domain report
@@ -490,16 +492,16 @@ run() {
     # Search and report subdomains
     printf "\n\n${CBold}${CFGCyan}[${CFGWhite}+${CFGCyan}] Starting Scan on Subdomains${CReset}\n"
     (
-      while read domain && [[ $domain ]]; do
-        run_tools -f "$logdir/${dtreport}${domain/:\/\//.}.log" -s slow dirsearch
+      while read domain; do
+        [[ $domain ]] && run_tools -f "$logdir/${dtreport}${domain/:\/\//.}.log" -s slow dirsearch
       done < "$logdir/${dtreport}httpx.log"
     )
 
     [[ $anon_mode == 1 ]] && anonsurf stop &> /dev/null
     (
       anon_mode=0
-      while read domain && [[ $domain ]]; do
-        run_tools -f "$logdir/${dtreport}${domain}nmap.log" fnmap
+      while read domain; do
+        [[ $domain ]] && run_tools -f "$logdir/${dtreport}${domain}nmap.log" fnmap
       done < "$logdir/${dtreport}mrx.log"
     )
     aquatone -chrome-path /usr/bin/chromium -out "$logdir" 2>>$logerr >/dev/null < "$logdir/${dtreport}mrx.log"

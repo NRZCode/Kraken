@@ -95,7 +95,7 @@ export -f system_update
 
 system_upgrade() {
   print_message 'Updating system'
-  apt -y upgrade
+  apt -y upgrade <<< 'SYSTEM_UPGRADE'
   apt -y autoremove
   apt -y autoclean
 }
@@ -144,7 +144,7 @@ init_install() {
         ;;
       Kali)
         apt -y install kali-desktop-gnome
-        packages+=' hcxtools amass joomscan uniscan metagoofil gospider crackmapexec arjun dnsgen s3scanner chromium'
+        packages+=' hcxtools amass joomscan uniscan metagoofil gospider crackmapexec arjun dnsgen s3scanner chromium libwacom-common'
         ;;
     esac
     apt -y install $packages

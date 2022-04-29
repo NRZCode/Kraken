@@ -23,15 +23,19 @@ Aquatone|ParamSpider|Gau|Assetfinder|Subfinder|Takeover
 Httpx|Infoga|Gobuster|Anonsurf|Gittools|Droopescan
 Joomscan|Sslyze|Sslscan
 
-### Full installation
 #### Run commands as root
+### Minimal installation
+```sh
+sudo kraken/install.sh httpx anonsurf assetfinder findomain subfinder aquatone dirsearch feroxbuster
+```
+### Full installation
 #### cURL, wget mode
 ```sh
 curl -sL https://github.com/NRZCode/kraken/raw/master/install.sh | bash
 ```
 ### Can install just only tools from a list
 ```sh
-curl -sL https://github.com/NRZCode/kraken/raw/master/install.sh | bash -s dirseach ngrok httpx
+curl -sL https://github.com/NRZCode/kraken/raw/master/install.sh | bash -s dirseach httpx anonsurf assetfinder findomain subfinder aquatone feroxbuster
 ```
 #### Git mode
 ```sh

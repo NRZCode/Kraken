@@ -426,6 +426,7 @@ init() {
   export domain=${domain#@(ht|f)tp?(s)://}
 
   [[ -z "$domain" ]] && { usage "$basename: ERROR: Invalid domain"; return 1; }
+  export ip=$(nslookup "$domain"|grep -oP 'Address: \K.*([0-9]{1,3}\.){3}[0-9]{1,3}')
   return 0
 }
 

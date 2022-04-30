@@ -189,15 +189,15 @@ domain_info_report() {
 }
 
 report_tools() {
-  tools[mrx]='Mrx Scan Subdomains|subfinder findomain-linux assetfinder|for log in "$logdir/"{assetfinder,findomain,subfinder}.log; do > "$log"; done; sleep 5;findomain-linux -q -t "$domain" > "$logdir/findomain.log"; sleep 5; subfinder -d "$domain" -silent -t 40 -o "$logdir/subfinder.log"; sleep 5; assetfinder -subs-only "$domain" > "$logdir/assetfinder.log"; sort -u "$logdir/"{assetfinder,findomain,subfinder}.log -o "$logfile"; httpx -silent < "$logfile" > "$logdir/${dtreport}httpx.log"'
-  tools[dirsearch]='Dirsearch|dirsearch|dirsearch -q -e php,aspx,jsp,html,zip,jar -x 404-499,500-599 -w "$dicc" --random-agent -o "$logfile" -u "$domain"'
+  tools[mrx]='subdomains|subfinder findomain-linux assetfinder|for log in "$logdir/"{assetfinder,findomain,subfinder}.log; do > "$log"; done; sleep 5;findomain-linux -q -t "$domain" > "$logdir/findomain.log"; sleep 5; subfinder -d "$domain" -silent -t 40 -o "$logdir/subfinder.log"; sleep 5; assetfinder -subs-only "$domain" > "$logdir/assetfinder.log"; sort -u "$logdir/"{assetfinder,findomain,subfinder}.log -o "$logfile"; httpx -silent < "$logfile" > "$logdir/${dtreport}httpx.log"'
+  tools[dirsearch]='directories|dirsearch|dirsearch -q -e php,asp,aspx,jsp,html,zip,jar -x 404-499,500-599 -w "$dicc" --random-agent --skip-on-status 429,999 -r -o "$logfile" -u "$domain"; sleep 5'
   tools[feroxbuster]='Feroxbuster Scan sub-directories|feroxbuster|feroxbuster -q -x php,asp,aspx,jsp,html,zip,jar -A --rate-limit 50 --time-limit 30m -t 30 -L 1 --extract-links -w "$dicc" -o "$logfile" -u "$domain"; sleep 5'
-  tools[whatweb]='Whatweb|whatweb|whatweb -q -t 50 --no-errors "$domain" --log-brief="$logfile"'
-  tools[owasp]='Owasp Getallurls|waybackurls uro anew|cat "$logdir/${dtreport}httpx.log" | waybackurls | uro | anew | sort -u > "$logfile"'
-  tools[crt]='Certificate Search|curl|curl -s "https://crt.sh/?q=%25.${domain}&output=json" | anew > "$logfile"'
-  tools[nmap]='Nmap Ports|nmap|nmap -sS -sCV "$domain" -T4 -Pn -oN "$logfile"'
-  tools[nmap-cvss]='Nmap CVSs|nmap|nmap -sV --script vulners --script-args mincvss=1.0 "$domain" -oN "$logfile"'
-  tools[fnmap]='Nmap|nmap|nmap -n -Pn -sS "$domain" -T4 --open -sV -oN "$logfile"'
+  tools[whatweb]='web|whatweb|whatweb -q -t 50 --no-errors "$domain" --log-brief="$logfile"'
+  tools[owasp]='getallurls|waybackurls uro anew|cat "$logdir/${dtreport}httpx.log" | waybackurls | uro | anew | sort -u > "$logfile"'
+  tools[crt]='certificate|curl|curl -s "https://crt.sh/?q=%25.${domain}&output=json" | anew > "$logfile"'
+  tools[nmap]='ports|nmap|nmap -sS -sCV "$domain" -T4 -Pn -oN "$logfile"'
+  tools[nmap-cvss]='vulnerability|nmap|nmap -sV --script vulners --script-args mincvss=1.0 "$domain" -oN "$logfile"'
+  tools[fnmap]='ports|nmap|nmap -n -Pn -sS "$domain" -T4 --open -sV -oN "$logfile"; sleep 2'
 }
 
 report() {
@@ -385,7 +385,7 @@ banner() {
   banner_logo
   lolcat $'\n\n 🐙 Powerful scan tool and parameter analyzer.'
   printf "
- 🎯   Target                         〔${CBold}${CFGYellow}https://$domain${CReset}〕
+ 🎯   Target                         〔${CBold}${CFGYellow}https://$domain/${CReset}〕
  🚪   Scan Port                      〔true〕
  🧰   Redirect                       〔true〕
  🕘   Started at                     〔%(%Y/%m/%d %H:%M:%S)T〕"
@@ -426,7 +426,6 @@ init() {
   export domain=${domain#@(ht|f)tp?(s)://}
 
   [[ -z "$domain" ]] && { usage "$basename: ERROR: Invalid domain"; return 1; }
-  export ip=$(nslookup "$domain"|grep -oP 'Address: \K.*([0-9]{1,3}\.){3}[0-9]{1,3}')
   return 0
 }
 
@@ -456,7 +455,7 @@ run_tools() {
     [[ $anon_mode == 1 ]] && anonsurf change &> /dev/null
     IFS='|' read app depends cmd <<< ${tools[${tool,,}]}
     if type -t $depends > /dev/null; then
-      printf "\n\n${CBold}${CFGCyan}[${CFGWhite}+${CFGCyan}] Starting ${app}${CReset}\n"
+      printf "\n\n${CBold}${CFGCyan}[${CFGWhite}+${CFGCyan}] Starting scan in ${app}${CReset}\n"
       logfile="$file"
       if [[ -z "$file" ]]; then
         logfile="$logdir/${dtreport}${tool,,}.log";
@@ -466,6 +465,7 @@ run_tools() {
       result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s ${speed:-normal} -m "${tool^} $domain"
       user_notification -s "$APP Reconnaissance" -b "Scanning ${tool^} completed"
       elapsedtime -p "${tool^}"
+      sleep 5
     fi
   done
 }
@@ -487,14 +487,14 @@ run() {
     # Tools for report
     run_tools nmap nmap-cvss
     [[ $anon_mode == 1 ]] && anonsurf start &> /dev/null
-    run_tools mrx whatweb owasp ${selection,,}
+    run_tools mrx whatweb owasp crt ${selection,,}
 
     ##
     # Search and report subdomains
-    printf "\n\n${CBold}${CFGCyan}[${CFGWhite}+${CFGCyan}] Starting Scan on Subdomains${CReset}\n"
+    printf "\n\n${CBold}${CFGCyan}[${CFGWhite}+${CFGCyan}] Starting scan on subdomains${CReset}\n"
     (
       while read domain; do
-        [[ $domain ]] && run_tools -f "$logdir/${dtreport}${domain/:\/\//.}.log" -s slow dirsearch
+        [[ $domain ]] && run_tools -f "$logdir/${dtreport}${domain/:\/\//.}.log" -s slowest dirsearch
       done < "$logdir/${dtreport}httpx.log"
     )
 

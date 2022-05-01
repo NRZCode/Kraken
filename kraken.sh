@@ -234,31 +234,46 @@ report() {
             printf -v "screenshot_$port" '%s' "screenshots/${f##*/}"
           fi
         done
+        if [[ $screenshot_80 ]]; then
+          (
+            sed '1,/{{screenshot-80}}/!d; s/{{screenshot-80}}.*/\n/' "$workdir/resources/subreport.tpl"
+            echo "data:image/png;base64,$(base64 -w0 "$screenshot_80")"
+            sed '/{{screenshot-80}}/,$!d; s/.*{{screenshot-80}}/\n/' "$workdir/resources/subreport.tpl"
+          ) > "$logdir/temp.tpl"
+          mv "$logdir/temp.tpl" "$logdir/$href"
+        fi
+        if [[ $screenshot_443 ]]; then
+          (
+            sed '1,/{{screenshot-443}}/!d; s/{{screenshot-443}}.*/\n/' "$logdir/$href"
+            echo "data:image/png;base64,$(base64 -w0 "$screenshot_443")"
+            sed '/{{screenshot-443}}/,$!d; s/.*{{screenshot-443}}/\n/' "$logdir/$href"
+          ) > "$logdir/temp.tpl"
+          mv "$logdir/temp.tpl" "$logdir/$href"
+        fi
         (
-          sed '1,/{{response-headers}}/!d; s/{{response-headers}}.*/\n/' "$workdir/resources/subreport.tpl"
+          sed '1,/{{response-headers}}/!d; s/{{response-headers}}.*/\n/'  "$logdir/$href"
           : "${subdomain#@(ht|f)tp?(s)://}"
           for f in "$logdir/"headers/*${_//./_}*txt; do
             if [[ -s "$f" ]]; then
               printf "==> $f <==\n$(<$f)\n"
             fi
           done
-          sed '/{{response-headers}}/,$!d; s/.*{{response-headers}}/\n/' "$workdir/resources/subreport.tpl"
+          sed '/{{response-headers}}/,$!d; s/.*{{response-headers}}/\n/'  "$logdir/$href"
         ) > "$logdir/temp.tpl"
+        mv "$logdir/temp.tpl" "$logdir/$href"
         (
-          sed '1,/{{subdomains}}/!d; s/{{subdomains}}.*/\n/' "$logdir/temp.tpl"
+          sed '1,/{{subdomains}}/!d; s/{{subdomains}}.*/\n/' "$logdir/$href"
           while read code length url; do
             url=$(sed -E 's@((ht|f)tps?[^[:space:]]+)@<a href="\1" target="_blank">\1</a>@g' <<< "$url")
             printf '<tr><td>%s</td><td>%s</td><td>%s</td></tr>' "$code" "$length" "$url"
           done < <(grep -Ev '^(#|$)' "$logfile")
-          sed '/{{subdomains}}/,$!d; s/.*{{subdomains}}/\n/' "$logdir/temp.tpl"
-        ) > "$logdir/$href"
-        rm "$logdir/temp.tpl"
+          sed '/{{subdomains}}/,$!d; s/.*{{subdomains}}/\n/' "$logdir/$href"
+        ) > "$logdir/temp.tpl"
+        mv "$logdir/temp.tpl" "$logdir/$href"
         sed -i "s|{{domain}}|$subdomain|g;
           s|{{app}}|$APP|;
           s|{{datetime}}|$datetime|;
           s|{{year}}|$(date +%Y)|;
-          s|{{screenshot-80}}|$screenshot_80|g;
-          s|{{screenshot-443}}|$screenshot_443|g;
           s|{{nmap}}|$nmap|;
           s|{{host}}|$host|;" "$logdir/$href"
       fi

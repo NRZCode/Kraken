@@ -408,7 +408,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                                             <h4 class="heading graphina-chart-heading" style="text-align: center; color: #FFFFFF;">Screenshot Port 80</h4>
                                                                         </div>
                                                                         <div class="">
-                                                                            <a href="{{screenshot-80}}"><img src="{{screenshot-80}}"></a>
+                                                                            <img src="{{screenshot-80}}">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -424,7 +424,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                                             <h4 class="heading graphina-chart-heading" style="text-align: center;  color: #FFFFFF;">Screenshot Port 443</h4>
                                                                         </div>
                                                                         <div class="">
-                                                                            <a href="{{screenshot-443}}"><img src="{{screenshot-443}}"></a>
+                                                                            <img src="{{screenshot-443}}">
                                                                         </div>
                                                                     </div>
                                                                 </div>

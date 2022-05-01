@@ -255,7 +255,7 @@ report() {
           : "${subdomain#@(ht|f)tp?(s)://}"
           for f in "$logdir/"headers/*${_//./_}*txt; do
             if [[ -s "$f" ]]; then
-              printf "==> $f <==\n$(<$f)\n"
+              printf "==> %s <==\n%s\n" "$f" "$(<$f)"
             fi
           done
           sed '/{{response-headers}}/,$!d; s/.*{{response-headers}}/\n/'  "$logdir/$href"

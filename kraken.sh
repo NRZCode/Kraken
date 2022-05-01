@@ -190,8 +190,8 @@ domain_info_report() {
 
 report_tools() {
   tools[mrx]='subdomains|subfinder findomain-linux assetfinder|for log in "$logdir/"{assetfinder,findomain,subfinder}.log; do > "$log"; done; sleep 5;findomain-linux -q -t "$domain" > "$logdir/findomain.log"; sleep 5; subfinder -d "$domain" -silent -t 40 -o "$logdir/subfinder.log"; sleep 5; assetfinder -subs-only "$domain" > "$logdir/assetfinder.log"; sort -u "$logdir/"{assetfinder,findomain,subfinder}.log -o "$logfile"; httpx -silent < "$logfile" > "$logdir/${dtreport}httpx.log"'
-  tools[dirsearch]='directories|dirsearch|dirsearch -q -e php,asp,aspx,jsp,html,zip,jar -x 404-499,500-599 -w "$dicc" --random-agent --skip-on-status 429,999 -r -o "$logfile" -u "$domain"; sleep 5'
-  tools[feroxbuster]='Feroxbuster Scan sub-directories|feroxbuster|feroxbuster -q -x php,asp,aspx,jsp,html,zip,jar -A --rate-limit 50 --time-limit 30m -t 30 -L 1 --extract-links -w "$dicc" -o "$logfile" -u "$domain"; sleep 5'
+  tools[dirsearch]='directories|dirsearch|dirsearch -q -e php,asp,aspx,jsp,html,zip,jar -x 404-499,500-599 -w "$dicc" --random-agent --skip-on-status 429,999 -r -R 4 -o "$logfile" -u "$domain"'
+  tools[feroxbuster]='Feroxbuster Scan sub-directories|feroxbuster|feroxbuster -q -x php,asp,aspx,jsp,html,zip,jar -A --rate-limit 50 --time-limit 30m -t 30 -L 1 --extract-links -w "$dicc" -o "$logfile" -u "$domain"'
   tools[whatweb]='web|whatweb|whatweb -q -t 50 --no-errors "$domain" --log-brief="$logfile"'
   tools[owasp]='getallurls|waybackurls uro anew|cat "$logdir/${dtreport}httpx.log" | waybackurls | uro | anew | sort -u > "$logfile"'
   tools[crt]='certificate|curl|curl -s "https://crt.sh/?q=%25.${domain}&output=json" | anew > "$logfile"'
@@ -389,13 +389,30 @@ lolcat() {
 
 banner_logo() {
   lolcat "
- ██╗  ██╗██████╗  █████╗ ██╗  ██╗███████╗███╗   ██╗
- ██║ ██╔╝██╔══██╗██╔══██╗██║ ██╔╝██╔════╝████╗  ██║
- █████╔╝ ██████╔╝███████║█████╔╝ █████╗  ██╔██╗ ██║
- ██╔═██╗ ██╔══██╗██╔══██║██╔═██╗ ██╔══╝  ██║╚██╗██║
- ██║  ██╗██║  ██║██║  ██║██║  ██╗███████╗██║ ╚████║
- ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝®
-                                    version: $version"
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣴⣾⣿⣿⣿⣶⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣴⣾⣿⠿⠛⠉⢉⣀⠉⠙⠻⢿⣿⣶⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣴⣾⣿⠿⠛⠉⠀⠀⢀⣴⣿⣿⣷⣄⠀⠀⠈⠙⠻⢿⣿⣶⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣴⣾⣿⠿⠛⠉⠀⠀⠀⠀⢀⣴⣿⣿⣿⣿⣿⣿⣷⣄⠀⠀⠀⠀⠈⠙⠻⢿⣿⣶⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣶⣿⡿⠛⠉⠀⠀⠀⠀⠀⠀⠀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣄⠀⠀⠀⠀⠀⠀⠈⠙⠻⣿⣷⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣿⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⣿⡏⠀⠀⠤⠶⣶⣦⣤⣀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⢀⣠⣤⣤⣤⣤⣄⠀⠫⣿⣿⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣧⣤⣤⣀⡀⠀⠈⠛⢿⣿⣿⡿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⣿⣿⣿⡿⠛⠉⠀⢀⣠⣤⣤⣽⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⡿⠿⠿⠿⣿⣿⣶⣄⠀⠀⠙⣿⣿⣆⠈⠻⢿⣿⣿⣿⣿⣿⠿⠋⢠⣾⣿⡿⠋⠀⢀⣤⣾⣿⣿⠿⠿⠿⢿⣿⣄⠀⠀⠀⣀⠀⠀⠀⢀⣀⠀⢀⣀⣀⣀⣀⡀⠀⠀⠀⠀⣀⣀⡀⠀⠀⠀⣀⡀⠀⠀⠀⣀⠀⠀⣀⣀⣀⣀⣀⣀⠀⢀⣀⡀⠀⠀⣀⡀⠀
+⠀⠀⠀⠀⠀⠀⠀⣾⠟⠁⢠⠀⠀⠀⠈⠙⣿⣿⣧⡀⠀⠈⣿⣿⣿⣷⣾⣿⣿⣿⣿⣷⣶⣿⣿⣿⡟⠀⠀⣠⣿⣿⡿⠋⠀⠀⠀⢠⡀⠙⢿⠄⠀⠀⣿⠀⠀⠀⣸⡟⠀⢸⣿⠉⠉⠙⢿⡆⠀⠀⢠⣿⢹⣧⠀⠀⠀⣿⡇⠀⠀⢰⣿⠀⠀⣿⠋⠉⠉⠉⠉⠀⢸⣿⣷⡀⠀⣿⡇⠀
+⠀⠀⠀⠀⠀⠀⠀⠉⠀⣴⣿⠀⠀⠀⠀⠀⠈⢻⣿⣷⠀⠀⣿⣿⡿⣿⣿⣿⣿⣿⣿⣿⣿⡿⣿⣿⡇⠀⢰⣿⣿⠏⠀⠀⠀⠀⠀⢸⣿⡄⠀⠀⠀⠀⣿⡀⣀⣴⠟⠁⠀⢸⣿⣀⣀⣠⣾⠇⠀⠀⣼⠇⠀⢿⡆⠀⠀⣿⡇⣀⣴⡿⠁⠀⠀⣿⣦⣤⣤⣤⠀⠀⢸⣿⠘⣧⠀⣿⡇⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣄⣀⡀⠀⠀⠀⠀⢻⡏⠀⠀⣿⣿⠇⠘⢿⣿⣿⣿⣿⣿⡟⠀⢿⣿⡇⠀⠈⣿⠃⠀⠀⠀⠀⣀⣀⣼⣿⡇⠀⠀⠀⠀⣿⠛⠋⠻⣧⡀⠀⢸⣿⠉⠉⢿⣇⠀⠀⢰⡿⠶⠶⠾⣿⠀⠀⣿⡟⠋⠹⣷⡄⠀⠀⣿⠁⠀⠀⠀⠀⠀⢸⣿⠀⠸⣧⣿⡇⠀
+⠀⠀⠀⠀⠀⠀⢀⣴⣿⡿⠿⠿⠿⣿⣷⣄⠀⠀⠈⠁⠀⣰⣿⡿⠀⠀⠈⣿⣿⣿⣿⡟⠀⠀⠸⣿⣿⡀⠀⠈⠀⠀⢀⣴⣿⣿⠿⠿⠿⣿⣷⣄⠀⠀⠿⠀⠀⠀⠹⠷⠀⠸⠿⠀⠀⠀⠻⠧⠀⠿⠃⠀⠀⠀⠻⠇⠀⠿⠇⠀⠀⠘⠿⠄⠀⠿⠶⠶⠶⠶⠶⠀⠸⠿⠀⠀⠹⠿⠇⠀
+⠀⠀⣀⠀⠀⣰⣿⡿⠋⠀⣠⣤⡄⠈⠻⣿⡷⠀⠀⠀⣠⣿⣿⣧⣀⠀⠀⢹⣿⣿⣿⡃⠀⢀⣠⣿⣿⣷⡀⠀⠀⢰⣿⡿⠋⠀⣠⣤⡀⠈⠻⣿⣷⡄⠀⢀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      version: $version⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⢻⣷⣾⣿⠟⠀⠀⠀⠘⣿⣷⡀⠀⠈⠁⠀⠀⣴⣿⡿⠛⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠛⣿⣷⡄⠀⠀⠉⠀⠀⣰⣿⡿⠀⠀⠀⠘⢿⣿⣶⡿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠈⠉⠁⠀⠀⠀⠀⠀⠹⠿⠷⠀⠀⠀⠀⣼⣿⡿⣿⣿⣿⡿⠿⠻⣿⣿⣿⣿⣿⠛⠿⣿⣿⣿⣿⣿⣿⡆⠀⠀⠀⠰⠿⠿⠁⠀⠀⠀⠀⠀⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣤⣤⡀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⠀⣸⣿⡟⠙⣿⣿⡄⠀⠀⠀⠀⠀⢸⣿⡇⠀⠀⠀⣠⣤⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⠿⠛⠿⣿⣷⣄⠀⠹⣿⣆⠀⠀⠀⠀⣰⣿⡿⠁⠀⠸⣿⣷⡀⠀⠀⠀⢀⣾⡿⠁⢀⣴⣿⡿⠟⠛⢿⣷⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠟⠁⠀⠀⠀⠈⠻⣿⣷⣄⡈⠉⠛⠀⣀⣴⣿⡟⠁⠀⠀⠀⠙⢿⣿⣦⡀⠈⠉⠉⣀⣴⣿⡿⠋⠀⠀⠀⠀⠙⠷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⠿⣿⣿⣿⣿⣿⠟⠋⠀⠀⠀⠀⠀⠀⠈⠙⠿⣿⣿⣿⣿⡿⠟⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠿⣿⣷⣦⣄⠀⠀⢀⣠⣶⣿⡿⠟⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠻⢿⣿⣿⣿⠿⠛⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉"
 }
 
 banner() {
@@ -428,11 +445,10 @@ OPTIONS
     -V, --version          Print current version
     -h, --help             Show the help message and exit
     -m, --max-time int     Minutes to wait for enumeration results 〔 Default: 10 〕
-    -T, --timeout int      Seconds to wait before timing out 〔 Default: 30 〕
 
 Example of use:
 # $basename -d example.com -a off -n"
-  banner_logo
+
   printf "$usage\n${*:+\n$*\n}"
 }
 
@@ -509,7 +525,7 @@ run() {
 
     ##
     # Search and report subdomains
-    printf "\n\n${CBold}${CFGCyan}[${CFGWhite}+${CFGCyan}] Starting scan on subdomains${CReset}\n"
+    printf "\n\n${CBold}${CFGCyan}»»»»»»»»»»»» Enabling brute force on subdirectories${CReset}\n"
     (
       while read domain; do
         [[ $domain ]] && run_tools -f "$logdir/${dtreport}${domain/:\/\//.}.log" -s slowest dirsearch

@@ -273,6 +273,8 @@ report() {
         sed -i "s|{{domain}}|$subdomain|g;
           s|{{app}}|$APP|;
           s|{{datetime}}|$datetime|;
+          s|{{screenshot-80}}||g;
+          s|{{screenshot-443}}||g;
           s|{{year}}|$(date +%Y)|;
           s|{{nmap}}|$nmap|;
           s|{{host}}|$host|;" "$logdir/$href"

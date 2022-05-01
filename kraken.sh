@@ -222,16 +222,16 @@ report() {
         host=$(domain_info_report host "${subdomain#@(ht|f)tp?(s)://}")
         nmap=$(nmap_report "$logdir/${dtreport}${subdomain#@(ht|f)tp?(s)://}nmap.log")
         d="${subdomain#@(ht|f)tp?(s)://}"
-        for f in $logdir/screenshots/*${d//./_}*png; do
+        for png in $logdir/screenshots/*${d//./_}*png; do
           re="(https?)__${d//./_}__(([0-9]+)__)?[[:alnum:]]+\.png"
-          if [[ $f =~ $re ]]; then
+          if [[ $png =~ $re ]]; then
             if [[ ${BASH_REMATCH[1]} == https ]]; then
               port=443
             elif [[ ${BASH_REMATCH[1]} == http ]]; then
               port=80
             fi
             port=${BASH_REMATCH[4]:-$port}
-            printf -v "screenshot_$port" '%s' "screenshots/${f##*/}"
+            printf -v "screenshot_$port" '%s' "$png"
           fi
         done
         if [[ $screenshot_80 ]]; then

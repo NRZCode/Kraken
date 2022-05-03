@@ -532,17 +532,8 @@ run() {
 
     ##
     # Search and report subdomains
-<<<<<<< HEAD
-    printf "\n\n${CBold}${CFGCyan}»»»»»»»»»»»» Enabling brute force on subdirectories${CReset}\n"
-    (
-      while read domain; do
-        [[ $domain ]] && run_tools -f "$logdir/${dtreport}${domain/:\/\//.}.log" -s slowest dirsearch
-      done < "$logdir/${dtreport}httpx.log"
-    )
-
-=======
     if [[ $subdomains_scan_mode == 1 ]]; then
-      printf "\n\n${CBold}${CFGCyan}[${CFGWhite}+${CFGCyan}] Starting scan on subdomains${CReset}\n"
+      printf "\n\n${CBold}${CFGCyan}»»»»»»»»»»»» Enabling brute force on subdirectories${CReset}\n"
       (
         while read domain; do
           [[ $domain ]] && run_tools -f "$logdir/${dtreport}${domain/:\/\//.}.log" -s slowest dirsearch
@@ -557,7 +548,6 @@ run() {
         done < "$logdir/${dtreport}mrx.log"
       )
     fi
->>>>>>> Help usage
     [[ $anon_mode == 1 ]] && anonsurf stop &> /dev/null
     aquatone -chrome-path /usr/bin/chromium -out "$logdir" 2>>$logerr >/dev/null < "$logdir/${dtreport}mrx.log"
     report

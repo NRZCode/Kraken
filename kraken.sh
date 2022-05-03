@@ -77,7 +77,7 @@ read_package_ini() {
 
 check_dependencies() {
   local exit_code=0
-  for pkg in git dialog nmap httpx anonsurf assetfinder findomain-linux subfinder aquatone dirsearch; do
+  for pkg in $required_packages; do
     if ! type -t $pkg >/dev/null; then
       printf '%s: ERROR: Required package %s.\n' "$basename" "$pkg" 1>&2
       exit_code=1
@@ -109,6 +109,14 @@ check_environments() {
   [[ -r "$workdir/.env" ]] && source "$workdir/.env"
 }
 
+check_domainfile() {
+  if [[ $domainfile ]]; then
+    [[ -r "$domainfile" ]] || { printf '%s\n' "INVALID domain file: $domainfile"; exit 1; }
+    return 0
+  fi
+  return 1
+}
+
 update_tools() {
   echo 'wait a moment...'
   git -C "$workdir" pull --all
@@ -126,6 +134,7 @@ mklogdir() {
 }
 
 dg_menu() {
+  [[ $dg_checklist_mode == 0 ]] && return 0
   dg=(dialog --stdout --title "$title" --backtitle "$backtitle" --checklist "$text" 0 "$width" 0)
   selection=$("${dg[@]}" "${dg_options[@]}")
 }
@@ -216,69 +225,68 @@ report() {
       logfile="$logdir/${dtreport}${subdomain/:\/\//.}.log"
       n=$(($([[ -f "$logfile" ]] && wc -l < "$logfile" 2>&-)))
       ((scanned_urls+=n))
-      href='#'
-      if [[ $n -gt 0 ]]; then
-        href="${dtreport}${subdomain/:\/\//.}.html"
-        host=$(domain_info_report host "${subdomain#@(ht|f)tp?(s)://}")
-        nmap=$(nmap_report "$logdir/${dtreport}${subdomain#@(ht|f)tp?(s)://}nmap.log")
-        d="${subdomain#@(ht|f)tp?(s)://}"
-        for png in $logdir/screenshots/*${d//./_}*png; do
-          re="(https?)__${d//./_}__(([0-9]+)__)?[[:alnum:]]+\.png"
-          if [[ $png =~ $re ]]; then
-            if [[ ${BASH_REMATCH[1]} == https ]]; then
-              port=443
-            elif [[ ${BASH_REMATCH[1]} == http ]]; then
-              port=80
-            fi
-            port=${BASH_REMATCH[4]:-$port}
-            printf -v "screenshot_$port" '%s' "$png"
+
+      href="${dtreport}${subdomain/:\/\//.}.html"
+      host=$(domain_info_report host "${subdomain#@(ht|f)tp?(s)://}")
+      nmap=$(nmap_report "$logdir/${dtreport}${subdomain#@(ht|f)tp?(s)://}nmap.log")
+      d="${subdomain#@(ht|f)tp?(s)://}"
+      for png in $logdir/screenshots/*${d//./_}*png; do
+        re="(https?)__${d//./_}__(([0-9]+)__)?[[:alnum:]]+\.png"
+        if [[ $png =~ $re ]]; then
+          if [[ ${BASH_REMATCH[1]} == https ]]; then
+            port=443
+          elif [[ ${BASH_REMATCH[1]} == http ]]; then
+            port=80
+          fi
+          port=${BASH_REMATCH[4]:-$port}
+          printf -v "screenshot_$port" '%s' "$png"
+        fi
+      done
+      if [[ $screenshot_80 ]]; then
+        (
+          sed '1,/{{screenshot-80}}/!d; s/{{screenshot-80}}.*/\n/' "$workdir/resources/subreport.tpl"
+          echo "data:image/png;base64,$(base64 -w0 "$screenshot_80")"
+          sed '/{{screenshot-80}}/,$!d; s/.*{{screenshot-80}}/\n/' "$workdir/resources/subreport.tpl"
+        ) > "$logdir/temp.tpl"
+        mv "$logdir/temp.tpl" "$logdir/$href"
+      fi
+      if [[ $screenshot_443 ]]; then
+        (
+          sed '1,/{{screenshot-443}}/!d; s/{{screenshot-443}}.*/\n/' "$logdir/$href"
+          echo "data:image/png;base64,$(base64 -w0 "$screenshot_443")"
+          sed '/{{screenshot-443}}/,$!d; s/.*{{screenshot-443}}/\n/' "$logdir/$href"
+        ) > "$logdir/temp.tpl"
+        mv "$logdir/temp.tpl" "$logdir/$href"
+      fi
+      (
+        sed '1,/{{response-headers}}/!d; s/{{response-headers}}.*/\n/'  "$logdir/$href"
+        : "${subdomain#@(ht|f)tp?(s)://}"
+        for f in "$logdir/"headers/*${_//./_}*txt; do
+          if [[ -s "$f" ]]; then
+            printf "==> %s <==\n%s\n" "$f" "$(<$f)"
           fi
         done
-        if [[ $screenshot_80 ]]; then
-          (
-            sed '1,/{{screenshot-80}}/!d; s/{{screenshot-80}}.*/\n/' "$workdir/resources/subreport.tpl"
-            echo "data:image/png;base64,$(base64 -w0 "$screenshot_80")"
-            sed '/{{screenshot-80}}/,$!d; s/.*{{screenshot-80}}/\n/' "$workdir/resources/subreport.tpl"
-          ) > "$logdir/temp.tpl"
-          mv "$logdir/temp.tpl" "$logdir/$href"
-        fi
-        if [[ $screenshot_443 ]]; then
-          (
-            sed '1,/{{screenshot-443}}/!d; s/{{screenshot-443}}.*/\n/' "$logdir/$href"
-            echo "data:image/png;base64,$(base64 -w0 "$screenshot_443")"
-            sed '/{{screenshot-443}}/,$!d; s/.*{{screenshot-443}}/\n/' "$logdir/$href"
-          ) > "$logdir/temp.tpl"
-          mv "$logdir/temp.tpl" "$logdir/$href"
-        fi
-        (
-          sed '1,/{{response-headers}}/!d; s/{{response-headers}}.*/\n/'  "$logdir/$href"
-          : "${subdomain#@(ht|f)tp?(s)://}"
-          for f in "$logdir/"headers/*${_//./_}*txt; do
-            if [[ -s "$f" ]]; then
-              printf "==> %s <==\n%s\n" "$f" "$(<$f)"
-            fi
-          done
-          sed '/{{response-headers}}/,$!d; s/.*{{response-headers}}/\n/'  "$logdir/$href"
-        ) > "$logdir/temp.tpl"
-        mv "$logdir/temp.tpl" "$logdir/$href"
-        (
-          sed '1,/{{subdomains}}/!d; s/{{subdomains}}.*/\n/' "$logdir/$href"
-          while read code length url; do
-            url=$(sed -E 's@((ht|f)tps?[^[:space:]]+)@<a href="\1" target="_blank">\1</a>@g' <<< "$url")
-            printf '<tr><td>%s</td><td>%s</td><td>%s</td></tr>' "$code" "$length" "$url"
-          done < <(grep -Ev '^(#|$)' "$logfile")
-          sed '/{{subdomains}}/,$!d; s/.*{{subdomains}}/\n/' "$logdir/$href"
-        ) > "$logdir/temp.tpl"
-        mv "$logdir/temp.tpl" "$logdir/$href"
-        sed -i "s|{{domain}}|$subdomain|g;
-          s|{{app}}|$APP|;
-          s|{{datetime}}|$datetime|;
-          s|{{screenshot-80}}||g;
-          s|{{screenshot-443}}||g;
-          s|{{year}}|$(date +%Y)|;
-          s|{{nmap}}|$nmap|;
-          s|{{host}}|$host|;" "$logdir/$href"
-      fi
+        sed '/{{response-headers}}/,$!d; s/.*{{response-headers}}/\n/'  "$logdir/$href"
+      ) > "$logdir/temp.tpl"
+      mv "$logdir/temp.tpl" "$logdir/$href"
+      (
+        sed '1,/{{subdomains}}/!d; s/{{subdomains}}.*/\n/' "$logdir/$href"
+        while read code length url; do
+          url=$(sed -E 's@((ht|f)tps?[^[:space:]]+)@<a href="\1" target="_blank">\1</a>@g' <<< "$url")
+          printf '<tr><td>%s</td><td>%s</td><td>%s</td></tr>' "$code" "$length" "$url"
+        done < <(grep -Ev '^(#|$)' "$logfile")
+        sed '/{{subdomains}}/,$!d; s/.*{{subdomains}}/\n/' "$logdir/$href"
+      ) > "$logdir/temp.tpl"
+      mv "$logdir/temp.tpl" "$logdir/$href"
+      sed -i "s|{{domain}}|$subdomain|g;
+        s|{{app}}|$APP|;
+        s|{{datetime}}|$datetime|;
+        s|{{screenshot-80}}||g;
+        s|{{screenshot-443}}||g;
+        s|{{year}}|$(date +%Y)|;
+        s|{{nmap}}|$nmap|;
+        s|{{host}}|$host|;" "$logdir/$href"
+
       tbody+=$(printf "<tr><td><a href='%s'>%s</a></td><td>%s</td></tr>" "$href" "$subdomain" "$n")
       ((subdomains_qtde++))
     fi
@@ -434,7 +442,7 @@ DESCRIPTION
 OPTIONS
   General options
     -d, --domain           Scan domain and subdomains
-    -dL,--list string      File containing list of domains for subdomain discovery
+    -dL,--domain-list      File containing list of domains for subdomain discovery
     -a, --anon             Setup usage of anonsurf change IP 〔 Default: On 〕
     -t, --threads          Number of threads to be used 〔 Default: 20 〕
     -A, --agressive        Use all sources (slow) for enumeration 〔 Default: Off 〕
@@ -448,7 +456,6 @@ OPTIONS
 
 Example of use:
 # $basename -d example.com -a off -n"
-
   printf "$usage\n${*:+\n$*\n}"
 }
 
@@ -525,6 +532,7 @@ run() {
 
     ##
     # Search and report subdomains
+<<<<<<< HEAD
     printf "\n\n${CBold}${CFGCyan}»»»»»»»»»»»» Enabling brute force on subdirectories${CReset}\n"
     (
       while read domain; do
@@ -532,13 +540,25 @@ run() {
       done < "$logdir/${dtreport}httpx.log"
     )
 
+=======
+    if [[ $subdomains_scan_mode == 1 ]]; then
+      printf "\n\n${CBold}${CFGCyan}[${CFGWhite}+${CFGCyan}] Starting scan on subdomains${CReset}\n"
+      (
+        while read domain; do
+          [[ $domain ]] && run_tools -f "$logdir/${dtreport}${domain/:\/\//.}.log" -s slowest dirsearch
+        done < "$logdir/${dtreport}httpx.log"
+      )
+
+      [[ $anon_mode == 1 ]] && anonsurf stop &> /dev/null
+      (
+        anon_mode=0
+        while read domain; do
+          [[ $domain ]] && run_tools -f "$logdir/${dtreport}${domain}nmap.log" fnmap
+        done < "$logdir/${dtreport}mrx.log"
+      )
+    fi
+>>>>>>> Help usage
     [[ $anon_mode == 1 ]] && anonsurf stop &> /dev/null
-    (
-      anon_mode=0
-      while read domain; do
-        [[ $domain ]] && run_tools -f "$logdir/${dtreport}${domain}nmap.log" fnmap
-      done < "$logdir/${dtreport}mrx.log"
-    )
     aquatone -chrome-path /usr/bin/chromium -out "$logdir" 2>>$logerr >/dev/null < "$logdir/${dtreport}mrx.log"
     report
 
@@ -560,7 +580,12 @@ main() {
       -V|--version) echo "$version"; exit 0;;
       -u|--update) update_mode=1; shift;;
       -d|--domain) domain=$2; shift 2;;
+     -dL|--domain-list) domainfile=$2; shift 2;;
+      -f|--fast-scan) dg_checklist_mode=0;;
+      -A|--agressive) dg_checklist_status=ON; shift;;
+      -n|--no-subs) subdomains_scan_mode=0; shift;;
       -a|--anon) [[ ${2,,} == @(0|false|off) ]] && anon_mode=0; shift 2;;
+
       *) shift;;
     esac
   done
@@ -576,7 +601,7 @@ main() {
   workdir=$dirname
   wordlistdir="$workdir/share/wordlists"
   inifile="$workdir/package.ini"
-
+  required_packages='git dialog nmap httpx anonsurf assetfinder findomain-linux subfinder aquatone dirsearch anew waybackurls'
   check_dependencies
   check_inifile
   check_environments
@@ -584,12 +609,13 @@ main() {
   SECONDS=0
   read_package_ini
   report_tools
-  mapfile -t dg_options < <(for tool in "${!descriptions[@]}"; do IFS='|' read t d <<< "${descriptions[$tool]}"; printf "%s\n%s\n$dg_checklist_mode\n" "$t" "$d"; done)
+  mapfile -t dg_options < <(for tool in "${!descriptions[@]}"; do IFS='|' read t d <<< "${descriptions[$tool]}"; printf "%s\n%s\n$dg_checklist_status\n" "$t" "$d"; done)
 
   [[ $update_mode == 1 ]] && update_tools
   shopt -s extglob
   [[ -z "$domain" ]] && { banner_logo; read -p 'Enter domain: ' domain; }
   domains="$domain"
+  check_domainfile && domains=$(<$domainfile)
   [[ -t 0 ]] || domains="$(</dev/stdin)"
   while read domain; do
     init || continue
@@ -600,6 +626,8 @@ main() {
 declare -A tools
 declare -A descriptions
 declare -A pagereports
-dg_checklist_mode=${dg_checklist_mode:-OFF}
+dg_checklist_mode=1
+dg_checklist_status=OFF
+subdomains_scan_mode=1
 anon_mode=1
 [[ $BASH_SOURCE == $0 ]] && main "$@"

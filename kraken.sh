@@ -571,11 +571,10 @@ main() {
       -u|--update) update_mode=1; shift;;
       -d|--domain) domain=$2; shift 2;;
      -dL|--domain-list) domainfile=$2; shift 2;;
-      -f|--fast-scan) dg_checklist_mode=0;;
+      -f|--fast-scan) dg_checklist_mode=0; shift;;
       -A|--agressive) dg_checklist_status=ON; shift;;
       -n|--no-subs) subdomains_scan_mode=0; shift;;
       -a|--anon) [[ ${2,,} == @(0|false|off) ]] && anon_mode=0; shift 2;;
-
       *) shift;;
     esac
   done

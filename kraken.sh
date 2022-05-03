@@ -109,12 +109,16 @@ check_environments() {
   [[ -r "$workdir/.env" ]] && source "$workdir/.env"
 }
 
-check_domainfile() {
+check_domain() {
   if [[ $domainfile ]]; then
     [[ -r "$domainfile" ]] || { printf '%s\n' "INVALID domain file: $domainfile"; exit 1; }
-    return 0
+    domains=$(<$domainfile)
   fi
-  return 1
+  [[ -t 0 ]] || domains="$(</dev/stdin)"
+  if [[ -z $domains ]]; then
+    [[ -z "$domain" ]] && { banner_logo; read -p 'Enter domain: ' domain; }
+    domains="$domain"
+  fi
 }
 
 update_tools() {
@@ -602,10 +606,7 @@ main() {
 
   [[ $update_mode == 1 ]] && update_tools
   shopt -s extglob
-  [[ -z "$domain" ]] && { banner_logo; read -p 'Enter domain: ' domain; }
-  domains="$domain"
-  check_domainfile && domains=$(<$domainfile)
-  [[ -t 0 ]] || domains="$(</dev/stdin)"
+  check_domain
   while read domain; do
     init || continue
     run

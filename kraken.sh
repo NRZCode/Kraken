@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 APP='Kraken'
-version=0.0.26
+version=0.0.28
 
 # ANSI Colors
 function load_ansi_colors() {
@@ -202,7 +202,7 @@ domain_info_report() {
 }
 
 report_tools() {
-  tools[mrx]='subdomains|subfinder findomain-linux assetfinder|for log in "$logdir/"{assetfinder,findomain,subfinder}.log; do > "$log"; done; sleep 5;findomain-linux -q -t "$domain" > "$logdir/findomain.log"; sleep 5; subfinder -d "$domain" -silent -t 40 -o "$logdir/subfinder.log"; sleep 5; assetfinder -subs-only "$domain" > "$logdir/assetfinder.log"; sort -u "$logdir/"{assetfinder,findomain,subfinder}.log -o "$logfile"; httpx -silent < "$logfile" > "$logdir/${dtreport}httpx.log"'
+  tools[mrx]='subdomains|subfinder findomain-linux assetfinder|for log in "$logdir/"{assetfinder,findomain,subfinder}.log; do > "$log"; done; findomain-linux -q -t "$domain" > "$logdir/findomain.log"; sleep $delay; subfinder -d "$domain" -silent -t 40 -o "$logdir/subfinder.log"; sleep $delay; assetfinder -subs-only "$domain" > "$logdir/assetfinder.log"; sort -u "$logdir/"{assetfinder,findomain,subfinder}.log -o "$logfile"; httpx -silent < "$logfile" > "$logdir/${dtreport}httpx.log"'
   tools[dirsearch]='directories|dirsearch|dirsearch -q -e php,aspx,jsp,html,zip,jar -x 404-499,500-599 -w "$dicc" --random-agent --skip-on-status 429,999 -o "$logfile" --url "$domain"'
   tools[feroxbuster]='Feroxbuster Scan sub-directories|feroxbuster|feroxbuster -q -x php,asp,aspx,jsp,html,zip,jar -A --rate-limit 50 --time-limit 30m -t 30 -L 1 --extract-links -w "$dicc" -o "$logfile" -u "$domain"'
   tools[whatweb]='web|whatweb|whatweb -q -t 50 --no-errors "$domain" --log-brief="$logfile"'
@@ -210,7 +210,7 @@ report_tools() {
   tools[crt]='certificate|curl|curl -s "https://crt.sh/?q=%25.${domain}&output=json" | anew > "$logfile"'
   tools[nmap]='ports|nmap|nmap -sS -sCV "$domain" -T4 -Pn -oN "$logfile"'
   tools[nmap-cvss]='vulnerability|nmap|nmap -sV --script vulners --script-args mincvss=1.0 "$domain" -oN "$logfile"'
-  tools[fnmap]='ports|nmap|nmap -n -Pn -sS "$domain" -T4 --open -sV -oN "$logfile"; sleep 2'
+  tools[fnmap]='ports|nmap|nmap -n -Pn -sS "$domain" -T4 --open -sV -oN "$logfile"'
 }
 
 report() {
@@ -401,18 +401,18 @@ lolcat() {
 
 banner_logo() {
   lolcat "
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣠⣴⣾⡿⠟⠻⢿⣷⣦⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⣶⣿⠿⠛⠉⠀⣠⣶⣦⣀⠈⠉⠛⠿⣷⣦⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⣶⡿⠟⠋⠁⠀⠀⠀⣠⣾⣿⣿⣿⣿⣷⣄⠀⠀⠀⠉⠛⠿⢿⣶⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⠟⠋⠁⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣷⡄⠀⠀⠀⠀⠀⠈⠙⠿⣷⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⠃⠀⠀⣀⡀⠀⠀⠀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣆⠀⠀⠀⠀⠀⠀⠀⡻⣿⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⢠⣿⣏⣀⡀⠉⠉⠛⠿⣷⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣾⠿⠛⠛⠉⣀⣀⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⢀⣼⣿⠿⠿⢿⣿⣶⣄⠀⠈⠻⣿⣦⡉⠻⢿⣿⣿⣿⣿⡿⠛⣡⣾⣿⠟⠁⢀⣤⣾⣿⠿⠿⠿⣿⣦⠀⠀⠀⣀⠀⠀⠀⣀⠀⢀⣀⣀⣀⡀⠀⠀⠀⢀⣀⡀⠀⠀⢀⡀⠀⠀⢀⡀⠀⣀⣀⣀⣀⣀⡀⢀⣀⠀⠀⢀⡀⠀
-⠀⠀⠀⠀⠀⠀⡿⠋⢀⡄⠀⠀⠈⠻⣿⣷⡄⠀⠘⣿⣿⣿⣾⣿⣿⣿⣿⣾⣿⣿⣿⠁⠀⣠⣿⡿⠋⠁⠀⠀⢠⡀⠙⡇⠀⠀⣿⠀⠀⣰⡟⠀⢸⡏⠉⠉⢻⡆⠀⠀⣾⠙⣧⠀⠀⢸⡇⠀⠀⣸⠇⠀⣿⡏⠉⠉⠉⠁⢸⡿⣧⠀⢸⡇⠀
-⠀⠀⠀⠀⠀⠀⠀⢰⣿⡇⠀⠀⠀⠀⠈⢿⣿⠀⠀⣿⣿⠻⣿⣿⣿⣿⣿⣿⠟⣿⣿⠀⠀⣿⡟⠁⠀⠀⠀⠀⣸⣿⠀⠀⠀⠀⣿⣤⢶⣏⠀⠀⢸⡷⠶⣶⡟⠁⠀⣸⣏⣀⣻⡆⠀⢸⣧⣤⢾⡏⠀⠀⣿⡗⠒⠒⠂⠀⢸⣷⠘⣧⢸⡇⠀
-⠀⠀⠀⠀⠀⠀⣠⣼⣿⣿⣶⣦⣄⠀⠀⠈⠃⠀⣸⣿⡇⠀⠹⣿⣿⣿⣿⠃⠀⢻⣿⡄⠀⠙⠀⠀⢀⣤⣶⣶⣿⣿⣦⣄⠀⠀⣿⠀⠀⠻⣦⠀⢸⡇⠀⠈⢷⡄⢠⡿⠉⠉⠉⣿⡀⢸⡇⠀⠈⢻⣆⠀⣿⣧⣤⣤⣤⡀⢸⣿⠀⠘⣿⡇⠀
-⠀⢀⡀⠀⣠⣾⡿⠋⢀⣤⡄⠙⠻⣿⠆⠀⠀⣠⣿⣿⣀⠀⠀⣿⣿⣿⡇⠀⢀⣨⣿⣿⡄⠀⠀⢴⣿⠟⠉⣠⣄⠈⠙⢿⣷⡀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀   version: $version⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣠⣴⣾⡿⠟⠻⢿⣷⣦⣄⡀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⣶⣿⠿⠛⠉⠀⣠⣶⣦⣀⠈⠉⠛⠿⣷⣦⣤⣀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⣶⡿⠟⠋⠁⠀⠀⠀⣠⣾⣿⣿⣿⣿⣷⣄⠀⠀⠀⠉⠛⠿⢿⣶⣤⣀
+⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⠟⠋⠁⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣷⡄⠀⠀⠀⠀⠀⠈⠙⠿⣷⣦
+⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⠃⠀⠀⣀⡀⠀⠀⠀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣆⠀⠀⠀⠀⠀⠀⠀⡻⣿⣇
+⠀⠀⠀⠀⠀⠀⠀⢠⣿⣏⣀⡀⠉⠉⠛⠿⣷⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣾⠿⠛⠛⠉⣀⣀⣿⣿
+⠀⠀⠀⠀⠀⠀⢀⣼⣿⠿⠿⢿⣿⣶⣄⠀⠈⠻⣿⣦⡉⠻⢿⣿⣿⣿⣿⡿⠛⣡⣾⣿⠟⠁⢀⣤⣾⣿⠿⠿⠿⣿⣦⠀⠀⠀⣀⠀⠀⠀⣀⠀⢀⣀⣀⣀⡀⠀⠀⠀⢀⣀⡀⠀⠀⢀⡀⠀⠀⢀⡀⠀⣀⣀⣀⣀⣀⡀⢀⣀⠀⠀⢀⡀
+⠀⠀⠀⠀⠀⠀⡿⠋⢀⡄⠀⠀⠈⠻⣿⣷⡄⠀⠘⣿⣿⣿⣾⣿⣿⣿⣿⣾⣿⣿⣿⠁⠀⣠⣿⡿⠋⠁⠀⠀⢠⡀⠙⡇⠀⠀⣿⠀⠀⣰⡟⠀⢸⡏⠉⠉⢻⡆⠀⠀⣾⠙⣧⠀⠀⢸⡇⠀⠀⣸⠇⠀⣿⡏⠉⠉⠉⠁⢸⡿⣧⠀⢸⡇
+⠀⠀⠀⠀⠀⠀⠀⢰⣿⡇⠀⠀⠀⠀⠈⢿⣿⠀⠀⣿⣿⠻⣿⣿⣿⣿⣿⣿⠟⣿⣿⠀⠀⣿⡟⠁⠀⠀⠀⠀⣸⣿⠀⠀⠀⠀⣿⣤⢶⣏⠀⠀⢸⡷⠶⣶⡟⠁⠀⣸⣏⣀⣻⡆⠀⢸⣧⣤⢾⡏⠀⠀⣿⡗⠒⠒⠂⠀⢸⣷⠘⣧⢸⡇
+⠀⠀⠀⠀⠀⠀⣠⣼⣿⣿⣶⣦⣄⠀⠀⠈⠃⠀⣸⣿⡇⠀⠹⣿⣿⣿⣿⠃⠀⢻⣿⡄⠀⠙⠀⠀⢀⣤⣶⣶⣿⣿⣦⣄⠀⠀⣿⠀⠀⠻⣦⠀⢸⡇⠀⠈⢷⡄⢠⡿⠉⠉⠉⣿⡀⢸⡇⠀⠈⢻⣆⠀⣿⣧⣤⣤⣤⡀⢸⣿⠀⠘⣿⡇
+⠀⢀⡀⠀⣠⣾⡿⠋⢀⣤⡄⠙⠻⣿⠆⠀⠀⣠⣿⣿⣀⠀⠀⣿⣿⣿⡇⠀⢀⣨⣿⣿⡄⠀⠀⢴⣿⠟⠉⣠⣄⠈⠙⢿⣷⡀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀    version: $version
 ⠀⠈⠿⣶⡿⠏⠀⠀⠀⢻⣿⡄⠀⠈⠀⠀⣴⣿⣏⣹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣋⣻⣿⣆⠀⠈⠁⠀⣰⣿⡟⠀⠀⠈⠻⣿⡶⠏
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⠛⠀⠀⠀⢸⣿⠛⠛⠛⠛⠋⢹⣿⣿⣿⣿⡉⠛⠛⠛⠛⢻⣿⡇⠀⠀⠐⠛⠛
 ⠀⠀⠀⠀⠀⠀⠀⠀⣠⣶⠿⣿⣦⣄⠀⠸⣿⡀⠀⠀⠀⢀⣾⡿⠁⠘⣿⣧⠀⠀⠀⠀⣸⣿⠃⠀⣠⣶⡿⢿⣶⣄
@@ -420,7 +420,7 @@ banner_logo() {
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠻⠿⢿⡿⠿⠟⠋⠀⠀⠀⠀⠀⠀⠙⠻⠿⣿⠿⠿⠛⠁
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢤⣤⣦⣄⡀⠀⠀⠀⠀⢀⣠⣤⣤⠄
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⠻⢿⣷⣦⣴⣾⡿⠛⠉
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠀⠀"
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉"
 }
 
 banner() {
@@ -437,7 +437,7 @@ usage() {
   usage="  Usage: $basename -d DOMAIN [OPTIONS]
 
 DESCRIPTION
-  Reconnaissance tools
+  Reconnaissance tool's collection
 
 OPTIONS
   General options
@@ -452,7 +452,7 @@ OPTIONS
     -u, --update           Update script for better performance
     -V, --version          Print current version
     -h, --help             Show the help message and exit
-    -m, --max-time int     Minutes to wait for enumeration results 〔 Default: 10 〕
+    --delay                Seconds waiting between tools execution 〔 Default: 5 〕
 
 Example of use:
 # $basename -d example.com -a off -n"
@@ -467,6 +467,8 @@ init() {
 
   [[ -z "$domain" ]] && { usage "$basename: ERROR: Invalid domain"; return 1; }
   export ip=$(nslookup "$domain"|grep -oP 'Address: \K.*([0-9]{1,3}\.){3}[0-9]{1,3}')
+
+  export delay
   return 0
 }
 
@@ -506,7 +508,7 @@ run_tools() {
       result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s ${speed:-normal} -m "${tool^} $domain"
       user_notification -s "$APP Reconnaissance" -b "Scanning ${tool^} completed"
       elapsedtime -p "${tool^}"
-      sleep 5
+      sleep $delay
     fi
   done
 }
@@ -574,6 +576,7 @@ main() {
       -f|--fast-scan) dg_checklist_mode=0; shift;;
       -A|--agressive) dg_checklist_status=ON; shift;;
       -n|--no-subs) subdomains_scan_mode=0; shift;;
+      --delay) delay=$2; shift 2;;
       -a|--anon) [[ ${2,,} == @(0|false|off) ]] && anon_mode=0; shift 2;;
       *) shift;;
     esac
@@ -616,4 +619,5 @@ dg_checklist_mode=1
 dg_checklist_status=OFF
 subdomains_scan_mode=1
 anon_mode=1
+delay=5
 [[ $BASH_SOURCE == $0 ]] && main "$@"

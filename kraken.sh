@@ -514,7 +514,7 @@ run_tools() {
 }
 
 run() {
-  export logdir=${logdir:-$workdir/log/$target_domain}
+  export logdir=$workdir/log/$target_domain
   export logerr="$workdir/${basename%.*}.err"
   mklogdir "$logdir"
 

@@ -112,12 +112,12 @@ check_environments() {
 check_domain() {
   if [[ $domainfile ]]; then
     [[ -r "$domainfile" ]] || { printf '%s\n' "INVALID domain file: $domainfile"; exit 1; }
-    domains=$(<$domainfile)
+    domainslist=$(<$domainfile)
   fi
-  [[ -t 0 ]] || domains="$(</dev/stdin)"
-  if [[ -z $domains ]]; then
-    [[ -z "$domain" ]] && { banner_logo; read -p 'Enter domain: ' domain; }
-    domains="$domain"
+  [[ -t 0 ]] || domainslist="$(</dev/stdin)"
+  if [[ -z $domainslist ]]; then
+    [[ -z "$target_domain" ]] && { banner_logo; read -p 'Enter domain: ' target_domain; }
+    domainslist="$target_domain"
   fi
 }
 
@@ -202,21 +202,21 @@ domain_info_report() {
 }
 
 report_tools() {
-  tools[mrx]='subdomains|subfinder findomain-linux assetfinder|for log in "$logdir/"{assetfinder,findomain,subfinder}.log; do > "$log"; done; findomain-linux -q -t "$domain" > "$logdir/findomain.log"; sleep $delay; subfinder -d "$domain" -silent -t 40 -o "$logdir/subfinder.log"; sleep $delay; assetfinder -subs-only "$domain" > "$logdir/assetfinder.log"; sort -u "$logdir/"{assetfinder,findomain,subfinder}.log -o "$logfile"; httpx -silent < "$logfile" > "$logdir/${dtreport}httpx.log"'
-  tools[dirsearch]='directories|dirsearch|dirsearch -q -e php,aspx,jsp,html,zip,jar -x 404-499,500-599 -w "$dicc" --random-agent --skip-on-status 429,999 -o "$logfile" --url "$domain"'
-  tools[feroxbuster]='Feroxbuster Scan sub-directories|feroxbuster|feroxbuster -q -x php,asp,aspx,jsp,html,zip,jar -A --rate-limit 50 --time-limit 30m -t 30 -L 1 --extract-links -w "$dicc" -o "$logfile" -u "$domain"'
-  tools[whatweb]='web|whatweb|whatweb -q -t 50 --no-errors "$domain" --log-brief="$logfile"'
+  tools[mrx]='subdomains|subfinder findomain-linux assetfinder|for log in "$logdir/"{assetfinder,findomain,subfinder}.log; do > "$log"; done; findomain-linux -q -t "$target_domain" > "$logdir/findomain.log"; sleep $delay; subfinder -d "$target_domain" -silent -t 40 -o "$logdir/subfinder.log"; sleep $delay; assetfinder -subs-only "$target_domain" > "$logdir/assetfinder.log"; sort -u "$logdir/"{assetfinder,findomain,subfinder}.log -o "$logfile"; httpx -silent < "$logfile" > "$logdir/${dtreport}httpx.log"'
+  tools[dirsearch]='directories|dirsearch|dirsearch -q -e php,aspx,jsp,html,zip,jar -x 404-499,500-599 -w "$dicc" --random-agent --skip-on-status 429,999 -o "$logfile" --url "$target_domain"'
+  tools[feroxbuster]='Feroxbuster Scan sub-directories|feroxbuster|feroxbuster -q -x php,asp,aspx,jsp,html,zip,jar -A --rate-limit 50 --time-limit 30m -t 30 -L 1 --extract-links -w "$dicc" -o "$logfile" -u "$target_domain"'
+  tools[whatweb]='web|whatweb|whatweb -q -t 50 --no-errors "$target_domain" --log-brief="$logfile"'
   tools[owasp]='getallurls|waybackurls uro anew|cat "$logdir/${dtreport}httpx.log" | waybackurls | uro | anew | sort -u > "$logfile"'
-  tools[crt]='certificate|curl|curl -s "https://crt.sh/?q=%25.${domain}&output=json" | anew > "$logfile"'
-  tools[nmap]='ports|nmap|nmap -sS -sCV "$domain" -T4 -Pn -oN "$logfile"'
-  tools[nmap-cvss]='vulnerability|nmap|nmap -sV --script vulners --script-args mincvss=1.0 "$domain" -oN "$logfile"'
-  tools[fnmap]='ports|nmap|nmap -n -Pn -sS "$domain" -T4 --open -sV -oN "$logfile"'
+  tools[crt]='certificate|curl|curl -s "https://crt.sh/?q=%25.${target_domain}&output=json" | anew > "$logfile"'
+  tools[nmap]='ports|nmap|nmap -sS -sCV "$target_domain" -T4 -Pn -oN "$logfile"'
+  tools[nmap-cvss]='vulnerability|nmap|nmap -sV --script vulners --script-args mincvss=1.0 "$target_domain" -oN "$logfile"'
+  tools[fnmap]='ports|nmap|nmap -n -Pn -sS "$target_domain" -T4 --open -sV -oN "$logfile"'
 }
 
 report() {
   local tbody
   datetime=$(date -d "$(sed -E 's/^.{10}/&:/;s/^.{8}/& /;s/^.{6}/&-/;s/^.{4}/&-/;' <<< "$dtreport")")
-  download=${dtreport}${domain}.zip
+  download=${dtreport}${target_domain}.zip
   ##
   # Page reports
   for report in "${!pagereports[@]}"; do
@@ -297,9 +297,9 @@ report() {
   done < "$logdir/${dtreport}httpx.log"
   ##
   # Domain report
-  dig=$(domain_info_report dig "$domain")
-  host=$(domain_info_report host "$domain")
-  whois=$(domain_info_report whois "$domain")
+  dig=$(domain_info_report dig "$target_domain")
+  host=$(domain_info_report host "$target_domain")
+  whois=$(domain_info_report whois "$target_domain")
   nmap=$(nmap_report "$logdir/${dtreport}nmap.log")
   risk_rating_levels "$logdir/${dtreport}nmap-cvss.log"
   (
@@ -333,7 +333,7 @@ report() {
     sed '/{{cards-reports}}/,$!d; s/.*{{cards-reports}}/\n/' "$logdir/temp.tpl"
   ) > "$logdir/${dtreport}report-01.html"
   rm "$logdir/temp.tpl"
-  sed -i "s|{{domain}}|$domain|g;
+  sed -i "s|{{domain}}|$target_domain|g;
     s|{{app}}|$APP|;
     s|{{datetime}}|$datetime|;
     s|{{year}}|$(date +%Y)|;
@@ -359,17 +359,17 @@ report() {
   # Compact reports
   cp $logdir/${dtreport}report-01.html $logdir/report.html
   cd "$logdir"
-  zip -q -r ${dtreport}${domain}.zip ${dtreport}*html report.html screenshots/ headers/
+  zip -q -r ${dtreport}${target_domain}.zip ${dtreport}*html report.html screenshots/ headers/
   xdg-open "$logdir/${dtreport}report-01.html" &
   ##
   # Menu reports
   btview='<a href="%s" class="btn-menu"><i class="fa fa-bar-chart"></i>&nbsp;Visualizar</a>'
   btdownload='<a href="%s" class="btn-menu"><i class="fa fa-file-archive-o"></i>&nbsp;Download</a>'
   rows=$(
-  for domain in $workdir/log/*; do
-    for report in $domain/*; do
+  for str_domain in $workdir/log/*; do
+    for report in $str_domain/*; do
       if [[ ${report##*/} =~ ^(([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})).* ]]; then
-        echo  "${domain##*/}/${BASH_REMATCH[1]}"
+        echo  "${str_domain##*/}/${BASH_REMATCH[1]}"
       fi
     done
   done | sort -u
@@ -377,13 +377,13 @@ report() {
   (
   sed '1,/{{reports}}/!d; s/{{reports}}.*/\n/' "$workdir/resources/menu.tpl"
   while read report; do
-    domain=${report%%/*}
+    str_domain=${report%%/*}
     if [[ $report =~ (([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})) ]]; then
-      printf -v bt1 "$btview" "$domain/${BASH_REMATCH[1]}report-01.html"
-      printf -v bt2 "$btdownload" "$domain/${BASH_REMATCH[1]}.zip"
+      printf -v bt1 "$btview" "$str_domain/${BASH_REMATCH[1]}report-01.html"
+      printf -v bt2 "$btdownload" "$str_domain/${BASH_REMATCH[1]}.zip"
       printf '<tr><td><a href="%s">%s %s/%s/%s %s:%s</a></td><td>%s&nbsp;&nbsp;%s</td></tr>' \
-        "$domain/${BASH_REMATCH[1]}report-01.html" \
-        "$domain" "${BASH_REMATCH[4]}" "${BASH_REMATCH[3]}" "${BASH_REMATCH[2]}" "${BASH_REMATCH[5]}" "${BASH_REMATCH[6]}" \
+        "$str_domain/${BASH_REMATCH[1]}report-01.html" \
+        "$str_domain" "${BASH_REMATCH[4]}" "${BASH_REMATCH[3]}" "${BASH_REMATCH[2]}" "${BASH_REMATCH[5]}" "${BASH_REMATCH[6]}" \
         "$bt1" "$bt2"
     fi
   done <<< "$rows"
@@ -427,7 +427,7 @@ banner() {
   banner_logo
   lolcat $'\n 🐙 Powerful scan tool and parameter analyzer.'
   printf "
- 🎯   Target                         〔${CBold}${CFGYellow}https://$domain/${CReset}〕
+ 🎯   Target                         〔${CBold}${CFGYellow}https://$target_domain/${CReset}〕
  🚪   Scan Port                      〔${CBold}${CFGGreen}true${CReset}〕
  🧰   Redirect                       〔${CBold}${CFGGreen}true${CReset}〕
  🕘   Started at                     〔%(%Y/%m/%d %H:%M:%S)T〕"
@@ -463,10 +463,10 @@ init() {
   local OPTIND OPTARG
   load_ansi_colors
 
-  export domain=${domain#@(ht|f)tp?(s)://}
+  export target_domain=${target_domain#@(ht|f)tp?(s)://}
 
-  [[ -z "$domain" ]] && { usage "$basename: ERROR: Invalid domain"; return 1; }
-  export ip=$(nslookup "$domain"|grep -oP 'Address: \K.*([0-9]{1,3}\.){3}[0-9]{1,3}')
+  [[ -z "$target_domain" ]] && { usage "$basename: ERROR: Invalid domain"; return 1; }
+  export target_ip=$(nslookup "$target_domain"|grep -oP 'Address: \K.*([0-9]{1,3}\.){3}[0-9]{1,3}')
 
   export delay
   return 0
@@ -505,7 +505,7 @@ run_tools() {
         pagereports[${tool,,}]="$logfile"
       fi
       > $logfile
-      result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s ${speed:-normal} -m "${tool^} $domain"
+      result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s ${speed:-normal} -m "${tool^} $target_domain"
       user_notification -s "$APP Reconnaissance" -b "Scanning ${tool^} completed"
       elapsedtime -p "${tool^}"
       sleep $delay
@@ -514,12 +514,12 @@ run_tools() {
 }
 
 run() {
-  export logdir=${logdir:-$workdir/log/$domain}
+  export logdir=${logdir:-$workdir/log/$target_domain}
   export logerr="$workdir/${basename%.*}.err"
   mklogdir "$logdir"
 
   backtitle="Reconnaissence tools [$APP]"
-  title="Target's Reconnaissence [$domain]"
+  title="Target's Reconnaissence [$target_domain]"
   text='Select tools:'
   width=0
   if dg_menu checklist; then
@@ -537,16 +537,16 @@ run() {
     if [[ $subdomains_scan_mode == 1 ]]; then
       printf "\n\n${CBold}${CFGCyan}»»»»»»»»»»»» Enabling brute force on subdirectories${CReset}\n"
       (
-        while read domain; do
-          [[ $domain ]] && run_tools -f "$logdir/${dtreport}${domain/:\/\//.}.log" -s slowest dirsearch
+        while read target_domain; do
+          [[ $target_domain ]] && run_tools -f "$logdir/${dtreport}${target_domain/:\/\//.}.log" -s slowest dirsearch
         done < "$logdir/${dtreport}httpx.log"
       )
 
       [[ $anon_mode == 1 ]] && anonsurf stop &> /dev/null
       (
         anon_mode=0
-        while read domain; do
-          [[ $domain ]] && run_tools -f "$logdir/${dtreport}${domain}nmap.log" fnmap
+        while read target_domain; do
+          [[ $target_domain ]] && run_tools -f "$logdir/${dtreport}${target_domain}nmap.log" fnmap
         done < "$logdir/${dtreport}mrx.log"
       )
     fi
@@ -554,7 +554,7 @@ run() {
     aquatone -chrome-path /usr/bin/chromium -out "$logdir" 2>>$logerr >/dev/null < "$logdir/${dtreport}mrx.log"
     report
 
-    user_notification -u critical -s "$APP Reconnaissance" -b "Recon of $domain completed"
+    user_notification -u critical -s "$APP Reconnaissance" -b "Recon of $target_domain completed"
     elapsedtime 'TOTAL Reconnaissance'
     return 0
   fi
@@ -571,7 +571,7 @@ main() {
       -h|--help|help) usage; exit 0;;
       -V|--version) echo "$version"; exit 0;;
       -u|--update) update_mode=1; shift;;
-      -d|--domain) domain=$2; shift 2;;
+      -d|--domain) target_domain=$2; shift 2;;
      -dL|--domain-list) domainfile=$2; shift 2;;
       -f|--fast-scan) dg_checklist_mode=0; shift;;
       -A|--agressive) dg_checklist_status=ON; shift;;
@@ -606,10 +606,10 @@ main() {
   [[ $update_mode == 1 ]] && update_tools
   shopt -s extglob
   check_domain
-  while read domain; do
+  while read target_domain; do
     init || continue
     run
-  done <<< "$domains"
+  done <<< "$domainslist"
 }
 
 declare -A tools

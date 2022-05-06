@@ -203,8 +203,7 @@ domain_info_report() {
 
 report_tools() {
   tools[mrx]='subdomains|subfinder findomain-linux assetfinder|for log in "$logdir/"{assetfinder,findomain,subfinder}.log; do > "$log"; done; findomain-linux -q -t "$target_domain" > "$logdir/findomain.log"; sleep $delay; subfinder -d "$target_domain" -silent -t 40 -o "$logdir/subfinder.log"; sleep $delay; assetfinder -subs-only "$target_domain" > "$logdir/assetfinder.log"; sort -u "$logdir/"{assetfinder,findomain,subfinder}.log -o "$logfile"; httpx -silent < "$logfile" > "$logdir/${dtreport}httpx.log"'
-  tools[dirsearch]='directories|dirsearch|dirsearch -q -e php,aspx,jsp,html,zip,jar -x 404-499,500-599 -w "$dicc" --random-agent --skip-on-status 429,999 -o "$logfile" --url "$target_domain"'
-  tools[feroxbuster]='Feroxbuster Scan sub-directories|feroxbuster|feroxbuster -q -x php,asp,aspx,jsp,html,zip,jar -A --rate-limit 50 --time-limit 30m -t 30 -L 1 --extract-links -w "$dicc" -o "$logfile" -u "$target_domain"'
+  tools[dirsearch]='directories|dirsearch|dirsearch -q -e php,aspx,jsp,html,zip,jar -x 404-499,500-599 -w "$dicc" -t 20 --random-agent --skip-on-status 429,999 -o "$logfile" --url "$target_domain"'
   tools[whatweb]='web|whatweb|whatweb -q -t 50 --no-errors "$target_domain" --log-brief="$logfile"'
   tools[owasp]='getallurls|waybackurls uro anew|cat "$logdir/${dtreport}httpx.log" | waybackurls | uro | anew | sort -u > "$logfile"'
   tools[crt]='certificate|curl|curl -s "https://crt.sh/?q=%25.${target_domain}&output=json" | anew > "$logfile"'
@@ -412,7 +411,7 @@ banner_logo() {
 ⠀⠀⠀⠀⠀⠀⡿⠋⢀⡄⠀⠀⠈⠻⣿⣷⡄⠀⠘⣿⣿⣿⣾⣿⣿⣿⣿⣾⣿⣿⣿⠁⠀⣠⣿⡿⠋⠁⠀⠀⢠⡀⠙⡇⠀⠀⣿⠀⠀⣰⡟⠀⢸⡏⠉⠉⢻⡆⠀⠀⣾⠙⣧⠀⠀⢸⡇⠀⠀⣸⠇⠀⣿⡏⠉⠉⠉⠁⢸⡿⣧⠀⢸⡇
 ⠀⠀⠀⠀⠀⠀⠀⢰⣿⡇⠀⠀⠀⠀⠈⢿⣿⠀⠀⣿⣿⠻⣿⣿⣿⣿⣿⣿⠟⣿⣿⠀⠀⣿⡟⠁⠀⠀⠀⠀⣸⣿⠀⠀⠀⠀⣿⣤⢶⣏⠀⠀⢸⡷⠶⣶⡟⠁⠀⣸⣏⣀⣻⡆⠀⢸⣧⣤⢾⡏⠀⠀⣿⡗⠒⠒⠂⠀⢸⣷⠘⣧⢸⡇
 ⠀⠀⠀⠀⠀⠀⣠⣼⣿⣿⣶⣦⣄⠀⠀⠈⠃⠀⣸⣿⡇⠀⠹⣿⣿⣿⣿⠃⠀⢻⣿⡄⠀⠙⠀⠀⢀⣤⣶⣶⣿⣿⣦⣄⠀⠀⣿⠀⠀⠻⣦⠀⢸⡇⠀⠈⢷⡄⢠⡿⠉⠉⠉⣿⡀⢸⡇⠀⠈⢻⣆⠀⣿⣧⣤⣤⣤⡀⢸⣿⠀⠘⣿⡇
-⠀⢀⡀⠀⣠⣾⡿⠋⢀⣤⡄⠙⠻⣿⠆⠀⠀⣠⣿⣿⣀⠀⠀⣿⣿⣿⡇⠀⢀⣨⣿⣿⡄⠀⠀⢴⣿⠟⠉⣠⣄⠈⠙⢿⣷⡀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀    version: $version
+⠀⢀⡀⠀⣠⣾⡿⠋⢀⣤⡄⠙⠻⣿⠆⠀⠀⣠⣿⣿⣀⠀⠀⣿⣿⣿⡇⠀⢀⣨⣿⣿⡄⠀⠀⢴⣿⠟⠉⣠⣄⠈⠙⢿⣷⡀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      version: $version
 ⠀⠈⠿⣶⡿⠏⠀⠀⠀⢻⣿⡄⠀⠈⠀⠀⣴⣿⣏⣹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣋⣻⣿⣆⠀⠈⠁⠀⣰⣿⡟⠀⠀⠈⠻⣿⡶⠏
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⠛⠀⠀⠀⢸⣿⠛⠛⠛⠛⠋⢹⣿⣿⣿⣿⡉⠛⠛⠛⠛⢻⣿⡇⠀⠀⠐⠛⠛
 ⠀⠀⠀⠀⠀⠀⠀⠀⣠⣶⠿⣿⣦⣄⠀⠸⣿⡀⠀⠀⠀⢀⣾⡿⠁⠘⣿⣧⠀⠀⠀⠀⣸⣿⠃⠀⣠⣶⡿⢿⣶⣄
@@ -444,9 +443,7 @@ OPTIONS
     -d, --domain           Scan domain and subdomains
     -dL,--domain-list      File containing list of domains for subdomain discovery
     -a, --anon             Setup usage of anonsurf change IP 〔 Default: On 〕
-    -t, --threads          Number of threads to be used 〔 Default: 20 〕
     -A, --agressive        Use all sources (slow) for enumeration 〔 Default: Off 〕
-    -v, --verbose          Enable the verbose mode and display results in realtime 〔 Default: Off 〕
     -n, --no-subs          Scan only the domain given in -d domain.com
     -f, --fast-scan        Scan without options menu
     -u, --update           Update script for better performance
@@ -505,7 +502,7 @@ run_tools() {
         pagereports[${tool,,}]="$logfile"
       fi
       > $logfile
-      result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s ${speed:-normal} -m "${tool^} $target_domain"
+      result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s ${speed:-slow} -m "${tool^} $target_domain"
       user_notification -s "$APP Reconnaissance" -b "Scanning ${tool^} completed"
       elapsedtime -p "${tool^}"
       sleep $delay

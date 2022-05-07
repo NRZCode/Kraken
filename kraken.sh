@@ -132,7 +132,7 @@ update_tools() {
     vendor=${_##*/}
     dir="/usr/local/$vendor/${repo##*/}"
     if [[ -d "$dir/.git" ]]; then
-      git -C "$dir" pull -q origin master
+      git -C "$dir" pull -q origin
     fi
   done < <(cfg_listsections "$inifile")
 }

@@ -155,12 +155,12 @@ form() {
   # menu checklist
   case $dialog in
     dialog)
-      dg=(dialog --stdout --title "$title" --backtitle "$backtitle" --checklist "$text" 0 "$width" 0)
+      dg=(dialog --stdout --title "$title" --backtitle "$backtitle" --ok-label 'Run tools' --checklist "$text" 0 "$width" 0)
       [[ $dg_checklist_status == 'checked' ]] && dg_checklist_status=ON || dg_checklist_status=OFF
       items_fmt="%s\n%s\n$dg_checklist_status\n"
       ;;
     yad)
-      dg=(yad --height 600 --width 800 --center --window-icon="$workdir/share/icons/logo-48x48.png" --image="$workdir/share/icons/logo-48x48.png" --title "$backtitle" --text "$title" --buttons-layout=spread --list --checklist --column '#' --column Tool --column Description)
+      dg=(yad --height 600 --width 800 --center --window-icon="$workdir/share/icons/logo-48x48.png" --image="$workdir/share/icons/logo-48x48.png" --title "$backtitle" --text "$title" --button='Run tools!gtk-ok:0' --button='gtk-cancel:1' --buttons-layout=spread --list --checklist --column '#' --column Tool --column Description)
       [[ $dg_checklist_status == 'checked' ]] && dg_checklist_status=TRUE || dg_checklist_status=FALSE
       items_fmt="$dg_checklist_status\n%s\n%s\n"
       ;;

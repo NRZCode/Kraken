@@ -168,6 +168,7 @@ form() {
   esac
   mapfile -t checklist_items < <(for tool in "${!descriptions[@]}"; do IFS='|' read t d <<< "${descriptions[$tool]}"; printf "$items_fmt" "$t" "$d"; done)
   selection=$("${dg[@]}" "${checklist_items[@]}")
+  [[ $? == 1 ]] && return 1 # BTN_CANCEL
   case $dialog in
     yad)
       selection=$(while IFS='|' read status tool description; do [[ $status == TRUE ]] && echo "$tool"; done <<< "$selection")

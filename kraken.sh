@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 APP='Kraken'
-version=0.0.28
+version=0.0.32
 
 # ANSI Colors
 function load_ansi_colors() {

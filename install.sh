@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-version=1.0.9
+version=1.0.16
 usage() {
   usage="  Usage: $basename [OPTIONS]
 
@@ -53,18 +53,13 @@ print_message() {
   fi
 }
 
-banner_color() {
-  local colors logo_print
-  local c=({30..37})
-  logo_print="$(sed -E 's/$/\\e[m/;s/^.{26}/&\\e[%sm/;s/^.{16}/&\\e[%sm/;s/^.{8}/&\\e[%sm/;s/^/\\e[%sm/' <<< "$logo")"
-  substr=$(for i in {1..4}; do echo -n "${c[$((RANDOM%${#c[@]}))]} "; done)
-  printf -v colors '%6s'
-  colors=(${colors// /$substr})
-  printf "$logo_print\n" "${colors[@]}"
+lolcat() {
+  lolcat=/usr/games/lolcat
+  if type -t $lolcat >/dev/null; then $lolcat; else cat; fi <<< "$1"
 }
 
 banner() {
-  logo='
+  lolcat "
    █████████   ███████████   ██████   █████    ███████ ®
   ███░░░░░███ ░░███░░░░░███ ░░██████ ░░███   ███░░░░░███
  ░███    ░███  ░███    ░███  ░███░███ ░███  ███     ░░███
@@ -73,17 +68,15 @@ banner() {
  ░███    ░███  ░███    ░███  ░███  ░░█████ ░░███     ███
  █████   █████ █████   █████ █████  ░░█████ ░░░███████░
 ░░░░░   ░░░░░ ░░░░░   ░░░░░ ░░░░░    ░░░░░    ░░░░░░░
-                                       ➥ version: '$version''
+                                       ➥ version: $version
 
-  social="   A Reconaissance Tool's Collection.
+            A Reconaissance Tool's Collection.
 
 📥 Discord Community
 
  〔https://discord.io/thekrakenhacker〕
-🛠  Recode The Copyright Is Not Make You A Coder Dude\n"
-  [[ -x /usr/games/lolcat ]] &&
-    /usr/games/lolcat <(printf "$logo\n$social\n") ||
-    { banner_color "$logo"; echo "$social"; }
+🛠  Recode The Copyright Is Not Make You A Coder Dude
+"
 }
 
 system_update() {
@@ -148,6 +141,7 @@ init_install() {
         ;;
     esac
     apt -y install $packages
+    system_upgrade
     pip3 install --upgrade pip osrframework py-altdns==1.0.2 requests wfuzz holehe twint droopescan uro arjun dnsgen s3scanner emailfinder pipx one-lin3r win_unicode_console aiodnsbrute webscreenshot dnspython netaddr git-dumper
     gem install typhoeus opt_parse_validator blunder wpscan
     mkdir -p "$HOME/.local"
@@ -323,5 +317,4 @@ for tool in ${selection,,}; do
     fi
   fi
 done
-system_upgrade
 checklist_report

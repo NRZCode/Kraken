@@ -174,6 +174,7 @@ form() {
       selection=$(while IFS='|' read status tool description; do [[ $status == TRUE ]] && echo "$tool"; done <<< "$selection")
       ;;
   esac
+  return 0
 }
 
 risk_rating_levels() {

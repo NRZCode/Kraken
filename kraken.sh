@@ -122,13 +122,19 @@ check_domain() {
 }
 
 update_tools() {
-  echo 'wait a moment...'
+  echo '[+] wait a moment...'
   git -C "$workdir" pull --all
-  for dir in /usr/local/*; do
+  while read sec; do
+    unset url script depends post_install
+    cfg_section_$sec 2>&-
+    repo=${url%%+(.git|/)}
+    : "${repo%/*}"
+    vendor=${_##*/}
+    dir="/usr/local/$vendor/${repo##*/}"
     if [[ -d "$dir/.git" ]]; then
       git -C "$dir" pull -q origin master
     fi
-  done
+  done < <(cfg_listsections "$inifile")
 }
 
 mklogdir() {

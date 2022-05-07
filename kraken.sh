@@ -150,7 +150,7 @@ form() {
   text='Select tools:'
   width=0
   dialog=dialog
-  [[ $XDG_SESSION_DESKTOP ]] && dialog=yad
+  [[ $XAUTHORITY ]] && dialog=yad
 
   # menu checklist
   case $dialog in

@@ -137,10 +137,36 @@ mklogdir() {
   export dtreport=$(date '+%Y%m%d%H%M')
 }
 
-dg_menu() {
+form() {
   [[ $dg_checklist_mode == 0 ]] && return 0
-  dg=(dialog --stdout --title "$title" --backtitle "$backtitle" --checklist "$text" 0 "$width" 0)
-  selection=$("${dg[@]}" "${dg_options[@]}")
+  backtitle="Reconnaissence tools [$APP]"
+  title="Target's Reconnaissence [$target_domain]"
+  text='Select tools:'
+  width=0
+  dialog=dialog
+  [[ $XDG_SESSION_DESKTOP ]] && dialog=yad
+
+  # menu checklist
+  case $dialog in
+    dialog)
+      dg=(dialog --stdout --title "$title" --backtitle "$backtitle" --checklist "$text" 0 "$width" 0)
+      [[ $dg_checklist_status == 'checked' ]] && dg_checklist_status=ON || dg_checklist_status=OFF
+      items_fmt="%s\n%s\n$dg_checklist_status\n"
+      ;;
+    yad)
+      dg=(yad --height 600 --width 800 --center --window-icon="$workdir/share/icons/logo-48x48.png" --image="$workdir/share/icons/logo-48x48.png" --title "$backtitle" --text "$title" --buttons-layout=spread --list --checklist --column '#' --column Tool --column Description)
+      [[ $dg_checklist_status == 'checked' ]] && dg_checklist_status=TRUE || dg_checklist_status=FALSE
+      items_fmt="$dg_checklist_status\n%s\n%s\n"
+      ;;
+      *) echo 'ERROR: Dialog not defined!'; exit 1;;
+  esac
+  mapfile -t checklist_items < <(for tool in "${!descriptions[@]}"; do IFS='|' read t d <<< "${descriptions[$tool]}"; printf "$items_fmt" "$t" "$d"; done)
+  selection=$("${dg[@]}" "${checklist_items[@]}")
+  case $dialog in
+    yad)
+      selection=$(while IFS='|' read status tool description; do [[ $status == TRUE ]] && echo "$tool"; done <<< "$selection")
+      ;;
+  esac
 }
 
 risk_rating_levels() {
@@ -515,11 +541,7 @@ run() {
   export logerr="$workdir/${basename%.*}.err"
   mklogdir "$logdir"
 
-  backtitle="Reconnaissence tools [$APP]"
-  title="Target's Reconnaissence [$target_domain]"
-  text='Select tools:'
-  width=0
-  if dg_menu checklist; then
+  if form menu checklist; then
     clear
 
     banner
@@ -571,7 +593,7 @@ main() {
       -d|--domain) target_domain=$2; shift 2;;
      -dL|--domain-list) domainfile=$2; shift 2;;
       -f|--fast-scan) dg_checklist_mode=0; shift;;
-      -A|--agressive) dg_checklist_status=ON; shift;;
+      -A|--agressive) dg_checklist_status=checked; shift;;
       -n|--no-subs) subdomains_scan_mode=0; shift;;
       --delay) delay=$2; shift 2;;
       -a|--anon) [[ ${2,,} == @(0|false|off) ]] && anon_mode=0; shift 2;;
@@ -590,7 +612,7 @@ main() {
   workdir=$dirname
   wordlistdir="$workdir/share/wordlists"
   inifile="$workdir/package.ini"
-  required_packages='git dialog nmap httpx anonsurf assetfinder findomain-linux subfinder aquatone dirsearch anew waybackurls'
+  required_packages='git dialog yad nmap httpx anonsurf assetfinder findomain-linux subfinder aquatone dirsearch anew waybackurls'
   check_dependencies
   check_inifile
   check_environments
@@ -598,7 +620,6 @@ main() {
   SECONDS=0
   read_package_ini
   report_tools
-  mapfile -t dg_options < <(for tool in "${!descriptions[@]}"; do IFS='|' read t d <<< "${descriptions[$tool]}"; printf "%s\n%s\n$dg_checklist_status\n" "$t" "$d"; done)
 
   [[ $update_mode == 1 ]] && update_tools
   shopt -s extglob
@@ -613,7 +634,6 @@ declare -A tools
 declare -A descriptions
 declare -A pagereports
 dg_checklist_mode=1
-dg_checklist_status=OFF
 subdomains_scan_mode=1
 anon_mode=1
 delay=5

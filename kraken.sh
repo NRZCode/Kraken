@@ -622,7 +622,7 @@ main() {
   workdir=$dirname
   wordlistdir="$workdir/share/wordlists"
   inifile="$workdir/package.ini"
-  required_packages='git dialog yad nmap httpx anonsurf assetfinder findomain-linux subfinder aquatone dirsearch anew waybackurls'
+  required_packages='git dialog yad nmap httpx anonsurf assetfinder findomain-linux subfinder aquatone dirsearch anew waybackurls EmailHarvester emailfinder holehe'
   check_dependencies
   check_inifile
   check_environments

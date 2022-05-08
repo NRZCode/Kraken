@@ -241,7 +241,7 @@ report_tools() {
   tools[dirsearch]='directories|dirsearch|dirsearch -q -e php,aspx,jsp,html,zip,jar -x 404-499,500-599 -w "$dicc" -t 20 --random-agent --skip-on-status 429,999 -o "$logfile" --url "$target_domain"'
   tools[whatweb]='web|whatweb|whatweb -q -t 50 --no-errors "$target_domain" --log-brief="$logfile"'
   tools[owasp]='getallurls|waybackurls uro anew|cat "$logdir/${dtreport}httpx.log" | waybackurls | uro | anew | sort -u > "$logfile"'
-  tools[crt]='certificate|curl|curl -s "https://crt.sh/?q=%25.${target_domain}&output=json" | anew > "$logfile"'
+  tools[crt]='certificate|curl|curl -s "https://crt.sh/?q=%25.${target_domain}&output=json" | anew | jq > "$logfile"'
   tools[nmap]='ports|nmap|nmap -sS -sCV "$target_domain" -T4 -Pn -oN "$logfile"'
   tools[nmap-cvss]='vulnerability|nmap|nmap -sV --script vulners --script-args mincvss=1.0 "$target_domain" -oN "$logfile"'
   tools[fnmap]='ports|nmap|nmap -n -Pn -sS "$target_domain" -T4 --open -sV -oN "$logfile"'

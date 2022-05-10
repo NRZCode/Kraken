@@ -245,7 +245,7 @@ report_tools() {
   tools[nmap]='ports|nmap|nmap -sS -sCV "$target_domain" -T4 -Pn -oN "$logfile"'
   tools[nmap-cvss]='vulnerability|nmap|nmap -sV --script vulners --script-args mincvss=1.0 "$target_domain" -oN "$logfile"'
   tools[fnmap]='ports|nmap|nmap -n -Pn -sS "$target_domain" -T4 --open -sV -oN "$logfile"'
-  tools[email-search]='email-search|EmailHarvester emailfinder holehe|EmailHarvester -d $target_domain -e all -s $logdir/${dtreport}emailharvester.log; emailfinder -d $target_domain > $logdir/${dtreport}emailfinder.log; while read mail; do holehe --no-clear --only-used --no-color "$mail"; done < $logdir/${dtreport}emailharvester.log > "$logfile"'
+  tools[email-search]='email-search|EmailHarvester emailfinder holehe|EmailHarvester -d $target_domain -e all -s $logdir/${dtreport}emailharvester.log; emailfinder -d $target_domain > $logdir/${dtreport}emailfinder.log; while read mail; do holehe --no-clear --only-used --no-color "$mail"; done < <(cat $logdir/${dtreport}email{harvester,finder}.log) > "$logfile"'
 }
 
 report() {

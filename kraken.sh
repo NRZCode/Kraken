@@ -227,7 +227,7 @@ risk_rating_levels() {
 
 nmap_report() {
   local file=$1
-  [[ -r "$file" ]] && awk '/^PORT/{flag=1} /^Service/{flag=0} flag {gsub(/\|/, "\\|"); printf "%s\\n", $0}' "$file"
+  [[ -r "$file" ]] && awk '/^PORT/{flag=1} /^Service/{flag=0} flag {gsub(/\\/, "\\\\"); gsub(/\|/, "\\|"); printf "%s\\n", $0}' "$file"
 }
 
 domain_info_report() {
@@ -557,9 +557,9 @@ run() {
     banner
 
     # Tools for report
-    run_tools nmap nmap-cvss
+    run_tools nmap nmap-cvss email-search
     [[ $anon_mode == 1 ]] && anonsurf start &> /dev/null
-    run_tools mrx whatweb owasp crt email-search ${selection,,}
+    run_tools mrx whatweb owasp crt ${selection,,}
 
     ##
     # Search and report subdomains

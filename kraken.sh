@@ -506,7 +506,9 @@ init() {
 }
 
 user_notification() {
-  local summary body urgency icon=$workdir/share/icons/logo-48x48.png
+  local summary body urgency \
+    icon=$workdir/share/icons/logo-48x48.png
+  [[ -z $XAUTHORITY ]] && return
   while [[ $1 ]]; do
     case $1 in
       -u|--urgency) urgency=$2; shift 2;;

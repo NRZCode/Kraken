@@ -237,8 +237,8 @@ domain_info_report() {
 }
 
 report_tools() {
-  tools[mrx]='subdomains|subfinder findomain-linux assetfinder|for log in "$logdir/"{assetfinder,findomain,subfinder}.log; do > "$log"; done; findomain-linux -q -t "$target_domain" > "$logdir/findomain.log"; sleep $delay; subfinder -d "$target_domain" -silent -t 40 -o "$logdir/subfinder.log"; sleep $delay; assetfinder -subs-only "$target_domain" > "$logdir/assetfinder.log"; sort -u "$logdir/"{assetfinder,findomain,subfinder}.log -o "$logfile"; httpx -silent < "$logfile" > "$logdir/${dtreport}httpx.log"'
-  tools[dirsearch]='directories|dirsearch|dirsearch -q -e php,aspx,jsp,html,zip,jar -x 404-499,500-599 -w "$dicc" -t 20 --random-agent --skip-on-status 429,999 -o "$logfile" --url "$target_domain"'
+  tools[mrx]='Enum subdomains|amass|amass enum -passive -d "$target_domain" -o "$logfile"; httpx -silent < "$logfile" > "$logdir/${dtreport}httpx.log"'
+  tools[dirsearch]='directories|dirsearch|dirsearch -q -e php,aspx,jsp,html,cgi -x 404-499,500-599 -w "$dicc" -t 20 --random-agent --skip-on-status 429,999 -o "$logfile" --url "$target_domain"'
   tools[whatweb]='web|whatweb|whatweb -q -t 50 --no-errors "$target_domain" --log-brief="$logfile"'
   tools[owasp]='getallurls|waybackurls uro anew|cat "$logdir/${dtreport}httpx.log" | waybackurls | uro | anew | sort -u > "$logfile"'
   tools[crt]='certificate|curl|curl -s "https://crt.sh/?q=%25.${target_domain}&output=json" | anew | jq > "$logfile"'

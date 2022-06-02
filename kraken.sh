@@ -178,6 +178,13 @@ form() {
   return 0
 }
 
+interrupt_handler() {
+  if [[ $interrupt_handler == 1 ]]; then
+    printf "\rCTRL+C: Aborted by user!\n"
+  fi
+}
+trap interrupt_handler SIGINT
+
 risk_rating_levels() {
   local file=$1
   scores=($(awk 'BEGIN {
@@ -539,7 +546,9 @@ run_tools() {
         pagereports[${tool,,}]="$logfile"
       fi
       > $logfile
+      interrupt_handler=1
       result=$(bash -c "$cmd" 2>>$logerr) | progressbar -s ${speed:-slow} -m "${tool^} $target_domain"
+      interrupt_handler=0
       user_notification -s "$APP Reconnaissance" -b "Scanning ${tool^} completed"
       elapsedtime -p "${tool^}"
       sleep $delay

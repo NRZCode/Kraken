@@ -95,8 +95,8 @@ check_dependencies() {
 check_inifile() {
   if [[ ! -r "$inifile" ]]; then
     [[ -r "$workdir/package-dist.ini" ]] &&
-      cp "$workdir"/package{-dist,}.ini ||
-      wget -qO "$workdir/package.ini" https://github.com/NRZCode/GhostRecon/raw/master/package-dist.ini
+      cp "$workdir"/package{-dist,}.ini \
+        || wget -qO "$workdir/package.ini" https://github.com/NRZCode/Kraken/raw/master/package-dist.ini
   fi
   [[ -r "$inifile" ]] || exit 1
 }

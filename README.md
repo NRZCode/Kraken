@@ -4,12 +4,13 @@ Complete shell script tool for Bug bounty or Pentest ! It will save 90% of your 
 It already configures all the tools for you to work, you won't need to configure it manually.
 
 
-1. (Installation)[#installation]
-  1. (Minimal installation)[#minimal-installation]
-  2. (Full installation)[#full-installation]
-2. (Usage)[#usage]
-  1. (Simple usage)[simple-usage]
-  2. (Parameters options)[#parameters-options]
+1. [Installation](#installation)
+   1. [Minimal installation](#minimal-installation)
+   2. [Full installation](#full-installation)
+
+2. [Usage](#usage)
+   1. [Simple and fast](simple-usage)
+   2. [Parameters options](#parameters-options)
 
 ## Installation
 Run as root
@@ -21,7 +22,8 @@ sudo kraken/install.sh httpx anonsurf assetfinder findomain subfinder aquatone d
 ```
 or through curl
 ```sh
-curl -sL https://github.com/NRZCode/kraken/raw/master/install.sh | sudo bash -s httpx anonsurf assetfinder findomain subfinder aquatone dirsearch feroxbuster
+curl -sL https://github.com/NRZCode/kraken/raw/master/install.sh \
+  | sudo bash -s httpx anonsurf assetfinder findomain subfinder aquatone dirsearch feroxbuster
 ```
 ### Full installation
 through git
@@ -39,4 +41,17 @@ Simple and fast recon
 ```sh
 kraken -f -d domain.com
 ```
-### Parameters
+### Parameters options
+```sh
+  General options
+    -d, --domain           Scan domain and subdomains
+    -dL,--domain-list      File containing list of domains for subdomain discovery
+    -a, --anon             Setup usage of anonsurf change IP 〔 Default: On 〕
+    -A, --agressive        Use all sources (slow) for enumeration 〔 Default: Off 〕
+    -n, --no-subs          Scan only the domain given in -d domain.com
+    -f, --fast-scan        Scan without options menu
+    -u, --update           Update script for better performance
+    -V, --version          Print current version
+    -h, --help             Show the help message and exit
+    --delay                Seconds waiting between tools execution 〔 Default: 5 〕
+```
